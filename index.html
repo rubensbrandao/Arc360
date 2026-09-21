@@ -6,9 +6,14 @@
 
 <title>ARC 360 — Architects</title>
 
-<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
+<!-- Primary ethers CDN -->
+<script
+    src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"
+    onerror="this.onerror=null;this.src='https://unpkg.com/ethers@6.13.5/dist/ethers.umd.min.js'">
+</script>
 
 <style>
+
 :root {
     --bg: #050607;
     --panel: #0b0d10;
@@ -16,7 +21,10 @@
     --line: #20252c;
     --text: #f2f2f2;
     --muted: #8b929b;
+    --soft: #b8bec6;
     --accent: #ffffff;
+    --danger: #ff5c5c;
+    --success: #8dffb0;
 }
 
 * {
@@ -30,18 +38,75 @@ html {
 body {
     margin: 0;
     background:
-        radial-gradient(circle at 50% -10%, #20252c 0%, #08090b 35%, #050607 70%);
+        radial-gradient(
+            circle at 50% -10%,
+            #20252c 0%,
+            #08090b 35%,
+            #050607 70%
+        );
     color: var(--text);
-    font-family: Arial, Helvetica, sans-serif;
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+}
+
+button,
+input {
+    font: inherit;
 }
 
 button {
-    font: inherit;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .container {
     width: min(1400px, calc(100% - 40px));
     margin: auto;
+}
+
+/* =========================================================
+   NAV
+========================================================= */
+
+.nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(14px);
+    background: rgba(5, 6, 7, .82);
+    border-bottom: 1px solid var(--line);
+}
+
+.nav-inner {
+    min-height: 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.nav-logo {
+    font-weight: 900;
+    letter-spacing: -.03em;
+}
+
+.wallet {
+    border: 1px solid #343a42;
+    background: #101318;
+    color: white;
+    border-radius: 7px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.wallet:hover {
+    border-color: #777;
+}
+
+.wallet.connected {
+    border-color: #777;
 }
 
 /* =========================================================
@@ -64,7 +129,7 @@ button {
 .logo {
     font-size: clamp(48px, 10vw, 110px);
     font-weight: 900;
-    letter-spacing: -0.07em;
+    letter-spacing: -.07em;
     line-height: .85;
 }
 
@@ -116,47 +181,13 @@ button {
     background: #ddd;
 }
 
-/* =========================================================
-   NAV
-========================================================= */
-
-.nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    backdrop-filter: blur(14px);
-    background: rgba(5,6,7,.82);
-    border-bottom: 1px solid var(--line);
-}
-
-.nav-inner {
-    min-height: 64px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
-}
-
-.nav-logo {
-    font-weight: 900;
-    letter-spacing: -.03em;
-}
-
-.wallet {
-    border: 1px solid #343a42;
-    background: #101318;
-    color: white;
-    border-radius: 7px;
-    padding: 10px 15px;
-    cursor: pointer;
-}
-
-.wallet.connected {
-    border-color: #777;
+.btn:disabled {
+    opacity: .45;
+    cursor: not-allowed;
 }
 
 /* =========================================================
-   INFO
+   SECTIONS
 ========================================================= */
 
 .section {
@@ -173,6 +204,10 @@ button {
     color: var(--muted);
     margin-bottom: 35px;
 }
+
+/* =========================================================
+   STATS
+========================================================= */
 
 .stats {
     display: grid;
@@ -252,8 +287,46 @@ button {
 .status {
     margin-top: 18px;
     color: var(--muted);
-    min-height: 22px;
+    min-height: 24px;
     line-height: 1.5;
+    word-break: break-word;
+}
+
+.status.success {
+    color: var(--success);
+}
+
+.status.error {
+    color: var(--danger);
+}
+
+.status a {
+    color: white;
+}
+
+/* =========================================================
+   CONTRACT STATUS
+========================================================= */
+
+.contract-status {
+    margin-top: 25px;
+    padding: 13px 15px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #080a0d;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.contract-status.ok {
+    border-color: #303a34;
+    color: #aeb8b1;
+}
+
+.contract-status.error {
+    border-color: #4a2727;
+    color: #ff9b9b;
 }
 
 /* =========================================================
@@ -278,9 +351,14 @@ button {
     outline: none;
 }
 
+.search:focus {
+    border-color: #666;
+}
+
 .gallery {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-template-columns:
+        repeat(auto-fill, minmax(180px, 1fr));
     gap: 12px;
 }
 
@@ -291,7 +369,9 @@ button {
     border-radius: 10px;
     overflow: hidden;
     cursor: pointer;
-    transition: transform .18s, border-color .18s;
+    transition:
+        transform .18s,
+        border-color .18s;
 }
 
 .card:hover {
@@ -302,7 +382,11 @@ button {
 .card-image {
     aspect-ratio: 1;
     background:
-        radial-gradient(circle, #1d2228, #090b0d 70%);
+        radial-gradient(
+            circle,
+            #1d2228,
+            #090b0d 70%
+        );
     display: flex;
     align-items: center;
     justify-content: center;
@@ -330,20 +414,20 @@ button {
     font-size: 12px;
 }
 
-.minted {
-    border-color: #727981;
+.empty {
+    grid-column: 1 / -1;
+    padding: 60px 20px;
+    text-align: center;
+    border: 1px dashed #292e35;
+    border-radius: 12px;
+    color: var(--muted);
 }
 
-.minted-label {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: white;
-    color: black;
-    padding: 5px 8px;
-    border-radius: 5px;
-    font-size: 10px;
-    font-weight: 800;
+.loading {
+    grid-column: 1 / -1;
+    padding: 50px 20px;
+    text-align: center;
+    color: var(--muted);
 }
 
 /* =========================================================
@@ -354,7 +438,7 @@ button {
     position: fixed;
     inset: 0;
     z-index: 500;
-    background: rgba(0,0,0,.85);
+    background: rgba(0, 0, 0, .85);
     display: none;
     align-items: center;
     justify-content: center;
@@ -387,6 +471,7 @@ button {
     background: #15181d;
     color: white;
     cursor: pointer;
+    z-index: 2;
 }
 
 .modal-content {
@@ -424,6 +509,7 @@ button {
     border-radius: 7px;
     display: flex;
     justify-content: space-between;
+    gap: 20px;
 }
 
 .trait span:first-child {
@@ -469,6 +555,7 @@ footer {
     .search {
         width: 100%;
     }
+
 }
 
 @media(max-width: 500px) {
@@ -488,26 +575,47 @@ footer {
     .section {
         padding: 60px 0;
     }
+
+    .mint-box {
+        padding: 20px;
+    }
+
 }
+
 </style>
 </head>
 
 <body>
 
+<!-- =======================================================
+     NAV
+======================================================= -->
+
 <nav class="nav">
+
     <div class="container nav-inner">
 
         <div class="nav-logo">
             ARC 360
         </div>
 
-        <button id="walletButton" class="wallet">
+        <button
+            id="walletButton"
+            class="wallet"
+            type="button">
+
             CONNECT WALLET
+
         </button>
 
     </div>
+
 </nav>
 
+
+<!-- =======================================================
+     HERO
+======================================================= -->
 
 <section class="hero">
 
@@ -522,23 +630,34 @@ footer {
         </div>
 
         <div class="story">
+
             3,600 original Architects.
-            Each identity is generated and rendered by the ARC 360
-            smart contract. The artwork and metadata live on-chain.
+
+            Each identity is generated and rendered by the
+            ARC 360 smart contract.
+
+            The artwork and metadata live on-chain.
+
         </div>
 
         <div class="hero-buttons">
 
             <button
                 class="btn primary"
-                onclick="document.getElementById('mint').scrollIntoView()">
+                type="button"
+                onclick="scrollToSection('mint')">
+
                 MINT
+
             </button>
 
             <button
                 class="btn"
-                onclick="document.getElementById('collection').scrollIntoView()">
+                type="button"
+                onclick="scrollToSection('collection')">
+
                 EXPLORE
+
             </button>
 
         </div>
@@ -547,6 +666,10 @@ footer {
 
 </section>
 
+
+<!-- =======================================================
+     INFO
+======================================================= -->
 
 <section class="section">
 
@@ -563,44 +686,79 @@ footer {
         <div class="stats">
 
             <div class="stat">
+
                 <div class="stat-label">
                     Genesis Supply
                 </div>
 
-                <div class="stat-value" id="genesisSupply">
+                <div
+                    class="stat-value"
+                    id="genesisSupply">
+
                     —
+
                 </div>
+
             </div>
 
+
             <div class="stat">
+
                 <div class="stat-label">
                     Minted
                 </div>
 
-                <div class="stat-value" id="minted">
+                <div
+                    class="stat-value"
+                    id="minted">
+
                     —
+
                 </div>
+
             </div>
 
+
             <div class="stat">
+
                 <div class="stat-label">
                     Remaining
                 </div>
 
-                <div class="stat-value" id="remaining">
+                <div
+                    class="stat-value"
+                    id="remaining">
+
                     —
+
                 </div>
+
             </div>
 
+
             <div class="stat">
+
                 <div class="stat-label">
                     Active Supply
                 </div>
 
-                <div class="stat-value" id="activeSupply">
+                <div
+                    class="stat-value"
+                    id="activeSupply">
+
                     —
+
                 </div>
+
             </div>
+
+        </div>
+
+        <div
+            id="contractStatus"
+            class="contract-status">
+
+            Connecting to ARC 360 contract…
 
         </div>
 
@@ -609,7 +767,13 @@ footer {
 </section>
 
 
-<section class="section" id="mint">
+<!-- =======================================================
+     MINT
+======================================================= -->
+
+<section
+    class="section"
+    id="mint">
 
     <div class="container">
 
@@ -621,6 +785,7 @@ footer {
             Claim your Architect on Arc.
         </p>
 
+
         <div class="mint-box">
 
             <div class="mint-row">
@@ -631,21 +796,34 @@ footer {
 
                 <div class="quantity">
 
-                    <button onclick="changeQuantity(-1)">
+                    <button
+                        type="button"
+                        onclick="changeQuantity(-1)">
+
                         −
+
                     </button>
 
-                    <div id="quantity" class="quantity-number">
+                    <div
+                        id="quantity"
+                        class="quantity-number">
+
                         1
+
                     </div>
 
-                    <button onclick="changeQuantity(1)">
+                    <button
+                        type="button"
+                        onclick="changeQuantity(1)">
+
                         +
+
                     </button>
 
                 </div>
 
             </div>
+
 
             <div class="mint-row">
 
@@ -653,15 +831,21 @@ footer {
                     Price
                 </strong>
 
-                <div id="mintPrice" class="mint-price">
+                <div
+                    id="mintPrice"
+                    class="mint-price">
+
                     —
+
                 </div>
 
             </div>
 
+
             <button
                 id="mintButton"
                 class="btn primary"
+                type="button"
                 style="width:100%"
                 onclick="mintNFT()">
 
@@ -669,7 +853,12 @@ footer {
 
             </button>
 
-            <div id="mintStatus" class="status"></div>
+
+            <div
+                id="mintStatus"
+                class="status">
+
+            </div>
 
         </div>
 
@@ -678,7 +867,13 @@ footer {
 </section>
 
 
-<section class="section" id="collection">
+<!-- =======================================================
+     COLLECTION
+======================================================= -->
+
+<section
+    class="section"
+    id="collection">
 
     <div class="container">
 
@@ -702,34 +897,54 @@ footer {
                 type="number"
                 min="1"
                 max="3600"
-                placeholder="Search #ID"
-                oninput="filterGallery()">
+                placeholder="Search #ID">
 
         </div>
 
-        <div id="gallery" class="gallery"></div>
+
+        <div
+            id="gallery"
+            class="gallery">
+
+            <div class="loading">
+                Loading collection…
+            </div>
+
+        </div>
 
     </div>
 
 </section>
 
 
-<div id="modal" class="modal">
+<!-- =======================================================
+     MODAL
+======================================================= -->
+
+<div
+    id="modal"
+    class="modal">
 
     <div class="modal-box">
 
         <button
             class="close"
+            type="button"
             onclick="closeModal()">
+
             ×
+
         </button>
+
 
         <div class="modal-content">
 
             <div
                 id="modalImage"
                 class="modal-image">
+
             </div>
+
 
             <div>
 
@@ -740,11 +955,13 @@ footer {
                 <div
                     id="modalTraits"
                     class="traits">
+
                 </div>
 
                 <div
                     id="modalRarity"
                     class="rarity">
+
                 </div>
 
             </div>
@@ -756,9 +973,17 @@ footer {
 </div>
 
 
+<!-- =======================================================
+     FOOTER
+======================================================= -->
+
 <footer>
 
-    ARC 360 — Rubens Brandao
+    <div class="container">
+
+        ARC 360 — Rubens Brandao
+
+    </div>
 
 </footer>
 
@@ -766,7 +991,8 @@ footer {
 <script>
 
 /* =========================================================
-   ARC 360 CONTRACT
+   ARC 360
+   DEPLOYED CONTRACT
 ========================================================= */
 
 const CONTRACT_ADDRESS =
@@ -774,7 +1000,9 @@ const CONTRACT_ADDRESS =
 
 
 const ARC_TESTNET = {
+
     chainId: "0x4CEB52",
+
     chainName: "Arc Testnet",
 
     nativeCurrency: {
@@ -790,28 +1018,19 @@ const ARC_TESTNET = {
     blockExplorerUrls: [
         "https://testnet.arcscan.app"
     ]
+
 };
 
 
-/*
- * Only functions actually required by the website.
- *
- * IMPORTANT:
- * There is NO:
- * - generated DNA
- * - fallback SVG
- * - fallback rarity
- *
- * NFT data comes from the deployed contract.
- */
+/* =========================================================
+   ABI
+========================================================= */
 
 const ABI = [
 
     "function GENESIS_SUPPLY() view returns (uint256)",
 
     "function MAX_MINT_PER_TX() view returns (uint256)",
-
-    "function MAX_FUSE_INPUT() view returns (uint256)",
 
     "function genesisMinted() view returns (uint256)",
 
@@ -820,8 +1039,6 @@ const ABI = [
     "function mintPrice() view returns (uint256)",
 
     "function mint(uint256 quantity) payable",
-
-    "function fuse(uint256[] tokenIds)",
 
     "function ownerOf(uint256 tokenId) view returns (address)",
 
@@ -843,18 +1060,427 @@ const ABI = [
 
 
 /* =========================================================
-   GLOBALS
+   GLOBAL STATE
 ========================================================= */
 
-let provider = null;
+let readProvider = null;
+
+let readContract = null;
+
+let walletProvider = null;
+
 let signer = null;
-let contract = null;
+
+let writeContract = null;
+
+let walletAddress = null;
 
 let quantity = 1;
 
-const TOTAL_FALLBACK = 3600;
+let genesisSupply = 3600;
 
-const nftCache = new Map();
+let maxMintPerTx = 20;
+
+let mintedCount = 0;
+
+let activeCount = 0;
+
+let currentMintPrice = 0n;
+
+let galleryItems = [];
+
+let ethersReady = false;
+
+
+/* =========================================================
+   DOM HELPERS
+========================================================= */
+
+function $(id) {
+
+    return document.getElementById(id);
+
+}
+
+
+function setText(id, value) {
+
+    const el = $(id);
+
+    if (el) {
+        el.textContent = value;
+    }
+
+}
+
+
+function setStatus(message, type = "") {
+
+    const el = $("mintStatus");
+
+    if (!el) return;
+
+    el.className = "status " + type;
+
+    el.innerHTML = message;
+
+}
+
+
+function setContractStatus(message, type = "") {
+
+    const el = $("contractStatus");
+
+    if (!el) return;
+
+    el.className =
+        "contract-status " + type;
+
+    el.textContent = message;
+
+}
+
+
+function scrollToSection(id) {
+
+    const el = $(id);
+
+    if (el) {
+
+        el.scrollIntoView({
+            behavior: "smooth"
+        });
+
+    }
+
+}
+
+
+/* =========================================================
+   WAIT FOR ETHERS
+========================================================= */
+
+function waitForEthers() {
+
+    return new Promise((resolve, reject) => {
+
+        const started =
+            Date.now();
+
+        const timer =
+            setInterval(() => {
+
+                if (
+                    window.ethers &&
+                    window.ethers.Contract
+                ) {
+
+                    clearInterval(timer);
+
+                    ethersReady = true;
+
+                    resolve();
+
+                    return;
+
+                }
+
+
+                if (
+                    Date.now() - started >
+                    10000
+                ) {
+
+                    clearInterval(timer);
+
+                    reject(
+                        new Error(
+                            "Ethers library could not be loaded."
+                        )
+                    );
+
+                }
+
+            }, 100);
+
+    });
+
+}
+
+
+/* =========================================================
+   READ-ONLY CONTRACT
+========================================================= */
+
+async function initializeContract() {
+
+    try {
+
+        await waitForEthers();
+
+        readProvider =
+            new ethers.JsonRpcProvider(
+                ARC_TESTNET.rpcUrls[0],
+                {
+                    chainId: 5042002,
+                    name: "arc-testnet"
+                },
+                {
+                    staticNetwork: true
+                }
+            );
+
+
+        readContract =
+            new ethers.Contract(
+                CONTRACT_ADDRESS,
+                ABI,
+                readProvider
+            );
+
+
+        await readContract.getAddress();
+
+
+        await updateStats();
+
+
+        setContractStatus(
+            "ARC 360 contract connected • Arc Testnet",
+            "ok"
+        );
+
+
+        await loadGallery();
+
+
+    } catch (error) {
+
+        console.error(
+            "ARC 360 initialization error:",
+            error
+        );
+
+
+        setContractStatus(
+            "Contract connection failed: " +
+            cleanError(error),
+            "error"
+        );
+
+
+        setText(
+            "genesisSupply",
+            "3,600"
+        );
+
+
+        setText(
+            "minted",
+            "—"
+        );
+
+
+        setText(
+            "remaining",
+            "—"
+        );
+
+
+        setText(
+            "activeSupply",
+            "—"
+        );
+
+
+        renderEmptyGallery(
+            "Unable to read the ARC 360 contract. Check the browser console for details."
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   READ CONTRACT STATS
+========================================================= */
+
+async function updateStats() {
+
+    if (!readContract) {
+        return;
+    }
+
+
+    const results =
+        await Promise.all([
+
+            readContract.GENESIS_SUPPLY(),
+
+            readContract.genesisMinted(),
+
+            readContract.activeSupply(),
+
+            readContract.mintPrice(),
+
+            readContract.MAX_MINT_PER_TX()
+
+        ]);
+
+
+    genesisSupply =
+        Number(results[0]);
+
+    mintedCount =
+        Number(results[1]);
+
+    activeCount =
+        Number(results[2]);
+
+    currentMintPrice =
+        BigInt(results[3].toString());
+
+    maxMintPerTx =
+        Number(results[4]);
+
+
+    setText(
+        "genesisSupply",
+        genesisSupply.toLocaleString()
+    );
+
+
+    setText(
+        "minted",
+        mintedCount.toLocaleString()
+    );
+
+
+    setText(
+        "remaining",
+        Math.max(
+            0,
+            genesisSupply - mintedCount
+        ).toLocaleString()
+    );
+
+
+    setText(
+        "activeSupply",
+        activeCount.toLocaleString()
+    );
+
+
+    updateMintPriceDisplay();
+
+}
+
+
+/* =========================================================
+   PRICE
+========================================================= */
+
+function updateMintPriceDisplay() {
+
+    const priceEl =
+        $("mintPrice");
+
+    if (!priceEl) return;
+
+
+    const total =
+        currentMintPrice *
+        BigInt(quantity);
+
+
+    priceEl.textContent =
+        formatUSDC(total);
+
+}
+
+
+/* =========================================================
+   USDC FORMAT
+   Arc native USDC = 18 decimals
+========================================================= */
+
+function formatUSDC(value) {
+
+    try {
+
+        const formatted =
+            ethers.formatUnits(
+                value,
+                18
+            );
+
+        return formatted + " USDC";
+
+    } catch {
+
+        return "—";
+
+    }
+
+}
+
+
+/* =========================================================
+   QUANTITY
+========================================================= */
+
+function changeQuantity(delta) {
+
+    let next =
+        quantity + delta;
+
+
+    const remaining =
+        Math.max(
+            0,
+            genesisSupply - mintedCount
+        );
+
+
+    const maximum =
+        Math.min(
+            maxMintPerTx,
+            remaining || maxMintPerTx
+        );
+
+
+    if (maximum <= 0) {
+
+        next = 1;
+
+    } else {
+
+        next =
+            Math.max(
+                1,
+                Math.min(
+                    maximum,
+                    next
+                )
+            );
+
+    }
+
+
+    quantity =
+        next;
+
+
+    setText(
+        "quantity",
+        quantity
+    );
+
+
+    updateMintPriceDisplay();
+
+}
 
 
 /* =========================================================
@@ -865,66 +1491,124 @@ async function connectWallet() {
 
     if (!window.ethereum) {
 
-        alert(
-            "No Web3 wallet detected. Install MetaMask or another compatible wallet."
+        setStatus(
+            "No Web3 wallet detected. Install MetaMask or another compatible wallet.",
+            "error"
         );
 
         return;
 
     }
 
+
     try {
 
-        provider =
+        await waitForEthers();
+
+
+        walletProvider =
             new ethers.BrowserProvider(
                 window.ethereum
             );
 
-        await provider.send(
+
+        await walletProvider.send(
             "eth_requestAccounts",
             []
         );
 
+
         await switchToArc();
 
-        signer =
-            await provider.getSigner();
 
-        contract =
+        walletProvider =
+            new ethers.BrowserProvider(
+                window.ethereum
+            );
+
+
+        signer =
+            await walletProvider.getSigner();
+
+
+        walletAddress =
+            await signer.getAddress();
+
+
+        writeContract =
             new ethers.Contract(
                 CONTRACT_ADDRESS,
                 ABI,
                 signer
             );
 
-        const address =
-            await signer.getAddress();
 
-        document
-            .getElementById("walletButton")
-            .textContent =
-            shortAddress(address);
+        updateWalletButton();
 
-        document
-            .getElementById("walletButton")
-            .classList
-            .add("connected");
 
-        await updateStats();
+        setStatus(
+            "Wallet connected: " +
+            shortAddress(walletAddress),
+            ""
+        );
+
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Wallet connection error:",
+            error
+        );
 
-        showStatus(
-            error?.shortMessage ||
-            "Unable to connect wallet."
+
+        setStatus(
+            cleanError(error),
+            "error"
         );
 
     }
 
 }
 
+
+/* =========================================================
+   WALLET BUTTON
+========================================================= */
+
+function updateWalletButton() {
+
+    const button =
+        $("walletButton");
+
+    if (!button) return;
+
+
+    if (walletAddress) {
+
+        button.textContent =
+            shortAddress(walletAddress);
+
+        button.classList.add(
+            "connected"
+        );
+
+    } else {
+
+        button.textContent =
+            "CONNECT WALLET";
+
+        button.classList.remove(
+            "connected"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   ARC NETWORK
+========================================================= */
 
 async function switchToArc() {
 
@@ -943,6 +1627,7 @@ async function switchToArc() {
             ]
 
         });
+
 
     } catch (error) {
 
@@ -970,6 +1655,10 @@ async function switchToArc() {
 }
 
 
+/* =========================================================
+   ADDRESS
+========================================================= */
+
 function shortAddress(address) {
 
     return (
@@ -981,240 +1670,266 @@ function shortAddress(address) {
 }
 
 
-document
-    .getElementById("walletButton")
-    .addEventListener(
-        "click",
-        connectWallet
-    );
-
-
-/* =========================================================
-   READ-ONLY CONTRACT
-========================================================= */
-
-async function loadContract() {
-
-    provider =
-        new ethers.JsonRpcProvider(
-            ARC_TESTNET.rpcUrls[0]
-        );
-
-    contract =
-        new ethers.Contract(
-            CONTRACT_ADDRESS,
-            ABI,
-            provider
-        );
-
-    await updateStats();
-
-}
-
-
-async function updateStats() {
-
-    if (!contract)
-        return;
-
-    try {
-
-        const genesisSupply =
-            await contract.GENESIS_SUPPLY();
-
-        const minted =
-            await contract.genesisMinted();
-
-        const active =
-            await contract.activeSupply();
-
-        const price =
-            await contract.mintPrice();
-
-
-        document
-            .getElementById("genesisSupply")
-            .textContent =
-            genesisSupply.toString();
-
-
-        document
-            .getElementById("minted")
-            .textContent =
-            minted.toString();
-
-
-        document
-            .getElementById("activeSupply")
-            .textContent =
-            active.toString();
-
-
-        document
-            .getElementById("remaining")
-            .textContent =
-            (
-                genesisSupply -
-                minted
-            ).toString();
-
-
-        document
-            .getElementById("mintPrice")
-            .textContent =
-            formatPrice(price);
-
-
-    } catch (error) {
-
-        console.error(
-            "Contract data error:",
-            error
-        );
-
-        document
-            .getElementById("mintPrice")
-            .textContent =
-            "—";
-
-    }
-
-}
-
-
-function formatPrice(value) {
-
-    const n =
-        Number(
-            ethers.formatUnits(
-                value,
-                18
-            )
-        );
-
-    if (n === 0)
-        return "FREE";
-
-    return (
-        n.toLocaleString(
-            undefined,
-            {
-                maximumFractionDigits: 6
-            }
-        ) +
-        " USDC"
-    );
-
-}
-
-
-/* =========================================================
-   QUANTITY
-========================================================= */
-
-function changeQuantity(amount) {
-
-    quantity += amount;
-
-    if (quantity < 1)
-        quantity = 1;
-
-    document
-        .getElementById("quantity")
-        .textContent =
-        quantity;
-
-}
-
-
 /* =========================================================
    MINT
 ========================================================= */
 
 async function mintNFT() {
 
+    setStatus("");
+
+    const button =
+        $("mintButton");
+
+
     try {
 
-        if (!signer) {
+        if (!window.ethereum) {
 
-            await connectWallet();
-
-            if (!signer)
-                return;
+            throw new Error(
+                "Connect a Web3 wallet first."
+            );
 
         }
 
-        const max =
+
+        if (!writeContract) {
+
+            await connectWallet();
+
+        }
+
+
+        if (!writeContract) {
+
+            throw new Error(
+                "Wallet is not connected."
+            );
+
+        }
+
+
+        await switchToArc();
+
+
+        const freshProvider =
+            new ethers.BrowserProvider(
+                window.ethereum
+            );
+
+
+        const freshSigner =
+            await freshProvider.getSigner();
+
+
+        writeContract =
+            new ethers.Contract(
+                CONTRACT_ADDRESS,
+                ABI,
+                freshSigner
+            );
+
+
+        const currentMinted =
             Number(
-                await contract.MAX_MINT_PER_TX()
+                await readContract.genesisMinted()
             );
 
-        if (
-            quantity < 1 ||
-            quantity > max
-        ) {
 
-            showStatus(
-                "Maximum mint per transaction: " +
-                max
+        const remaining =
+            genesisSupply -
+            currentMinted;
+
+
+        if (remaining <= 0) {
+
+            throw new Error(
+                "Genesis collection is sold out."
             );
 
-            return;
+        }
+
+
+        if (quantity > maxMintPerTx) {
+
+            throw new Error(
+                "Maximum mint per transaction is " +
+                maxMintPerTx +
+                "."
+            );
+
+        }
+
+
+        if (quantity > remaining) {
+
+            throw new Error(
+                "Only " +
+                remaining +
+                " Genesis Architect(s) remain."
+            );
 
         }
 
 
         const price =
-            await contract.mintPrice();
+            await readContract.mintPrice();
 
 
-        const total =
-            price *
+        const totalValue =
+            BigInt(price.toString()) *
             BigInt(quantity);
 
 
-        showStatus(
-            "Confirm the transaction in your wallet..."
+        button.disabled = true;
+
+        button.textContent =
+            "CONFIRM IN WALLET…";
+
+
+        setStatus(
+            "Please confirm the transaction in your wallet."
         );
 
 
         const tx =
-            await contract.mint(
+            await writeContract.mint(
                 quantity,
                 {
-                    value: total
+                    value: totalValue
                 }
             );
 
 
-        showStatus(
-            "Transaction submitted. Waiting for confirmation..."
+        button.textContent =
+            "MINTING…";
+
+
+        setStatus(
+            'Transaction submitted: <a href="' +
+            "https://testnet.arcscan.app/tx/" +
+            tx.hash +
+            '" target="_blank" rel="noopener">' +
+            shortHash(tx.hash) +
+            "</a>"
         );
 
 
         await tx.wait();
 
 
-        showStatus(
-            "Architect minted successfully."
+        button.textContent =
+            "MINT COMPLETE";
+
+
+        setStatus(
+            "Mint confirmed on Arc Testnet.",
+            "success"
         );
 
 
-        nftCache.clear();
-
         await updateStats();
 
-        await loadGallery();
+
+        /*
+         * The contract assigns Genesis IDs sequentially.
+         * If quantity = 1 and genesisMinted changed from N
+         * to N+1, the new token is N+1.
+         */
+
+        const firstNewId =
+            currentMinted + 1;
+
+
+        const newIds = [];
+
+
+        for (
+            let i = 0;
+            i < quantity;
+            i++
+        ) {
+
+            const tokenId =
+                firstNewId + i;
+
+            newIds.push(
+                tokenId
+            );
+
+        }
+
+
+        /*
+         * Give the RPC a short moment to expose
+         * the freshly mined state.
+         */
+
+        await sleep(500);
+
+
+        for (
+            const tokenId of newIds
+        ) {
+
+            try {
+
+                await addTokenToGallery(
+                    tokenId
+                );
+
+            } catch (error) {
+
+                console.warn(
+                    "Could not load minted token",
+                    tokenId,
+                    error
+                );
+
+            }
+
+        }
+
+
+        renderGallery();
+
+
+        if (newIds.length === 1) {
+
+            openModal(
+                newIds[0]
+            );
+
+        }
+
+
+        setTimeout(() => {
+
+            button.disabled = false;
+
+            button.textContent =
+                "MINT ARCHITECT";
+
+        }, 2000);
 
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Mint error:",
+            error
+        );
 
-        showStatus(
-            error?.shortMessage ||
-            error?.reason ||
-            "Mint failed."
+
+        button.disabled = false;
+
+        button.textContent =
+            "MINT ARCHITECT";
+
+
+        setStatus(
+            cleanError(error),
+            "error"
         );
 
     }
@@ -1226,376 +1941,222 @@ async function mintNFT() {
    TOKEN URI
 ========================================================= */
 
-/*
- * The website does NOT generate the NFT.
- *
- * It asks the contract for tokenURI().
- *
- * The metadata returned by the contract is the source
- * of truth for the image, attributes and identity.
- */
+async function readTokenMetadata(
+    tokenId
+) {
 
-async function readToken(tokenId) {
+    if (!readContract) {
 
-    if (
-        nftCache.has(tokenId)
-    ) {
-
-        return nftCache.get(tokenId);
-
-    }
-
-
-    let owner = null;
-
-    try {
-
-        owner =
-            await contract.ownerOf(
-                tokenId
-            );
-
-    } catch {
-
-        /*
-         * Token has not been minted.
-         */
-
-        return {
-            tokenId,
-            minted: false
-        };
-
-    }
-
-
-    let tokenURI;
-
-    try {
-
-        tokenURI =
-            await contract.tokenURI(
-                tokenId
-            );
-
-    } catch (error) {
-
-        console.error(
-            "tokenURI failed for",
-            tokenId,
-            error
+        throw new Error(
+            "Contract is not initialized."
         );
 
-        return {
-            tokenId,
-            minted: true,
-            owner,
-            image: null,
-            error: true
-        };
+    }
+
+
+    const uri =
+        await readContract.tokenURI(
+            tokenId
+        );
+
+
+    return decodeTokenURI(
+        uri
+    );
+
+}
+
+
+/* =========================================================
+   TOKEN URI DECODER
+========================================================= */
+
+function decodeTokenURI(uri) {
+
+    if (
+        typeof uri !== "string"
+    ) {
+
+        throw new Error(
+            "Invalid tokenURI."
+        );
+
+    }
+
+
+    if (
+        uri.startsWith(
+            "data:application/json;base64,"
+        )
+    ) {
+
+        const encoded =
+            uri.substring(
+                "data:application/json;base64,"
+                    .length
+            );
+
+
+        const json =
+            decodeBase64UTF8(
+                encoded
+            );
+
+
+        return JSON.parse(
+            json
+        );
+
+    }
+
+
+    if (
+        uri.startsWith(
+            "data:application/json,"
+        )
+    ) {
+
+        const encoded =
+            uri.substring(
+                "data:application/json,"
+                    .length
+            );
+
+
+        return JSON.parse(
+            decodeURIComponent(
+                encoded
+            )
+        );
+
+    }
+
+
+    /*
+     * The deployed ARC 360 contract returns
+     * on-chain base64 JSON.
+     *
+     * No fallback image is generated here.
+     */
+
+    throw new Error(
+        "ARC 360 returned an unsupported tokenURI format."
+    );
+
+}
+
+
+/* =========================================================
+   BASE64 UTF-8
+========================================================= */
+
+function decodeBase64UTF8(base64) {
+
+    const binary =
+        atob(base64);
+
+
+    const bytes =
+        Uint8Array.from(
+            binary,
+            char => char.charCodeAt(0)
+        );
+
+
+    return new TextDecoder(
+        "utf-8"
+    ).decode(bytes);
+
+}
+
+
+/* =========================================================
+   ADD TOKEN
+========================================================= */
+
+async function addTokenToGallery(
+    tokenId
+) {
+
+    if (
+        galleryItems.some(
+            item =>
+                item.tokenId === tokenId
+        )
+    ) {
+
+        return;
 
     }
 
 
     const metadata =
-        decodeTokenURI(
-            tokenURI
-        );
-
-
-    let dna = null;
-    let rarity = null;
-    let parents = [];
-
-
-    /*
-     * These values are read from the contract only.
-     */
-
-    try {
-
-        dna =
-            await contract.getDNA(
-                tokenId
-            );
-
-        dna = {
-
-            face:
-                Number(dna.face),
-
-            eyes:
-                Number(dna.eyes),
-
-            jaw:
-                Number(dna.jaw),
-
-            hair:
-                Number(dna.hair),
-
-            horns:
-                Number(dna.horns),
-
-            head:
-                Number(dna.head)
-
-        };
-
-    } catch (error) {
-
-        console.warn(
-            "getDNA unavailable:",
+        await readTokenMetadata(
             tokenId
         );
 
-    }
 
-
-    try {
-
-        rarity =
-            Number(
-                await contract.rarityScore(
-                    tokenId
-                )
-            );
-
-    } catch {
-
-        rarity = null;
-
-    }
-
-
-    try {
-
-        parents =
-            await contract.getParents(
-                tokenId
-            );
-
-        parents =
-            Array.from(
-                parents,
-                value => Number(value)
-            );
-
-    } catch {
-
-        parents = [];
-
-    }
-
-
-    const result = {
+    const item = {
 
         tokenId,
 
-        minted: true,
-
-        owner,
-
-        tokenURI,
-
         metadata,
 
+        name:
+            metadata.name ||
+            `ARC 360 #${String(tokenId).padStart(4, "0")}`,
+
         image:
-            metadata?.image || null,
+            metadata.image || "",
 
         attributes:
-            metadata?.attributes || [],
-
-        dna,
-
-        rarity,
-
-        parents
+            Array.isArray(
+                metadata.attributes
+            )
+                ? metadata.attributes
+                : []
 
     };
 
 
-    nftCache.set(
-        tokenId,
-        result
+    galleryItems.push(
+        item
     );
 
 
-    return result;
+    galleryItems.sort(
+        (a, b) =>
+            a.tokenId -
+            b.tokenId
+    );
+
+
+    return item;
 
 }
 
 
 /* =========================================================
-   METADATA DECODER
-========================================================= */
-
-function decodeTokenURI(uri) {
-
-    if (!uri)
-        return null;
-
-
-    try {
-
-        if (
-            uri.startsWith(
-                "data:application/json;base64,"
-            )
-        ) {
-
-            const base64 =
-                uri.substring(
-                    "data:application/json;base64,"
-                        .length
-                );
-
-            const json =
-                atob(base64);
-
-            return JSON.parse(
-                json
-            );
-
-        }
-
-
-        if (
-            uri.startsWith(
-                "data:application/json,"
-            )
-        ) {
-
-            const raw =
-                uri.substring(
-                    "data:application/json,"
-                        .length
-                );
-
-            return JSON.parse(
-                decodeURIComponent(raw)
-            );
-
-        }
-
-
-        return null;
-
-    } catch (error) {
-
-        console.error(
-            "Metadata decode error:",
-            error
-        );
-
-        return null;
-
-    }
-
-}
-
-
-/* =========================================================
-   IMAGE NORMALIZATION
-========================================================= */
-
-function normalizeImage(image) {
-
-    if (!image)
-        return null;
-
-
-    if (
-        image.startsWith(
-            "data:image/"
-        )
-    ) {
-
-        return image;
-
-    }
-
-
-    /*
-     * Raw SVG returned inside metadata.
-     */
-
-    if (
-        image
-            .trim()
-            .startsWith("<svg")
-    ) {
-
-        return (
-            "data:image/svg+xml;charset=utf-8," +
-            encodeURIComponent(image)
-        );
-
-    }
-
-
-    return image;
-
-}
-
-
-/* =========================================================
-   GALLERY
+   LOAD GALLERY
 ========================================================= */
 
 async function loadGallery() {
 
-    const gallery =
-        document.getElementById(
-            "gallery"
-        );
+    if (!readContract) {
 
-    gallery.innerHTML = "";
-
-
-    let supply = 0;
-
-
-    try {
-
-        supply =
-            Number(
-                await contract.activeSupply()
-            );
-
-    } catch {
-
-        try {
-
-            supply =
-                Number(
-                    await contract.genesisMinted()
-                );
-
-        } catch {
-
-            supply =
-                TOTAL_FALLBACK;
-
-        }
+        return;
 
     }
 
 
-    if (supply <= 0) {
+    galleryItems = [];
 
-        gallery.innerHTML =
-            `
-            <div style="
-                grid-column:1/-1;
-                padding:40px;
-                text-align:center;
-                color:#777;
-                border:1px solid #20252c;
-                border-radius:10px;
-            ">
-                No Architects minted yet.
-            </div>
-            `;
+
+    if (mintedCount <= 0) {
+
+        renderEmptyGallery(
+            "No Architects minted yet. The first Genesis Architect will be #0001."
+        );
 
         return;
 
@@ -1603,74 +2164,74 @@ async function loadGallery() {
 
 
     /*
-     * Only existing tokens are queried.
+     * IMPORTANT:
      *
-     * This is intentionally not a fake 3,600-token
-     * gallery with generated artwork.
+     * We only scan the number of Genesis NFTs
+     * actually minted.
+     *
+     * We do NOT scan activeSupply().
+     *
+     * activeSupply can decrease when fusion burns
+     * parent tokens, so it is not the Genesis ID count.
      */
 
-    const BATCH = 12;
+    renderGalleryLoading(
+        "Loading " +
+        mintedCount.toLocaleString() +
+        " minted Architect(s)…"
+    );
+
+
+    /*
+     * Limit simultaneous RPC calls.
+     * This prevents the browser/RPC from being
+     * flooded if the collection grows.
+     */
+
+    const concurrency = 6;
 
 
     for (
         let start = 1;
-        start <= supply;
-        start += BATCH
+        start <= mintedCount;
+        start += concurrency
     ) {
 
-        const end =
-            Math.min(
-                start + BATCH - 1,
-                supply
-            );
-
-
-        const promises = [];
+        const batch = [];
 
 
         for (
             let id = start;
-            id <= end;
+            id < start + concurrency &&
+            id <= mintedCount;
             id++
         ) {
 
-            promises.push(
-                readToken(id)
-            );
-
-        }
-
-
-        const results =
-            await Promise.all(
-                promises
-            );
-
-
-        for (
-            const nft of results
-        ) {
-
-            if (!nft.minted)
-                continue;
-
-            gallery.appendChild(
-                createCard(nft)
-            );
-
-        }
-
-
-        /*
-         * Give the browser a frame between batches.
-         */
-
-        await new Promise(
-            resolve =>
-                setTimeout(
-                    resolve,
-                    0
+            batch.push(
+                loadGalleryTokenSafe(
+                    id
                 )
+            );
+
+        }
+
+
+        await Promise.all(
+            batch
+        );
+
+
+        renderGallery();
+
+    }
+
+
+    if (
+        galleryItems.length === 0
+    ) {
+
+        renderEmptyGallery(
+            "No active Architects are currently available."
         );
 
     }
@@ -1679,166 +2240,263 @@ async function loadGallery() {
 
 
 /* =========================================================
-   CARD
+   SAFE GALLERY TOKEN
 ========================================================= */
 
-function createCard(nft) {
+async function loadGalleryTokenSafe(
+    tokenId
+) {
 
-    const card =
-        document.createElement(
-            "div"
+    try {
+
+        await addTokenToGallery(
+            tokenId
         );
 
-    card.className =
-        "card minted";
-
-
-    card.dataset.id =
-        nft.tokenId;
-
-
-    const image =
-        document.createElement(
-            "div"
-        );
-
-    image.className =
-        "card-image";
-
-
-    const normalized =
-        normalizeImage(
-            nft.image
-        );
-
-
-    if (normalized) {
-
-        const img =
-            document.createElement(
-                "img"
-            );
-
-        img.src =
-            normalized;
-
-        img.alt =
-            "ARC 360 #" +
-            String(
-                nft.tokenId
-            ).padStart(
-                4,
-                "0"
-            );
-
-        image.appendChild(
-            img
-        );
-
-    } else {
+    } catch (error) {
 
         /*
-         * No fallback artwork.
+         * A Genesis token can be burned through fusion.
+         * In that case tokenURI() will revert because
+         * the contract requires current ownership.
+         *
+         * That is expected and should not break
+         * the entire gallery.
          */
 
-        image.innerHTML =
-            `
-            <div style="
-                color:#666;
-                font-size:11px;
-                text-align:center;
-                padding:20px;
-            ">
-                tokenURI() returned<br>
-                no image
-            </div>
-            `;
+        console.warn(
+            "Token unavailable:",
+            tokenId,
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   RENDER GALLERY
+========================================================= */
+
+function renderGallery() {
+
+    const gallery =
+        $("gallery");
+
+
+    if (!gallery) {
+        return;
+    }
+
+
+    const searchValue =
+        $("search")?.value?.trim() ||
+        "";
+
+
+    let items =
+        galleryItems;
+
+
+    if (searchValue) {
+
+        const target =
+            Number(searchValue);
+
+
+        items =
+            galleryItems.filter(
+                item =>
+                    item.tokenId ===
+                    target
+            );
 
     }
 
 
-    const label =
-        document.createElement(
-            "div"
-        );
+    if (
+        items.length === 0
+    ) {
 
-    label.className =
-        "minted-label";
+        if (
+            galleryItems.length === 0
+        ) {
 
-    label.textContent =
-        "MINTED";
+            renderEmptyGallery(
+                mintedCount === 0
+                    ? "No Architects minted yet. The first Genesis Architect will be #0001."
+                    : "No active Architects found."
+            );
+
+        } else {
+
+            renderEmptyGallery(
+                "No Architect matches that ID."
+            );
+
+        }
+
+        return;
+
+    }
 
 
-    const info =
-        document.createElement(
-            "div"
-        );
+    gallery.innerHTML =
+        items.map(
+            item =>
+                createCardHTML(
+                    item
+                )
+        ).join("");
 
-    info.className =
-        "card-info";
+
+    for (
+        const item of items
+    ) {
+
+        const card =
+            document.querySelector(
+                `[data-token-id="${item.tokenId}"]`
+            );
 
 
-    const number =
-        document.createElement(
-            "div"
-        );
+        if (card) {
 
-    number.className =
-        "card-number";
+            card.addEventListener(
+                "click",
+                () => openModal(
+                    item.tokenId
+                )
+            );
 
-    number.textContent =
-        "ARC 360 #" +
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   CARD HTML
+========================================================= */
+
+function createCardHTML(
+    item
+) {
+
+    const tokenNumber =
         String(
-            nft.tokenId
+            item.tokenId
         ).padStart(
             4,
             "0"
         );
 
 
-    const meta =
-        document.createElement(
-            "div"
+    const rarity =
+        getAttribute(
+            item.attributes,
+            "Rarity Score"
         );
 
-    meta.className =
-        "card-meta";
 
-    meta.textContent =
-        nft.rarity !== null
-            ? "Rarity " + nft.rarity
-            : "Architect";
+    return `
+
+        <div
+            class="card"
+            data-token-id="${item.tokenId}">
+
+            <div class="card-image">
+
+                <img
+                    src="${escapeAttribute(item.image)}"
+                    alt="ARC 360 #${tokenNumber}"
+                    loading="lazy">
+
+            </div>
+
+            <div class="card-info">
+
+                <div class="card-number">
+                    ARC 360 #${tokenNumber}
+                </div>
+
+                ${
+                    rarity
+                        ? `
+                        <div class="card-meta">
+                            Rarity Score ${escapeHTML(rarity)}
+                        </div>
+                        `
+                        : ""
+                }
+
+            </div>
+
+        </div>
+
+    `;
+
+}
 
 
-    info.appendChild(
-        number
-    );
+/* =========================================================
+   GALLERY EMPTY
+========================================================= */
 
-    info.appendChild(
-        meta
-    );
+function renderEmptyGallery(
+    message
+) {
 
-
-    card.appendChild(
-        image
-    );
-
-    card.appendChild(
-        label
-    );
-
-    card.appendChild(
-        info
-    );
+    const gallery =
+        $("gallery");
 
 
-    card.addEventListener(
-        "click",
-        () => openModal(nft)
-    );
+    if (!gallery) {
+        return;
+    }
 
 
-    return card;
+    gallery.innerHTML = `
+
+        <div class="empty">
+
+            ${escapeHTML(message)}
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   GALLERY LOADING
+========================================================= */
+
+function renderGalleryLoading(
+    message
+) {
+
+    const gallery =
+        $("gallery");
+
+
+    if (!gallery) {
+        return;
+    }
+
+
+    gallery.innerHTML = `
+
+        <div class="loading">
+
+            ${escapeHTML(message)}
+
+        </div>
+
+    `;
 
 }
 
@@ -1849,54 +2507,7 @@ function createCard(nft) {
 
 function filterGallery() {
 
-    const value =
-        document
-            .getElementById(
-                "search"
-            )
-            .value
-            .trim();
-
-
-    const cards =
-        document.querySelectorAll(
-            ".card"
-        );
-
-
-    if (!value) {
-
-        cards.forEach(
-            card =>
-                card.style.display =
-                    ""
-        );
-
-        return;
-
-    }
-
-
-    const id =
-        Number(value);
-
-
-    cards.forEach(
-        card => {
-
-            const cardID =
-                Number(
-                    card.dataset.id
-                );
-
-
-            card.style.display =
-                cardID === id
-                    ? ""
-                    : "none";
-
-        }
-    );
+    renderGallery();
 
 }
 
@@ -1905,333 +2516,565 @@ function filterGallery() {
    MODAL
 ========================================================= */
 
-function openModal(nft) {
+async function openModal(
+    tokenId
+) {
 
     const modal =
-        document.getElementById(
-            "modal"
-        );
+        $("modal");
 
 
-    const imageBox =
-        document.getElementById(
-            "modalImage"
-        );
-
-
-    imageBox.innerHTML = "";
-
-
-    const normalized =
-        normalizeImage(
-            nft.image
-        );
-
-
-    if (normalized) {
-
-        const img =
-            document.createElement(
-                "img"
-            );
-
-        img.src =
-            normalized;
-
-        img.alt =
-            "ARC 360 #" +
-            String(
-                nft.tokenId
-            ).padStart(
-                4,
-                "0"
-            );
-
-        imageBox.appendChild(
-            img
-        );
-
-    } else {
-
-        imageBox.innerHTML =
-            `
-            <div style="
-                color:#666;
-                text-align:center;
-            ">
-                Artwork unavailable
-                from tokenURI()
-            </div>
-            `;
-
+    if (!modal) {
+        return;
     }
-
-
-    document
-        .getElementById(
-            "modalTitle"
-        )
-        .textContent =
-        "ARC 360 #" +
-        String(
-            nft.tokenId
-        ).padStart(
-            4,
-            "0"
-        );
-
-
-    const traits =
-        document.getElementById(
-            "modalTraits"
-        );
-
-
-    traits.innerHTML = "";
-
-
-    /*
-     * Prefer attributes returned directly
-     * by tokenURI().
-     */
-
-    if (
-        nft.attributes &&
-        nft.attributes.length
-    ) {
-
-        nft.attributes.forEach(
-            attribute => {
-
-                const row =
-                    document.createElement(
-                        "div"
-                    );
-
-                row.className =
-                    "trait";
-
-
-                row.innerHTML =
-                    `
-                    <span>
-                        ${escapeHTML(
-                            attribute.trait_type ||
-                            "Trait"
-                        )}
-                    </span>
-
-                    <strong>
-                        ${escapeHTML(
-                            attribute.value
-                        )}
-                    </strong>
-                    `;
-
-
-                traits.appendChild(
-                    row
-                );
-
-            }
-        );
-
-    }
-
-
-    /*
-     * If metadata does not expose attributes,
-     * show the contract DNA returned by getDNA().
-     */
-
-    if (
-        !nft.attributes?.length &&
-        nft.dna
-    ) {
-
-        const names = [
-            "Face",
-            "Eyes",
-            "Jaw",
-            "Hair",
-            "Horns",
-            "Head"
-        ];
-
-
-        const values = [
-            nft.dna.face,
-            nft.dna.eyes,
-            nft.dna.jaw,
-            nft.dna.hair,
-            nft.dna.horns,
-            nft.dna.head
-        ];
-
-
-        for (
-            let i = 0;
-            i < names.length;
-            i++
-        ) {
-
-            const row =
-                document.createElement(
-                    "div"
-                );
-
-            row.className =
-                "trait";
-
-
-            row.innerHTML =
-                `
-                <span>
-                    ${names[i]}
-                </span>
-
-                <strong>
-                    ${values[i]}
-                </strong>
-                `;
-
-
-            traits.appendChild(
-                row
-            );
-
-        }
-
-    }
-
-
-    if (
-        nft.parents &&
-        nft.parents.length
-    ) {
-
-        const row =
-            document.createElement(
-                "div"
-            );
-
-        row.className =
-            "trait";
-
-
-        row.innerHTML =
-            `
-            <span>
-                Parents
-            </span>
-
-            <strong>
-                ${nft.parents.join(", ")}
-            </strong>
-            `;
-
-
-        traits.appendChild(
-            row
-        );
-
-    }
-
-
-    document
-        .getElementById(
-            "modalRarity"
-        )
-        .textContent =
-        nft.rarity !== null
-            ? "RARITY " + nft.rarity
-            : "RARITY —";
 
 
     modal.classList.add(
         "open"
     );
 
+
+    $("modalTitle").textContent =
+        "Loading ARC 360 #" +
+        String(tokenId).padStart(4, "0");
+
+
+    $("modalImage").innerHTML =
+        "";
+
+
+    $("modalTraits").innerHTML =
+        "<div class='trait'>Loading on-chain metadata…</div>";
+
+
+    $("modalRarity").textContent =
+        "";
+
+
+    try {
+
+        let item =
+            galleryItems.find(
+                x =>
+                    x.tokenId ===
+                    tokenId
+            );
+
+
+        if (!item) {
+
+            item = await addTokenToGallery(
+                tokenId
+            );
+
+        }
+
+
+        const metadata =
+            item.metadata;
+
+
+        $("modalTitle").textContent =
+            metadata.name ||
+            "ARC 360 #" +
+            String(tokenId).padStart(
+                4,
+                "0"
+            );
+
+
+        if (
+            metadata.image
+        ) {
+
+            const img =
+                document.createElement(
+                    "img"
+                );
+
+
+            img.src =
+                metadata.image;
+
+
+            img.alt =
+                metadata.name ||
+                `ARC 360 #${tokenId}`;
+
+
+            $("modalImage").appendChild(
+                img
+            );
+
+        }
+
+
+        const attributes =
+            Array.isArray(
+                metadata.attributes
+            )
+                ? metadata.attributes
+                : [];
+
+
+        $("modalTraits").innerHTML =
+            attributes.length
+                ? attributes.map(
+                    attribute =>
+                        createTraitHTML(
+                            attribute
+                        )
+                ).join("")
+                : "<div class='trait'>No attributes returned.</div>";
+
+
+        const rarity =
+            getAttribute(
+                attributes,
+                "Rarity Score"
+            );
+
+
+        $("modalRarity").textContent =
+            rarity
+                ? "Rarity Score " + rarity
+                : "";
+
+    } catch (error) {
+
+        console.error(
+            "Modal error:",
+            error
+        );
+
+
+        $("modalTraits").innerHTML = `
+
+            <div class="trait">
+
+                <span>Error</span>
+
+                <span>
+                    ${escapeHTML(
+                        cleanError(error)
+                    )}
+                </span>
+
+            </div>
+
+        `;
+
+    }
+
 }
 
 
+/* =========================================================
+   TRAIT HTML
+========================================================= */
+
+function createTraitHTML(
+    attribute
+) {
+
+    const traitType =
+        attribute?.trait_type ||
+        "Trait";
+
+
+    const value =
+        attribute?.value ??
+        "";
+
+
+    return `
+
+        <div class="trait">
+
+            <span>
+                ${escapeHTML(traitType)}
+            </span>
+
+            <span>
+                ${escapeHTML(String(value))}
+            </span>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   GET ATTRIBUTE
+========================================================= */
+
+function getAttribute(
+    attributes,
+    traitType
+) {
+
+    const found =
+        attributes.find(
+            attribute =>
+                attribute &&
+                attribute.trait_type ===
+                traitType
+        );
+
+
+    return found
+        ? String(found.value)
+        : "";
+
+}
+
+
+/* =========================================================
+   CLOSE MODAL
+========================================================= */
+
 function closeModal() {
 
-    document
-        .getElementById(
-            "modal"
-        )
-        .classList.remove(
+    const modal =
+        $("modal");
+
+
+    if (modal) {
+
+        modal.classList.remove(
             "open"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   OUTSIDE MODAL CLICK
+========================================================= */
+
+$("modal")?.addEventListener(
+    "click",
+    event => {
+
+        if (
+            event.target ===
+            $("modal")
+        ) {
+
+            closeModal();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   ESCAPE MODAL
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key ===
+            "Escape"
+        ) {
+
+            closeModal();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   WALLET EVENTS
+========================================================= */
+
+$("walletButton")?.addEventListener(
+    "click",
+    connectWallet
+);
+
+
+$("search")?.addEventListener(
+    "input",
+    filterGallery
+);
+
+
+/* =========================================================
+   METAMASK / WALLET ACCOUNT CHANGES
+========================================================= */
+
+if (window.ethereum) {
+
+    window.ethereum.on(
+        "accountsChanged",
+        async accounts => {
+
+            if (
+                !accounts ||
+                accounts.length === 0
+            ) {
+
+                walletAddress =
+                    null;
+
+                signer =
+                    null;
+
+                writeContract =
+                    null;
+
+                updateWalletButton();
+
+                setStatus("");
+
+                return;
+
+            }
+
+
+            walletAddress =
+                accounts[0];
+
+
+            updateWalletButton();
+
+        }
+    );
+
+
+    window.ethereum.on(
+        "chainChanged",
+        () => {
+
+            /*
+             * Reloading is intentional here.
+             * It guarantees that read/write providers
+             * are recreated for Arc Testnet.
+             */
+
+            window.location.reload();
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   ERROR CLEANUP
+========================================================= */
+
+function cleanError(
+    error
+) {
+
+    if (!error) {
+
+        return "Unknown error.";
+
+    }
+
+
+    if (
+        error.shortMessage
+    ) {
+
+        return error.shortMessage;
+
+    }
+
+
+    if (
+        error.reason
+    ) {
+
+        return error.reason;
+
+    }
+
+
+    if (
+        error.info?.error?.message
+    ) {
+
+        return error.info.error.message;
+
+    }
+
+
+    if (
+        error.data?.message
+    ) {
+
+        return error.data.message;
+
+    }
+
+
+    if (
+        error.message
+    ) {
+
+        return error.message
+            .replace(
+                /^Error:\s*/i,
+                ""
+            );
+
+    }
+
+
+    return String(error);
+
+}
+
+
+/* =========================================================
+   TX HASH
+========================================================= */
+
+function shortHash(
+    hash
+) {
+
+    if (
+        !hash ||
+        hash.length < 14
+    ) {
+
+        return hash;
+
+    }
+
+
+    return (
+        hash.slice(0, 10) +
+        "..." +
+        hash.slice(-8)
+    );
+
+}
+
+
+/* =========================================================
+   ESCAPING
+========================================================= */
+
+function escapeHTML(
+    value
+) {
+
+    return String(value)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
         );
 
 }
 
 
-document
-    .getElementById(
-        "modal"
-    )
-    .addEventListener(
-        "click",
-        function(event) {
+function escapeAttribute(
+    value
+) {
 
-            if (
-                event.target === this
-            ) {
-
-                closeModal();
-
-            }
-
-        }
+    return escapeHTML(
+        value
     );
-
-
-/* =========================================================
-   STATUS
-========================================================= */
-
-function showStatus(message) {
-
-    document
-        .getElementById(
-            "mintStatus"
-        )
-        .textContent =
-        message;
 
 }
 
 
 /* =========================================================
-   HTML ESCAPE
+   SLEEP
 ========================================================= */
 
-function escapeHTML(value) {
+function sleep(
+    milliseconds
+) {
 
-    return String(
-        value ?? ""
-    ).replace(
-        /[&<>"']/g,
-        character => {
-
-            const map = {
-
-                "&": "&amp;",
-                "<": "&lt;",
-                ">": "&gt;",
-                '"': "&quot;",
-                "'": "&#039;"
-
-            };
-
-            return map[
-                character
-            ];
-
-        }
+    return new Promise(
+        resolve =>
+            setTimeout(
+                resolve,
+                milliseconds
+            )
     );
+
+}
+
+
+/* =========================================================
+   INITIALIZATION
+========================================================= */
+
+async function initARC360() {
+
+    console.log(
+        "ARC 360 initializing…"
+    );
+
+
+    console.log(
+        "Contract:",
+        CONTRACT_ADDRESS
+    );
+
+
+    console.log(
+        "Network:",
+        ARC_TESTNET.chainName
+    );
+
+
+    try {
+
+        await initializeContract();
+
+        console.log(
+            "ARC 360 ready."
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Fatal ARC 360 error:",
+            error
+        );
+
+        setContractStatus(
+            "Initialization error: " +
+            cleanError(error),
+            "error"
+        );
+
+    }
 
 }
 
@@ -2240,32 +3083,21 @@ function escapeHTML(value) {
    START
 ========================================================= */
 
-(async function init() {
+if (
+    document.readyState ===
+    "loading"
+) {
 
-    try {
+    document.addEventListener(
+        "DOMContentLoaded",
+        initARC360
+    );
 
-        /*
-         * Read-only connection.
-         */
+} else {
 
-        await loadContract();
+    initARC360();
 
-        /*
-         * Load only NFTs that actually exist.
-         */
-
-        await loadGallery();
-
-    } catch (error) {
-
-        console.error(
-            "ARC 360 initialization failed:",
-            error
-        );
-
-    }
-
-})();
+}
 
 </script>
 
