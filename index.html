@@ -11,9 +11,80 @@
     src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"
     onerror="this.onerror=null;this.src='https://unpkg.com/ethers@6.13.5/dist/ethers.umd.min.js'">
 </script>
+<script>
+const CONTRACT_ADDRESS = "0x48fad98b637d35c449819782b542af0306e4a56d";
 
+const CONTRACT_ABI = [
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "previewTokenURI",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+];
+
+async function loadNFT(tokenId) {
+  try {
+    const provider = new ethers.JsonRpcProvider(
+      "https://rpc.testnet.arc.network"
+    );
+
+    const contract = new ethers.Contract(
+      CONTRACT_ADDRESS,
+      CONTRACT_ABI,
+      provider
+    );
+
+    const uri = await contract.previewTokenURI(tokenId);
+
+    console.log("NFT #" + tokenId, uri);
+
+    // Se retornar data:application/json;base64,...
+    if (uri.startsWith("data:application/json;base64,")) {
+      const base64 = uri.split(",")[1];
+      const json = JSON.parse(atob(base64));
+
+      console.log(json);
+
+      return json;
+    }
+
+    return null;
+
+  } catch (error) {
+    console.error("Erro ao carregar NFT #" + tokenId, error);
+    return null;
+  }
+}
+</script>
+    
 <style>
+<div id="testNFT"></div>
 
+<script>
+loadNFT(1).then(nft => {
+  if (!nft) return;
+
+  document.getElementById("testNFT").innerHTML = `
+    <h2>${nft.name || "ARC 360 #0001"}</h2>
+    <img src="${nft.image}" style="width:400px;image-rendering:pixelated;">
+    <p>${nft.description || ""}</p>
+  `;
+});
+</script>
 :root {
     --bg: #050607;
     --panel: #0b0d10;
