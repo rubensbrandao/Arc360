@@ -1,0 +1,2956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ARC 360 — Mint</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #050508;
+      --panel: rgba(15, 15, 22, .82);
+      --panel2: rgba(20, 20, 29, .92);
+      --line: rgba(255,255,255,.10);
+      --text: #f5f5f7;
+      --muted: #8d8d99;
+      --accent: #ffffff;
+      --danger: #ff5c5c;
+      --success: #62e6a5;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 50% -10%, rgba(255,255,255,.09), transparent 35%),
+        radial-gradient(circle at 10% 40%, rgba(100,80,255,.07), transparent 30%),
+        var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(5,5,8,.82);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand {
+      font-weight: 900;
+      letter-spacing: .12em;
+      font-size: 15px;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-link {
+      color: var(--muted);
+      padding: 9px 12px;
+      border-radius: 9px;
+      transition: .2s;
+    }
+
+    .nav-link:hover {
+      color: white;
+      background: rgba(255,255,255,.06);
+    }
+
+    .wallet-btn,
+    .primary-btn,
+    .secondary-btn,
+    .danger-btn {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 11px 16px;
+      font-weight: 800;
+      transition: .2s;
+    }
+
+    .wallet-btn,
+    .primary-btn {
+      color: #050508;
+      background: white;
+    }
+
+    .wallet-btn:hover,
+    .primary-btn:hover {
+      transform: translateY(-1px);
+      background: #e9e9ec;
+    }
+
+    .secondary-btn {
+      color: white;
+      background: rgba(255,255,255,.05);
+    }
+
+    .secondary-btn:hover {
+      background: rgba(255,255,255,.10);
+    }
+
+    .danger-btn {
+      color: white;
+      background: rgba(255,80,80,.08);
+      border-color: rgba(255,80,80,.22);
+    }
+
+    .danger-btn:hover {
+      background: rgba(255,80,80,.15);
+    }
+
+    .wallet-info {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .wallet-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 10px rgba(98,230,165,.5);
+    }
+
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 55px 0 100px;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 45px;
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      letter-spacing: .30em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(46px, 9vw, 100px);
+      line-height: .88;
+      letter-spacing: -.055em;
+      font-weight: 950;
+    }
+
+    .hero p {
+      max-width: 650px;
+      margin: 22px auto 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .contract-line {
+      margin-top: 18px;
+      font-family: monospace;
+      font-size: 11px;
+      color: #70707b;
+      word-break: break-all;
+    }
+
+    .section {
+      margin-top: 35px;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -.02em;
+    }
+
+    .section-title span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .stat {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel);
+    }
+
+    .stat-label {
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: 9px;
+    }
+
+    .stat-value {
+      margin-top: 8px;
+      font-size: 25px;
+      font-weight: 900;
+    }
+
+    .mint-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .panel {
+      padding: 25px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--panel);
+    }
+
+    .panel h3 {
+      margin: 0 0 8px;
+      font-size: 19px;
+    }
+
+    .panel-description {
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .mint-price {
+      padding: 18px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.035);
+      margin-bottom: 15px;
+    }
+
+    .mint-price-label {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+
+    .mint-price-value {
+      margin-top: 5px;
+      font-size: 30px;
+      font-weight: 950;
+    }
+
+    .quantity-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .qty-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      color: white;
+      background: rgba(255,255,255,.05);
+      font-size: 22px;
+    }
+
+    .qty-btn:hover {
+      background: rgba(255,255,255,.10);
+    }
+
+    .quantity {
+      flex: 1;
+      height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(0,0,0,.25);
+      color: white;
+      text-align: center;
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    .full {
+      width: 100%;
+    }
+
+    .total {
+      display: flex;
+      justify-content: space-between;
+      padding: 14px 0;
+      margin-bottom: 14px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .total span:first-child {
+      color: var(--muted);
+    }
+
+    .total span:last-child {
+      font-weight: 900;
+    }
+
+    .wallet-card {
+      min-height: 100%;
+    }
+
+    .wallet-address {
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: rgba(0,0,0,.22);
+      font-family: monospace;
+      font-size: 12px;
+      word-break: break-all;
+      color: #ddd;
+      margin-bottom: 15px;
+    }
+
+    .message {
+      display: none;
+      margin-top: 13px;
+      padding: 13px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .message.error {
+      color: #ffaaaa;
+      border-color: rgba(255,90,90,.2);
+      background: rgba(255,70,70,.06);
+    }
+
+    .message.success {
+      color: #9df2c5;
+      border-color: rgba(90,230,160,.2);
+      background: rgba(90,230,160,.06);
+    }
+
+    .message.info {
+      color: #d4d4dc;
+      background: rgba(255,255,255,.04);
+    }
+
+    .collection-toolbar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .search {
+      flex: 1;
+      min-width: 0;
+      padding: 13px 15px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      outline: none;
+      color: white;
+      background: rgba(255,255,255,.04);
+    }
+
+    .search:focus {
+      border-color: rgba(255,255,255,.28);
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+
+    .nft-card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: #0b0b10;
+      cursor: pointer;
+      transition: transform .2s, border-color .2s;
+    }
+
+    .nft-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255,255,255,.27);
+    }
+
+    .nft-image {
+      display: block;
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      background: #08080c;
+    }
+
+    .nft-info {
+      padding: 11px;
+    }
+
+    .nft-id {
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    .nft-type {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+    }
+
+    .loading {
+      padding: 50px 20px;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed var(--line);
+      border-radius: 14px;
+    }
+
+    .empty {
+      padding: 40px 20px;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed var(--line);
+      border-radius: 14px;
+      grid-column: 1 / -1;
+    }
+
+    .fusion-panel {
+      margin-top: 25px;
+    }
+
+    .fusion-selected {
+      min-height: 50px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(0,0,0,.2);
+      margin-bottom: 12px;
+    }
+
+    .selected-chip {
+      padding: 7px 9px;
+      border-radius: 7px;
+      background: rgba(255,255,255,.1);
+      font-size: 11px;
+      font-family: monospace;
+    }
+
+    .fusion-hint {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+
+    .owned-card {
+      outline: 1px solid rgba(255,255,255,.25);
+    }
+
+    .owned-card.selected {
+      outline: 2px solid white;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      padding: 25px;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,.78);
+      backdrop-filter: blur(12px);
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      width: min(900px, 100%);
+      max-height: calc(100vh - 50px);
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #09090d;
+      box-shadow: 0 30px 100px rgba(0,0,0,.55);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 22px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      color: white;
+      background: rgba(0,0,0,.6);
+      font-size: 20px;
+      z-index: 5;
+    }
+
+    .modal-grid {
+      display: grid;
+      grid-template-columns: minmax(300px, 1fr) 1fr;
+    }
+
+    .modal-art {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 25px;
+      min-height: 500px;
+      background:
+        radial-gradient(circle, rgba(255,255,255,.07), transparent 65%),
+        #050508;
+    }
+
+    .modal-art img {
+      width: min(100%, 430px);
+      aspect-ratio: 1;
+      object-fit: contain;
+      image-rendering: pixelated;
+    }
+
+    .modal-details {
+      padding: 30px;
+    }
+
+    .modal-details h2 {
+      margin: 0;
+      font-size: 30px;
+    }
+
+    .modal-type {
+      margin-top: 5px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: 10px;
+    }
+
+    .rarity {
+      margin: 22px 0;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255,255,255,.035);
+    }
+
+    .rarity-label {
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+
+    .rarity-score {
+      margin-top: 5px;
+      font-size: 32px;
+      font-weight: 950;
+    }
+
+    .traits {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+    }
+
+    .trait {
+      padding: 11px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: rgba(255,255,255,.025);
+    }
+
+    .trait-name {
+      color: var(--muted);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .trait-value {
+      margin-top: 4px;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .parents {
+      margin-top: 18px;
+    }
+
+    .parents-title {
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      margin-bottom: 7px;
+    }
+
+    .parent-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .parent-chip {
+      padding: 7px 9px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      font-size: 11px;
+      font-family: monospace;
+    }
+
+    footer {
+      padding: 30px;
+      border-top: 1px solid var(--line);
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.8;
+    }
+
+    footer a {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 900px) {
+      .gallery {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .mint-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .modal-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .modal-art {
+        min-height: 330px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .nav {
+        padding: 0 14px;
+      }
+
+      .nav-link {
+        display: none;
+      }
+
+      main {
+        width: min(100% - 20px, 1180px);
+        padding-top: 35px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .gallery {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .panel {
+        padding: 18px;
+      }
+
+      .modal {
+        padding: 10px;
+      }
+
+      .modal-content {
+        max-height: calc(100vh - 20px);
+      }
+
+      .modal-details {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class="nav">
+    <a href="index.html" class="brand">ARC 360</a>
+
+    <div class="nav-right">
+      <a href="index.html" class="nav-link">HOME</a>
+
+      <div class="wallet-info" id="walletInfo">
+        <span class="wallet-dot"></span>
+        <span id="walletShort">Connected</span>
+      </div>
+
+      <button class="wallet-btn" id="walletBtn">
+        CONNECT WALLET
+      </button>
+    </div>
+  </nav>
+
+  <main>
+
+    <section class="hero">
+      <div class="eyebrow">The Architects</div>
+      <h1>MINT</h1>
+
+      <p>
+        ARC 360 is an on-chain collection of 3,600 Genesis Architects.
+        Every identity, trait, rarity score and artwork is generated and
+        rendered directly by the smart contract.
+      </p>
+
+      <div class="contract-line">
+        Contract:
+        0x0834518d9573eb2c4687ec8726c2a7e799a46fc6
+      </div>
+    </section>
+
+    <!-- =========================================================
+         STATS
+    ========================================================== -->
+
+    <section class="section">
+      <div class="section-title">
+        <h2>Collection</h2>
+        <span id="networkStatus">Arc Testnet</span>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-label">Genesis Supply</div>
+          <div class="stat-value" id="statGenesis">—</div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-label">Genesis Minted</div>
+          <div class="stat-value" id="statMinted">—</div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-label">Remaining</div>
+          <div class="stat-value" id="statRemaining">—</div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-label">Active Supply</div>
+          <div class="stat-value" id="statActive">—</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         MINT
+    ========================================================== -->
+
+    <section class="section">
+      <div class="mint-layout">
+
+        <div class="panel">
+          <h3>Mint an Architect</h3>
+
+          <p class="panel-description">
+            Genesis Architects occupy IDs #0001 through #3600.
+            The contract currently defines the mint price and maximum
+            quantity per transaction.
+          </p>
+
+          <div class="mint-price">
+            <div class="mint-price-label">Mint Price</div>
+            <div class="mint-price-value" id="mintPrice">—</div>
+          </div>
+
+          <div class="quantity-row">
+            <button class="qty-btn" id="minusBtn">−</button>
+
+            <input
+              id="quantity"
+              class="quantity"
+              type="number"
+              min="1"
+              max="20"
+              value="1"
+            />
+
+            <button class="qty-btn" id="plusBtn">+</button>
+          </div>
+
+          <div class="total">
+            <span>Total</span>
+            <span id="mintTotal">—</span>
+          </div>
+
+          <button class="primary-btn full" id="mintBtn">
+            CONNECT WALLET TO MINT
+          </button>
+
+          <div class="message" id="mintMessage"></div>
+        </div>
+
+        <div class="panel wallet-card">
+          <h3>Wallet</h3>
+
+          <p class="panel-description">
+            Connect your wallet to mint Genesis Architects and inspect
+            the Architects currently owned by your address.
+          </p>
+
+          <div class="wallet-address" id="walletAddress">
+            Not connected
+          </div>
+
+          <button class="secondary-btn full" id="disconnectBtn" style="display:none;">
+            DISCONNECT
+          </button>
+
+          <div class="message info show">
+            Network: Arc Testnet<br />
+            Chain ID: 5042002<br />
+            Currency: USDC
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================
+         MY ARCHITECTS / FUSION
+    ========================================================== -->
+
+    <section class="section" id="mySection">
+
+      <div class="section-title">
+        <h2>My Architects</h2>
+        <span id="ownedCount">Connect wallet to view</span>
+      </div>
+
+      <div id="ownedGallery" class="gallery">
+        <div class="empty">
+          Connect your wallet to load your Architects.
+        </div>
+      </div>
+
+      <div class="panel fusion-panel">
+        <h3>Fusion</h3>
+
+        <p class="panel-description">
+          Select two or more Architects you own. The contract burns the
+          selected parents and creates a new descendant with a blended DNA.
+          Fusion descendants receive IDs above #3600.
+        </p>
+
+        <div class="fusion-selected" id="fusionSelected">
+          <span style="color:#777;font-size:11px;">
+            No Architects selected.
+          </span>
+        </div>
+
+        <div class="fusion-hint">
+          Maximum inputs per fusion:
+          <strong id="maxFuse">—</strong>
+        </div>
+
+        <button class="primary-btn full" id="fusionBtn" disabled>
+          SELECT AT LEAST 2 ARCHITECTS
+        </button>
+
+        <div class="message" id="fusionMessage"></div>
+      </div>
+
+    </section>
+
+    <!-- =========================================================
+         COLLECTION
+    ========================================================== -->
+
+    <section class="section">
+
+      <div class="section-title">
+        <h2>Genesis Collection</h2>
+        <span id="galleryStatus">Loading...</span>
+      </div>
+
+      <div class="collection-toolbar">
+        <input
+          id="searchInput"
+          class="search"
+          type="text"
+          placeholder="Search token #..."
+        />
+
+        <button class="secondary-btn" id="refreshBtn">
+          REFRESH
+        </button>
+      </div>
+
+      <div id="gallery" class="gallery">
+        <div class="loading">
+          Loading on-chain collection...
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =========================================================
+         CONTRACT INFO
+    ========================================================== -->
+
+    <section class="section">
+      <div class="panel">
+
+        <h3 id="collectionName">
+          ARC 360
+        </h3>
+
+        <p class="panel-description" id="collectionCredit">
+          Loading contract credit...
+        </p>
+
+        <div class="message info show">
+          Artwork is not generated by this website.
+          The website reads the NFT's <strong>tokenURI()</strong> directly
+          from the smart contract and displays the on-chain metadata/SVG.
+        </div>
+
+        <div style="margin-top:15px;">
+          <button class="secondary-btn" id="originBtn">
+            DISCOVER ORIGIN
+          </button>
+        </div>
+
+        <div class="message" id="originMessage"></div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div>ARC 360 — THE ARCHITECTS</div>
+    <div>
+      <a
+        href="https://testnet.arcscan.app/address/0x0834518d9573eb2c4687ec8726c2a7e799a46fc6"
+        target="_blank"
+        rel="noopener"
+      >
+        View Contract on ArcScan
+      </a>
+    </div>
+  </footer>
+
+
+  <!-- =========================================================
+       NFT MODAL
+  ========================================================== -->
+
+  <div class="modal" id="modal">
+
+    <button class="modal-close" id="modalClose">
+      ×
+    </button>
+
+    <div class="modal-content">
+
+      <div class="modal-grid">
+
+        <div class="modal-art">
+          <img id="modalImage" alt="ARC 360 NFT" />
+        </div>
+
+        <div class="modal-details">
+
+          <h2 id="modalTitle">ARC 360</h2>
+
+          <div class="modal-type" id="modalType">
+            —
+          </div>
+
+          <div class="rarity">
+            <div class="rarity-label">
+              Rarity Score
+            </div>
+
+            <div class="rarity-score" id="modalRarity">
+              —
+            </div>
+          </div>
+
+          <div class="traits" id="modalTraits"></div>
+
+          <div class="parents" id="modalParentsSection" style="display:none;">
+
+            <div class="parents-title">
+              Parents
+            </div>
+
+            <div class="parent-list" id="modalParents"></div>
+
+          </div>
+
+          <div style="margin-top:20px;">
+            <a
+              id="modalExplorer"
+              class="secondary-btn"
+              href="#"
+              target="_blank"
+              rel="noopener"
+            >
+              VIEW ON ARCSCAN
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+
+  <script>
+    // =============================================================
+    // CONFIG
+    // =============================================================
+
+    const CONTRACT_ADDRESS =
+      "0x0834518d9573eb2c4687ec8726c2a7e799a46fc6";
+
+    const ARC_TESTNET = {
+      chainId: "0x4CEB52",
+      chainIdDecimal: 5042002,
+      chainName: "Arc Testnet",
+      nativeCurrency: {
+        name: "USDC",
+        symbol: "USDC",
+        decimals: 18
+      },
+      rpcUrls: [
+        "https://rpc.testnet.arc.network"
+      ],
+      blockExplorerUrls: [
+        "https://testnet.arcscan.app"
+      ]
+    };
+
+    const EXPLORER =
+      "https://testnet.arcscan.app";
+
+    // =============================================================
+    // EXACT CONTRACT ABI
+    // =============================================================
+
+    const ABI = [
+
+      "function COLLECTION_NAME() view returns (string)",
+      "function COLLECTION_CREDIT() view returns (string)",
+      "function GENESIS_SUPPLY() view returns (uint256)",
+      "function MAX_MINT_PER_TX() view returns (uint256)",
+      "function MAX_FUSE_INPUT() view returns (uint256)",
+
+      "function genesisMinted() view returns (uint256)",
+      "function activeSupply() view returns (uint256)",
+      "function mintPrice() view returns (uint256)",
+
+      "function mint(uint256 quantity) payable",
+      "function fuse(uint256[] tokenIds)",
+
+      "function ownerOf(uint256 tokenId) view returns (address)",
+      "function tokenURI(uint256 tokenId) view returns (string)",
+
+      "function getDNA(uint256 tokenId) view returns (uint256 face, uint256 eyes, uint256 jaw, uint256 hair, uint256 horns, uint256 head)",
+
+      "function rarityScore(uint256 tokenId) view returns (uint256)",
+
+      "function getParents(uint256 tokenId) view returns (uint256[])",
+
+      "function discoverOrigin() view returns (string)"
+    ];
+
+    // =============================================================
+    // STATE
+    // =============================================================
+
+    let provider = null;
+    let signer = null;
+    let contract = null;
+    let readContract = null;
+    let userAddress = null;
+
+    let genesisSupply = 3600;
+    let genesisMinted = 0;
+    let activeSupply = 0;
+    let mintPriceWei = 0n;
+    let maxMint = 20;
+    let maxFuse = 20;
+
+    let collectionTokens = [];
+    let ownedTokens = [];
+    let selectedFusion = new Set();
+
+    // =============================================================
+    // DOM
+    // =============================================================
+
+    const $ = id => document.getElementById(id);
+
+    // =============================================================
+    // UTILITIES
+    // =============================================================
+
+    function shortAddress(address) {
+      if (!address) return "";
+      return address.slice(0, 6) + "..." + address.slice(-4);
+    }
+
+    function formatUSDC(value) {
+      try {
+        return Number(
+          ethers.formatUnits(value, 18)
+        ).toLocaleString("en-US", {
+          maximumFractionDigits: 6
+        }) + " USDC";
+      } catch {
+        return "—";
+      }
+    }
+
+    function formatNumber(value) {
+      return Number(value).toLocaleString("en-US");
+    }
+
+    function escapeHTML(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function showMessage(element, text, type = "info") {
+      element.textContent = text;
+      element.className = "message show " + type;
+    }
+
+    function hideMessage(element) {
+      element.className = "message";
+      element.textContent = "";
+    }
+
+    function normalizeImageURI(image) {
+      if (!image) return null;
+
+      if (
+        image.startsWith("data:image/")
+      ) {
+        return image;
+      }
+
+      if (
+        image.trim().startsWith("<svg")
+      ) {
+        return "data:image/svg+xml;charset=utf-8," +
+          encodeURIComponent(image);
+      }
+
+      return image;
+    }
+
+    // =============================================================
+    // TOKEN URI DECODER
+    // =============================================================
+
+    function decodeBase64UTF8(base64) {
+      const binary = atob(base64);
+
+      const bytes = Uint8Array.from(
+        binary,
+        char => char.charCodeAt(0)
+      );
+
+      return new TextDecoder().decode(bytes);
+    }
+
+    function decodeDataURI(uri) {
+
+      if (!uri) {
+        throw new Error("Empty tokenURI");
+      }
+
+      if (
+        uri.startsWith("data:application/json;base64,")
+      ) {
+        const base64 =
+          uri.substring(
+            "data:application/json;base64,".length
+          );
+
+        return JSON.parse(
+          decodeBase64UTF8(base64)
+        );
+      }
+
+      if (
+        uri.startsWith("data:application/json,")
+      ) {
+        const encoded =
+          uri.substring(
+            "data:application/json,".length
+          );
+
+        return JSON.parse(
+          decodeURIComponent(encoded)
+        );
+      }
+
+      throw new Error(
+        "Unsupported tokenURI format"
+      );
+    }
+
+    // =============================================================
+    // CONTRACT INITIALIZATION
+    // =============================================================
+
+    async function initReadOnly() {
+
+      try {
+
+        const rpc =
+          new ethers.JsonRpcProvider(
+            ARC_TESTNET.rpcUrls[0]
+          );
+
+        readContract =
+          new ethers.Contract(
+            CONTRACT_ADDRESS,
+            ABI,
+            rpc
+          );
+
+        await loadContractInfo();
+
+      } catch (error) {
+
+        console.error(error);
+
+        showMessage(
+          $("mintMessage"),
+          "Could not connect to Arc Testnet RPC.",
+          "error"
+        );
+      }
+    }
+
+    async function loadContractInfo() {
+
+      const [
+        name,
+        credit,
+        supply,
+        maxMintValue,
+        maxFuseValue,
+        minted,
+        active,
+        price
+      ] = await Promise.all([
+
+        readContract.COLLECTION_NAME(),
+        readContract.COLLECTION_CREDIT(),
+
+        readContract.GENESIS_SUPPLY(),
+        readContract.MAX_MINT_PER_TX(),
+        readContract.MAX_FUSE_INPUT(),
+
+        readContract.genesisMinted(),
+        readContract.activeSupply(),
+        readContract.mintPrice()
+
+      ]);
+
+      genesisSupply = Number(supply);
+      maxMint = Number(maxMintValue);
+      maxFuse = Number(maxFuseValue);
+
+      genesisMinted = Number(minted);
+      activeSupply = Number(active);
+      mintPriceWei = BigInt(price);
+
+      $("collectionName").textContent = name;
+      $("collectionCredit").textContent = credit;
+
+      $("statGenesis").textContent =
+        formatNumber(genesisSupply);
+
+      $("statMinted").textContent =
+        formatNumber(genesisMinted);
+
+      $("statRemaining").textContent =
+        formatNumber(
+          Math.max(
+            genesisSupply - genesisMinted,
+            0
+          )
+        );
+
+      $("statActive").textContent =
+        formatNumber(activeSupply);
+
+      $("mintPrice").textContent =
+        formatUSDC(mintPriceWei);
+
+      $("maxFuse").textContent =
+        maxFuse;
+
+      $("quantity").max = maxMint;
+
+      updateMintTotal();
+
+      await loadGenesisCollection();
+
+      if (userAddress) {
+        await loadOwnedTokens();
+      }
+    }
+
+    // =============================================================
+    // WALLET
+    // =============================================================
+
+    async function connectWallet() {
+
+      if (!window.ethereum) {
+
+        showMessage(
+          $("mintMessage"),
+          "No compatible wallet detected. Install MetaMask or another EVM wallet.",
+          "error"
+        );
+
+        return;
+      }
+
+      try {
+
+        showMessage(
+          $("mintMessage"),
+          "Connecting wallet...",
+          "info"
+        );
+
+        await window.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [
+            {
+              chainId: ARC_TESTNET.chainId
+            }
+          ]
+        });
+
+      } catch (switchError) {
+
+        if (
+          switchError.code === 4902 ||
+          switchError.code === -32603
+        ) {
+
+          try {
+
+            await window.ethereum.request({
+              method: "wallet_addEthereumChain",
+              params: [
+                ARC_TESTNET
+              ]
+            });
+
+          } catch (addError) {
+
+            console.error(addError);
+
+            showMessage(
+              $("mintMessage"),
+              "Could not add Arc Testnet to your wallet.",
+              "error"
+            );
+
+            return;
+          }
+
+        } else {
+
+          console.error(switchError);
+
+          showMessage(
+            $("mintMessage"),
+            "Please switch your wallet to Arc Testnet.",
+            "error"
+          );
+
+          return;
+        }
+      }
+
+      try {
+
+        provider =
+          new ethers.BrowserProvider(
+            window.ethereum
+          );
+
+        signer =
+          await provider.getSigner();
+
+        userAddress =
+          await signer.getAddress();
+
+        const network =
+          await provider.getNetwork();
+
+        if (
+          Number(network.chainId) !==
+          ARC_TESTNET.chainIdDecimal
+        ) {
+          throw new Error(
+            "Wrong network"
+          );
+        }
+
+        contract =
+          new ethers.Contract(
+            CONTRACT_ADDRESS,
+            ABI,
+            signer
+          );
+
+        $("walletBtn").style.display = "none";
+        $("walletInfo").style.display = "flex";
+
+        $("walletShort").textContent =
+          shortAddress(userAddress);
+
+        $("walletAddress").textContent =
+          userAddress;
+
+        $("disconnectBtn").style.display =
+          "block";
+
+        $("mintBtn").textContent =
+          "MINT ARCHITECT";
+
+        hideMessage(
+          $("mintMessage")
+        );
+
+        await loadOwnedTokens();
+
+        await loadGenesisCollection();
+
+      } catch (error) {
+
+        console.error(error);
+
+        showMessage(
+          $("mintMessage"),
+          "Could not connect to the wallet.",
+          "error"
+        );
+      }
+    }
+
+    function disconnectWallet() {
+
+      provider = null;
+      signer = null;
+      contract = null;
+      userAddress = null;
+
+      ownedTokens = [];
+      selectedFusion.clear();
+
+      $("walletBtn").style.display =
+        "block";
+
+      $("walletInfo").style.display =
+        "none";
+
+      $("disconnectBtn").style.display =
+        "none";
+
+      $("walletAddress").textContent =
+        "Not connected";
+
+      $("mintBtn").textContent =
+        "CONNECT WALLET TO MINT";
+
+      $("ownedCount").textContent =
+        "Connect wallet to view";
+
+      renderOwnedGallery();
+
+      renderFusionSelection();
+
+      hideMessage(
+        $("mintMessage")
+      );
+    }
+
+    // =============================================================
+    // MINT
+    // =============================================================
+
+    function getQuantity() {
+
+      let quantity =
+        parseInt(
+          $("quantity").value,
+          10
+        );
+
+      if (!Number.isFinite(quantity)) {
+        quantity = 1;
+      }
+
+      quantity =
+        Math.max(
+          1,
+          Math.min(
+            maxMint,
+            quantity
+          )
+        );
+
+      $("quantity").value =
+        quantity;
+
+      return quantity;
+    }
+
+    function updateMintTotal() {
+
+      const quantity =
+        getQuantity();
+
+      const total =
+        mintPriceWei *
+        BigInt(quantity);
+
+      $("mintTotal").textContent =
+        formatUSDC(total);
+    }
+
+    async function mint() {
+
+      if (!userAddress || !contract) {
+
+        await connectWallet();
+
+        if (!contract) {
+          return;
+        }
+      }
+
+      const quantity =
+        getQuantity();
+
+      if (
+        genesisMinted + quantity >
+        genesisSupply
+      ) {
+
+        showMessage(
+          $("mintMessage"),
+          "There are not enough Genesis tokens remaining for this quantity.",
+          "error"
+        );
+
+        return;
+      }
+
+      try {
+
+        $("mintBtn").disabled = true;
+
+        showMessage(
+          $("mintMessage"),
+          "Confirm the transaction in your wallet...",
+          "info"
+        );
+
+        const value =
+          mintPriceWei *
+          BigInt(quantity);
+
+        const tx =
+          await contract.mint(
+            quantity,
+            {
+              value
+            }
+          );
+
+        showMessage(
+          $("mintMessage"),
+          "Transaction submitted. Waiting for confirmation...",
+          "info"
+        );
+
+        await tx.wait();
+
+        showMessage(
+          $("mintMessage"),
+          "Mint completed successfully.",
+          "success"
+        );
+
+        await loadContractInfo();
+
+        if (userAddress) {
+          await loadOwnedTokens();
+        }
+
+      } catch (error) {
+
+        console.error(error);
+
+        showMessage(
+          $("mintMessage"),
+          getReadableError(error),
+          "error"
+        );
+
+      } finally {
+
+        $("mintBtn").disabled = false;
+      }
+    }
+
+    // =============================================================
+    // ERROR PARSER
+    // =============================================================
+
+    function getReadableError(error) {
+
+      if (!error) {
+        return "Transaction failed.";
+      }
+
+      if (
+        error.code === 4001 ||
+        error.code === "ACTION_REJECTED"
+      ) {
+        return "Transaction rejected in wallet.";
+      }
+
+      const message =
+        error.shortMessage ||
+        error.reason ||
+        error.message ||
+        "Transaction failed.";
+
+      if (
+        message.includes("Genesis sold out")
+      ) {
+        return "Genesis collection is sold out.";
+      }
+
+      if (
+        message.includes("Wrong payment")
+      ) {
+        return "Incorrect payment amount.";
+      }
+
+      if (
+        message.includes("Too many")
+      ) {
+        return "The selected quantity is above the contract limit.";
+      }
+
+      if (
+        message.includes("Need 2+")
+      ) {
+        return "Fusion requires at least two Architects.";
+      }
+
+      if (
+        message.includes("Not owner")
+      ) {
+        return "You do not own one of the selected Architects.";
+      }
+
+      return message
+        .replace("execution reverted:", "")
+        .trim()
+        .slice(0, 300);
+    }
+
+    // =============================================================
+    // GENESIS COLLECTION
+    // =============================================================
+
+    async function loadGenesisCollection() {
+
+      const gallery =
+        $("gallery");
+
+      if (!readContract) {
+        return;
+      }
+
+      try {
+
+        gallery.innerHTML =
+          '<div class="loading">Reading Genesis Architects from the contract...</div>';
+
+        const tokens = [];
+
+        /*
+          Genesis IDs are deterministic:
+          #0001 -> #genesisMinted
+
+          We only query tokens that have actually
+          been minted. Nothing is fabricated.
+        */
+
+        const total =
+          genesisMinted;
+
+        for (
+          let tokenId = 1;
+          tokenId <= total;
+          tokenId++
+        ) {
+
+          try {
+
+            const data =
+              await readToken(
+                tokenId,
+                readContract
+              );
+
+            if (data) {
+              tokens.push(data);
+            }
+
+          } catch (error) {
+            console.warn(
+              "Could not read token",
+              tokenId,
+              error
+            );
+          }
+
+          if (
+            tokenId % 25 === 0 ||
+            tokenId === total
+          ) {
+
+            $("galleryStatus").textContent =
+              `${tokenId}/${total}`;
+          }
+        }
+
+        collectionTokens = tokens;
+
+        renderCollection();
+
+        $("galleryStatus").textContent =
+          `${tokens.length} minted`;
+
+      } catch (error) {
+
+        console.error(error);
+
+        gallery.innerHTML =
+          '<div class="empty">Could not load the collection.</div>';
+
+        $("galleryStatus").textContent =
+          "Error";
+      }
+    }
+
+    async function readToken(
+      tokenId,
+      activeContract
+    ) {
+
+      try {
+
+        const owner =
+          await activeContract.ownerOf(
+            tokenId
+          );
+
+        const uri =
+          await activeContract.tokenURI(
+            tokenId
+          );
+
+        const metadata =
+          decodeDataURI(uri);
+
+        const rarity =
+          await activeContract.rarityScore(
+            tokenId
+          );
+
+        const parents =
+          await activeContract.getParents(
+            tokenId
+          );
+
+        const dna =
+          await activeContract.getDNA(
+            tokenId
+          );
+
+        const type =
+          tokenId <= genesisSupply
+            ? "Genesis"
+            : "Fusion";
+
+        return {
+          tokenId,
+          owner,
+          uri,
+          metadata,
+          rarity: Number(rarity),
+          parents: parents.map(Number),
+          dna: {
+            face: Number(dna.face),
+            eyes: Number(dna.eyes),
+            jaw: Number(dna.jaw),
+            hair: Number(dna.hair),
+            horns: Number(dna.horns),
+            head: Number(dna.head)
+          },
+          type
+        };
+
+      } catch (error) {
+
+        return null;
+      }
+    }
+
+    function getMetadataAttributes(metadata) {
+
+      if (
+        !metadata ||
+        !Array.isArray(metadata.attributes)
+      ) {
+        return [];
+      }
+
+      return metadata.attributes;
+    }
+
+    function getAttribute(
+      attributes,
+      traitType
+    ) {
+
+      const found =
+        attributes.find(
+          item =>
+            String(item.trait_type)
+              .toLowerCase() ===
+            traitType.toLowerCase()
+        );
+
+      return found
+        ? found.value
+        : null;
+    }
+
+    // =============================================================
+    // COLLECTION RENDER
+    // =============================================================
+
+    function renderCollection() {
+
+      const gallery =
+        $("gallery");
+
+      const search =
+        $("searchInput")
+          .value
+          .trim()
+          .replace("#", "")
+          .toLowerCase();
+
+      const filtered =
+        collectionTokens.filter(
+          token => {
+
+            if (!search) {
+              return true;
+            }
+
+            return String(
+              token.tokenId
+            ).includes(search);
+          }
+        );
+
+      if (!filtered.length) {
+
+        gallery.innerHTML =
+          '<div class="empty">No Architect found.</div>';
+
+        return;
+      }
+
+      gallery.innerHTML =
+        filtered
+          .map(token => {
+
+            const attributes =
+              getMetadataAttributes(
+                token.metadata
+              );
+
+            const type =
+              getAttribute(
+                attributes,
+                "Type"
+              ) || token.type;
+
+            const image =
+              normalizeImageURI(
+                token.metadata.image
+              );
+
+            return `
+              <article
+                class="nft-card"
+                data-token-id="${token.tokenId}"
+                onclick="openToken(${token.tokenId})"
+              >
+
+                ${
+                  image
+                    ? `
+                      <img
+                        class="nft-image"
+                        src="${escapeHTML(image)}"
+                        alt="ARC 360 #${token.tokenId}"
+                        loading="lazy"
+                      />
+                    `
+                    : `
+                      <div
+                        class="nft-image"
+                        style="
+                          display:flex;
+                          align-items:center;
+                          justify-content:center;
+                          color:#777;
+                          font-size:11px;
+                        "
+                      >
+                        tokenURI() has no image
+                      </div>
+                    `
+                }
+
+                <div class="nft-info">
+
+                  <div class="nft-id">
+                    ARC 360 #${token.tokenId}
+                  </div>
+
+                  <div class="nft-type">
+                    ${escapeHTML(type)}
+                  </div>
+
+                </div>
+
+              </article>
+            `;
+          })
+          .join("");
+    }
+
+    // =============================================================
+    // OWNED TOKENS
+    // =============================================================
+
+    async function loadOwnedTokens() {
+
+      if (!userAddress || !readContract) {
+        return;
+      }
+
+      const results = [];
+
+      /*
+        First inspect the Genesis range.
+
+        Then inspect Fusion IDs from Transfer logs.
+        This allows the page to discover descendants whose IDs
+        are above #3600.
+      */
+
+      try {
+
+        for (
+          let tokenId = 1;
+          tokenId <= genesisMinted;
+          tokenId++
+        ) {
+
+          try {
+
+            const owner =
+              await readContract.ownerOf(
+                tokenId
+              );
+
+            if (
+              owner.toLowerCase() ===
+              userAddress.toLowerCase()
+            ) {
+
+              const data =
+                await readToken(
+                  tokenId,
+                  readContract
+                );
+
+              if (data) {
+                results.push(data);
+              }
+            }
+
+          } catch {
+            // Burned Genesis token.
+          }
+        }
+
+        /*
+          Discover fusion IDs through Transfer events.
+        */
+
+        const fusionIds =
+          await discoverFusionTokenIds();
+
+        for (const tokenId of fusionIds) {
+
+          if (
+            results.some(
+              item =>
+                item.tokenId === tokenId
+            )
+          ) {
+            continue;
+          }
+
+          try {
+
+            const owner =
+              await readContract.ownerOf(
+                tokenId
+              );
+
+            if (
+              owner.toLowerCase() ===
+              userAddress.toLowerCase()
+            ) {
+
+              const data =
+                await readToken(
+                  tokenId,
+                  readContract
+                );
+
+              if (data) {
+                results.push(data);
+              }
+            }
+
+          } catch {
+            // Burned descendant.
+          }
+        }
+
+        results.sort(
+          (a, b) =>
+            a.tokenId - b.tokenId
+        );
+
+        ownedTokens = results;
+
+        $("ownedCount").textContent =
+          `${ownedTokens.length} owned`;
+
+        renderOwnedGallery();
+
+      } catch (error) {
+
+        console.error(error);
+
+        $("ownedCount").textContent =
+          "Could not load";
+      }
+    }
+
+    async function discoverFusionTokenIds() {
+
+      if (!provider) {
+        return [];
+      }
+
+      try {
+
+        const latest =
+          await provider.getBlockNumber();
+
+        const transferTopic =
+          ethers.id(
+            "Transfer(address,address,uint256)"
+          );
+
+        const ids =
+          new Set();
+
+        /*
+          Read logs in chunks to avoid asking the RPC
+          for an enormous block range in one request.
+        */
+
+        const chunk = 50000;
+
+        for (
+          let from = 0;
+          from <= latest;
+          from += chunk
+        ) {
+
+          const to =
+            Math.min(
+              latest,
+              from + chunk - 1
+            );
+
+          try {
+
+            const logs =
+              await provider.getLogs({
+                address: CONTRACT_ADDRESS,
+                topics: [
+                  transferTopic
+                ],
+                fromBlock: from,
+                toBlock: to
+              });
+
+            for (const log of logs) {
+
+              try {
+
+                const parsed =
+                  new ethers.Interface([
+                    "event Transfer(address indexed from,address indexed to,uint256 indexed tokenId)"
+                  ]).parseLog(log);
+
+                if (!parsed) {
+                  continue;
+                }
+
+                const tokenId =
+                  Number(
+                    parsed.args.tokenId
+                  );
+
+                if (
+                  tokenId > genesisSupply
+                ) {
+                  ids.add(tokenId);
+                }
+
+              } catch {
+                // Ignore malformed log.
+              }
+            }
+
+          } catch (chunkError) {
+
+            console.warn(
+              "Log chunk failed",
+              from,
+              to,
+              chunkError
+            );
+          }
+        }
+
+        return [...ids].sort(
+          (a, b) => a - b
+        );
+
+      } catch (error) {
+
+        console.warn(
+          "Fusion discovery failed",
+          error
+        );
+
+        return [];
+      }
+    }
+
+    function renderOwnedGallery() {
+
+      const gallery =
+        $("ownedGallery");
+
+      if (!ownedTokens.length) {
+
+        gallery.innerHTML =
+          `
+            <div class="empty">
+              No active Architects found in this wallet.
+            </div>
+          `;
+
+        return;
+      }
+
+      gallery.innerHTML =
+        ownedTokens
+          .map(token => {
+
+            const image =
+              normalizeImageURI(
+                token.metadata.image
+              );
+
+            const selected =
+              selectedFusion.has(
+                token.tokenId
+              );
+
+            return `
+              <article
+                class="nft-card owned-card ${selected ? "selected" : ""}"
+                data-owned-token="${token.tokenId}"
+                onclick="toggleFusionToken(${token.tokenId})"
+              >
+
+                ${
+                  image
+                    ? `
+                      <img
+                        class="nft-image"
+                        src="${escapeHTML(image)}"
+                        alt="ARC 360 #${token.tokenId}"
+                        loading="lazy"
+                      />
+                    `
+                    : `
+                      <div class="nft-image"></div>
+                    `
+                }
+
+                <div class="nft-info">
+
+                  <div class="nft-id">
+                    #${token.tokenId}
+                  </div>
+
+                  <div class="nft-type">
+                    ${token.type}
+                  </div>
+
+                </div>
+
+              </article>
+            `;
+          })
+          .join("");
+    }
+
+    // =============================================================
+    // FUSION
+    // =============================================================
+
+    function toggleFusionToken(tokenId) {
+
+      if (
+        selectedFusion.has(tokenId)
+      ) {
+
+        selectedFusion.delete(
+          tokenId
+        );
+
+      } else {
+
+        if (
+          selectedFusion.size >=
+          maxFuse
+        ) {
+
+          showMessage(
+            $("fusionMessage"),
+            `You can select a maximum of ${maxFuse} Architects.`,
+            "error"
+          );
+
+          return;
+        }
+
+        selectedFusion.add(
+          tokenId
+        );
+      }
+
+      renderOwnedGallery();
+      renderFusionSelection();
+    }
+
+    function renderFusionSelection() {
+
+      const box =
+        $("fusionSelected");
+
+      const ids =
+        [...selectedFusion]
+          .sort(
+            (a,b) => a-b
+          );
+
+      if (!ids.length) {
+
+        box.innerHTML =
+          `
+            <span style="color:#777;font-size:11px;">
+              No Architects selected.
+            </span>
+          `;
+
+        $("fusionBtn").disabled = true;
+
+        $("fusionBtn").textContent =
+          "SELECT AT LEAST 2 ARCHITECTS";
+
+        return;
+      }
+
+      box.innerHTML =
+        ids
+          .map(
+            id =>
+              `
+                <span class="selected-chip">
+                  #${id}
+                </span>
+              `
+          )
+          .join("");
+
+      $("fusionBtn").disabled =
+        ids.length < 2;
+
+      $("fusionBtn").textContent =
+        ids.length < 2
+          ? "SELECT AT LEAST 2 ARCHITECTS"
+          : `FUSE ${ids.length} ARCHITECTS`;
+    }
+
+    async function fuseSelected() {
+
+      if (!contract) {
+
+        await connectWallet();
+
+        if (!contract) {
+          return;
+        }
+      }
+
+      const ids =
+        [...selectedFusion]
+          .sort(
+            (a,b) => a-b
+          );
+
+      if (ids.length < 2) {
+
+        showMessage(
+          $("fusionMessage"),
+          "Fusion requires at least two Architects.",
+          "error"
+        );
+
+        return;
+      }
+
+      if (
+        ids.length > maxFuse
+      ) {
+
+        showMessage(
+          $("fusionMessage"),
+          `Maximum ${maxFuse} inputs are allowed.`,
+          "error"
+        );
+
+        return;
+      }
+
+      try {
+
+        $("fusionBtn").disabled =
+          true;
+
+        showMessage(
+          $("fusionMessage"),
+          "Confirm the fusion transaction in your wallet...",
+          "info"
+        );
+
+        const tx =
+          await contract.fuse(
+            ids
+          );
+
+        showMessage(
+          $("fusionMessage"),
+          "Fusion submitted. Waiting for confirmation...",
+          "info"
+        );
+
+        await tx.wait();
+
+        selectedFusion.clear();
+
+        showMessage(
+          $("fusionMessage"),
+          "Fusion completed. Your new Architect has been created on-chain.",
+          "success"
+        );
+
+        await loadContractInfo();
+
+        if (userAddress) {
+          await loadOwnedTokens();
+        }
+
+      } catch (error) {
+
+        console.error(error);
+
+        showMessage(
+          $("fusionMessage"),
+          getReadableError(error),
+          "error"
+        );
+
+      } finally {
+
+        renderFusionSelection();
+      }
+    }
+
+    // =============================================================
+    // NFT MODAL
+    // =============================================================
+
+    async function openToken(tokenId) {
+
+      try {
+
+        const data =
+          collectionTokens.find(
+            token =>
+              token.tokenId === tokenId
+          ) ||
+          ownedTokens.find(
+            token =>
+              token.tokenId === tokenId
+          );
+
+        let token = data;
+
+        if (!token) {
+
+          token =
+            await readToken(
+              tokenId,
+              readContract
+            );
+        }
+
+        if (!token) {
+          throw new Error(
+            "Token could not be read."
+          );
+        }
+
+        const attributes =
+          getMetadataAttributes(
+            token.metadata
+          );
+
+        const image =
+          normalizeImageURI(
+            token.metadata.image
+          );
+
+        $("modalTitle").textContent =
+          `ARC 360 #${token.tokenId}`;
+
+        $("modalType").textContent =
+          getAttribute(
+            attributes,
+            "Type"
+          ) || token.type;
+
+        $("modalRarity").textContent =
+          token.rarity;
+
+        if (image) {
+
+          $("modalImage").src =
+            image;
+
+          $("modalImage").style.display =
+            "block";
+
+        } else {
+
+          $("modalImage").removeAttribute(
+            "src"
+          );
+
+          $("modalImage").style.display =
+            "none";
+        }
+
+        renderModalTraits(
+          attributes,
+          token
+        );
+
+        renderModalParents(
+          token.parents
+        );
+
+        $("modalExplorer").href =
+          EXPLORER +
+          "/token/" +
+          CONTRACT_ADDRESS +
+          "?a=" +
+          token.tokenId;
+
+        $("modal").classList.add(
+          "show"
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+        alert(
+          "Could not load this Architect."
+        );
+      }
+    }
+
+    function renderModalTraits(
+      attributes,
+      token
+    ) {
+
+      const traits =
+        $("modalTraits");
+
+      const desired = [
+        "Face",
+        "Eyes",
+        "Jaw",
+        "Hair",
+        "Horns",
+        "Head"
+      ];
+
+      traits.innerHTML =
+        desired
+          .map(name => {
+
+            const value =
+              getAttribute(
+                attributes,
+                name
+              );
+
+            /*
+              Contract tokenURI() is the source of truth.
+              If an attribute is not present in metadata,
+              use the value returned directly by getDNA().
+            */
+
+            let finalValue =
+              value;
+
+            if (
+              finalValue === null &&
+              token.dna
+            ) {
+
+              const key =
+                name.toLowerCase();
+
+              finalValue =
+                token.dna[key];
+            }
+
+            return `
+              <div class="trait">
+
+                <div class="trait-name">
+                  ${name}
+                </div>
+
+                <div class="trait-value">
+                  ${finalValue ?? "—"}
+                </div>
+
+              </div>
+            `;
+          })
+          .join("");
+    }
+
+    function renderModalParents(
+      parents
+    ) {
+
+      const section =
+        $("modalParentsSection");
+
+      const list =
+        $("modalParents");
+
+      if (
+        !parents ||
+        !parents.length
+      ) {
+
+        section.style.display =
+          "none";
+
+        list.innerHTML =
+          "";
+
+        return;
+      }
+
+      section.style.display =
+        "block";
+
+      list.innerHTML =
+        parents
+          .map(
+            id =>
+              `
+                <span class="parent-chip">
+                  #${id}
+                </span>
+              `
+          )
+          .join("");
+    }
+
+    function closeModal() {
+
+      $("modal").classList.remove(
+        "show"
+      );
+    }
+
+    // =============================================================
+    // ORIGIN EASTER EGG
+    // =============================================================
+
+    async function discoverOrigin() {
+
+      if (!readContract) {
+        return;
+      }
+
+      try {
+
+        $("originBtn").disabled =
+          true;
+
+        showMessage(
+          $("originMessage"),
+          "Reading the hidden message from the contract...",
+          "info"
+        );
+
+        const origin =
+          await readContract.discoverOrigin();
+
+        showMessage(
+          $("originMessage"),
+          origin,
+          "success"
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+        showMessage(
+          $("originMessage"),
+          "Could not read the origin message.",
+          "error"
+        );
+
+      } finally {
+
+        $("originBtn").disabled =
+          false;
+      }
+    }
+
+    // =============================================================
+    // EVENTS
+    // =============================================================
+
+    $("walletBtn")
+      .addEventListener(
+        "click",
+        connectWallet
+      );
+
+    $("disconnectBtn")
+      .addEventListener(
+        "click",
+        disconnectWallet
+      );
+
+    $("mintBtn")
+      .addEventListener(
+        "click",
+        mint
+      );
+
+    $("fusionBtn")
+      .addEventListener(
+        "click",
+        fuseSelected
+      );
+
+    $("minusBtn")
+      .addEventListener(
+        "click",
+        () => {
+
+          const input =
+            $("quantity");
+
+          input.value =
+            Math.max(
+              1,
+              Number(input.value || 1) - 1
+            );
+
+          updateMintTotal();
+        }
+      );
+
+    $("plusBtn")
+      .addEventListener(
+        "click",
+        () => {
+
+          const input =
+            $("quantity");
+
+          input.value =
+            Math.min(
+              maxMint,
+              Number(input.value || 1) + 1
+            );
+
+          updateMintTotal();
+        }
+      );
+
+    $("quantity")
+      .addEventListener(
+        "input",
+        updateMintTotal
+      );
+
+    $("searchInput")
+      .addEventListener(
+        "input",
+        renderCollection
+      );
+
+    $("refreshBtn")
+      .addEventListener(
+        "click",
+        async () => {
+
+          $("refreshBtn").disabled =
+            true;
+
+          try {
+
+            await loadContractInfo();
+
+            if (userAddress) {
+              await loadOwnedTokens();
+            }
+
+          } finally {
+
+            $("refreshBtn").disabled =
+              false;
+          }
+        }
+      );
+
+    $("originBtn")
+      .addEventListener(
+        "click",
+        discoverOrigin
+      );
+
+    $("modalClose")
+      .addEventListener(
+        "click",
+        closeModal
+      );
+
+    $("modal")
+      .addEventListener(
+        "click",
+        event => {
+
+          if (
+            event.target ===
+            $("modal")
+          ) {
+            closeModal();
+          }
+        }
+      );
+
+    // =============================================================
+    // WALLET EVENTS
+    // =============================================================
+
+    if (window.ethereum) {
+
+      window.ethereum.on(
+        "accountsChanged",
+        async accounts => {
+
+          if (!accounts.length) {
+
+            disconnectWallet();
+
+          } else {
+
+            await connectWallet();
+          }
+        }
+      );
+
+      window.ethereum.on(
+        "chainChanged",
+        () => {
+          window.location.reload();
+        }
+      );
+    }
+
+    // =============================================================
+    // INITIAL LOAD
+    // =============================================================
+
+    initReadOnly();
+
+  </script>
+
+</body>
+</html>
