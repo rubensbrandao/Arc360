@@ -1,1032 +1,904 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>ARC 360 — NFT Preview</title>
+<title>ARC 360 — On-Chain Preview</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
+<style>
+* {
+  box-sizing: border-box;
+}
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+body {
+  margin: 0;
+  background: #08090b;
+  color: #d8dde1;
+  font-family: Arial, Helvetica, sans-serif;
+}
 
-    body {
-      background:
-        radial-gradient(circle at top, #172033 0%, #080b12 45%, #030407 100%);
-      color: #f2f4f8;
-      font-family: Arial, Helvetica, sans-serif;
-      min-height: 100vh;
-    }
+header {
+  text-align: center;
+  padding: 42px 20px 25px;
+}
 
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(16px);
-      background: rgba(5, 7, 12, 0.88);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      padding: 20px 30px;
-    }
+h1 {
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: 9px;
+  font-weight: 500;
+}
 
-    .header-inner {
-      max-width: 1500px;
-      margin: auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 20px;
-    }
+.subtitle {
+  margin-top: 10px;
+  color: #555b61;
+  font-size: 10px;
+  letter-spacing: 3px;
+}
 
-    .logo {
-      font-size: 24px;
-      font-weight: 900;
-      letter-spacing: 4px;
-    }
+.status {
+  margin-top: 18px;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #555b61;
+}
 
-    .network {
-      font-size: 12px;
-      color: #9aa4b5;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
+.controls {
+  max-width: 1000px;
+  margin: 10px auto 35px;
+  padding: 0 20px;
+}
 
-    main {
-      max-width: 1500px;
-      margin: auto;
-      padding: 50px 25px 80px;
-    }
+.control-box {
+  border: 1px solid #22272c;
+  background: #0d1013;
+  padding: 18px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
 
-    .hero {
-      text-align: center;
-      margin-bottom: 45px;
-    }
+input {
+  width: 140px;
+  background: #08090b;
+  color: #d8dde1;
+  border: 1px solid #30363c;
+  padding: 11px 12px;
+  font-size: 12px;
+  outline: none;
+}
 
-    .hero h1 {
-      font-size: clamp(42px, 7vw, 90px);
-      letter-spacing: 8px;
-      font-weight: 900;
-      margin-bottom: 15px;
-    }
+input:focus {
+  border-color: #666;
+}
 
-    .hero p {
-      color: #9da7b7;
-      font-size: 15px;
-      letter-spacing: 2px;
-    }
+button {
+  background: #d8dde1;
+  color: #08090b;
+  border: 0;
+  padding: 12px 18px;
+  cursor: pointer;
+  font-size: 10px;
+  letter-spacing: 2px;
+  font-weight: bold;
+}
 
-    .contract-box {
-      max-width: 900px;
-      margin: 0 auto 35px;
-      padding: 20px;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 14px;
-      background: rgba(255,255,255,0.025);
-      text-align: center;
-      word-break: break-all;
-    }
+button:hover {
+  background: #ffffff;
+}
 
-    .contract-label {
-      font-size: 11px;
-      color: #7f8999;
-      letter-spacing: 2px;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-    }
+button.secondary {
+  background: transparent;
+  color: #aaa;
+  border: 1px solid #30363c;
+}
 
-    .contract-address {
-      font-family: monospace;
-      font-size: 13px;
-      color: #dce2ec;
-    }
+button.secondary:hover {
+  color: #fff;
+  border-color: #666;
+}
 
-    .status {
-      max-width: 900px;
-      margin: 0 auto 40px;
-      padding: 18px 20px;
-      border-radius: 12px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      text-align: center;
-    }
+.grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
 
-    .status-title {
-      font-size: 16px;
-      font-weight: bold;
-      margin-bottom: 7px;
-    }
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 20px;
+}
 
-    .status-text {
-      color: #9ba5b5;
-      font-size: 13px;
-    }
+.card {
+  background: #0d1013;
+  border: 1px solid #22272c;
+  padding: 18px;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
 
-    .progress-container {
-      max-width: 900px;
-      margin: 20px auto 45px;
-    }
+.card:hover {
+  border-color: #41474d;
+}
 
-    .progress-info {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 8px;
-      font-size: 12px;
-      color: #9ba5b5;
-    }
+.art {
+  width: 180px;
+  height: 180px;
 
-    .progress-bar {
-      width: 100%;
-      height: 8px;
-      background: rgba(255,255,255,0.08);
-      border-radius: 100px;
-      overflow: hidden;
-    }
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    .progress-fill {
-      width: 0%;
-      height: 100%;
-      background: #ffffff;
-      transition: width 0.2s ease;
-    }
+  background: #08090b;
+}
 
-    .summary {
-      display: flex;
-      justify-content: center;
-      gap: 35px;
-      flex-wrap: wrap;
-      margin-bottom: 35px;
-    }
+.art img {
+  width: 180px;
+  height: 180px;
 
-    .summary-item {
-      text-align: center;
-      min-width: 110px;
-    }
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
 
-    .summary-number {
-      font-size: 28px;
-      font-weight: 900;
-    }
+.token-name {
+  margin-top: 14px;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: #777d83;
+}
 
-    .summary-label {
-      margin-top: 5px;
-      color: #7f8999;
-      font-size: 10px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-    }
+.token-info {
+  margin-top: 8px;
+  font-size: 9px;
+  color: #454b51;
+  text-align: center;
+  line-height: 1.6;
+}
 
-    .gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-      gap: 18px;
-    }
+.loading {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 50px;
+  color: #555b61;
+  font-size: 10px;
+  letter-spacing: 3px;
+}
 
-    .card {
-      position: relative;
-      background: rgba(255,255,255,0.035);
-      border: 1px solid rgba(255,255,255,0.09);
-      border-radius: 14px;
-      overflow: hidden;
-      cursor: pointer;
-      transition:
-        transform 0.2s ease,
-        border-color 0.2s ease,
-        background 0.2s ease;
-    }
+.error {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px;
+  border: 1px solid #3a2525;
+  color: #9a7777;
+  font-size: 11px;
+  line-height: 1.8;
+}
 
-    .card:hover {
-      transform: translateY(-5px);
-      border-color: rgba(255,255,255,0.3);
-      background: rgba(255,255,255,0.055);
-    }
+footer {
+  border-top: 1px solid #161a1e;
+  text-align: center;
+  padding: 25px;
+  color: #3f4449;
+  font-size: 9px;
+  letter-spacing: 2px;
+}
 
-    .card-image {
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      background: #07090e;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+/* Mobile */
 
-    .card-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      display: block;
-    }
+@media (max-width: 600px) {
+  h1 {
+    font-size: 22px;
+    letter-spacing: 6px;
+  }
 
-    .card-info {
-      padding: 13px 14px 15px;
-    }
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 0 10px 40px;
+  }
 
-    .card-number {
-      font-size: 15px;
-      font-weight: 900;
-      letter-spacing: 1px;
-    }
+  .card {
+    padding: 10px;
+    min-height: 190px;
+  }
 
-    .card-name {
-      color: #8993a3;
-      font-size: 11px;
-      margin-top: 5px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+  .art,
+  .art img {
+    width: 130px;
+    height: 130px;
+  }
 
-    .card-status {
-      display: inline-block;
-      margin-top: 9px;
-      padding: 4px 7px;
-      border-radius: 5px;
-      background: rgba(255,255,255,0.07);
-      color: #aab3c1;
-      font-size: 9px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-
-    .error-card {
-      padding: 25px;
-      border: 1px solid rgba(255,70,70,0.25);
-      background: rgba(255,50,50,0.04);
-      border-radius: 12px;
-      color: #ff9b9b;
-      font-size: 12px;
-    }
-
-    /* MODAL */
-
-    .modal {
-      position: fixed;
-      inset: 0;
-      z-index: 500;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 25px;
-      background: rgba(0,0,0,0.82);
-      backdrop-filter: blur(12px);
-    }
-
-    .modal.active {
-      display: flex;
-    }
-
-    .modal-content {
-      width: min(900px, 100%);
-      max-height: 92vh;
-      overflow-y: auto;
-      background: #090c13;
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 18px;
-      padding: 25px;
-      position: relative;
-    }
-
-    .close {
-      position: absolute;
-      right: 20px;
-      top: 15px;
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.05);
-      color: white;
-      font-size: 20px;
-      cursor: pointer;
-    }
-
-    .modal-image {
-      width: 100%;
-      max-width: 650px;
-      margin: 0 auto 25px;
-      display: block;
-      background: #05070b;
-      border-radius: 12px;
-    }
-
-    .modal-title {
-      font-size: 28px;
-      font-weight: 900;
-      margin-bottom: 8px;
-    }
-
-    .modal-description {
-      color: #8f99a9;
-      font-size: 13px;
-      line-height: 1.6;
-      margin-bottom: 25px;
-    }
-
-    .traits {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 10px;
-    }
-
-    .trait {
-      padding: 12px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 9px;
-    }
-
-    .trait-type {
-      color: #6f7888;
-      font-size: 9px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      margin-bottom: 5px;
-    }
-
-    .trait-value {
-      font-size: 12px;
-      font-weight: bold;
-    }
-
-    footer {
-      text-align: center;
-      color: #505867;
-      font-size: 11px;
-      letter-spacing: 1px;
-      padding: 40px 20px;
-    }
-
-    @media (max-width: 600px) {
-      header {
-        padding: 16px;
-      }
-
-      main {
-        padding: 35px 12px 60px;
-      }
-
-      .gallery {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-      }
-
-      .card-info {
-        padding: 10px;
-      }
-
-      .hero h1 {
-        letter-spacing: 4px;
-      }
-    }
-  </style>
+  .token-name {
+    font-size: 8px;
+    letter-spacing: 2px;
+  }
+}
+</style>
 </head>
 
 <body>
 
 <header>
-  <div class="header-inner">
-    <div class="logo">ARC 360</div>
-    <div class="network">ARC TESTNET · NFT PREVIEW</div>
+
+  <h1>ARC 360</h1>
+
+  <div class="subtitle">
+    ON-CHAIN // CYBERPUNK // 40×40
   </div>
+
+  <div class="status" id="status">
+    CONNECTING TO ARC TESTNET...
+  </div>
+
 </header>
 
-<main>
 
-  <section class="hero">
-    <h1>ARC 360</h1>
-    <p>ON-CHAIN ARCHITECTS · GENESIS PREVIEW</p>
-  </section>
+<section class="controls">
 
-  <div class="contract-box">
-    <div class="contract-label">Preview Contract</div>
-    <div class="contract-address" id="contractAddress">
-      0x48fad98b637d35c449819782b542af0306e4a56d
-    </div>
-  </div>
+  <div class="control-box">
 
-  <div class="status">
-    <div class="status-title" id="statusTitle">
-      Connecting to Arc Testnet...
-    </div>
+    <input
+      id="tokenInput"
+      type="number"
+      min="1"
+      max="3600"
+      value="1"
+      placeholder="Token ID"
+    >
 
-    <div class="status-text" id="statusText">
-      Preparing on-chain preview.
-    </div>
-  </div>
+    <button onclick="loadSingle()">
+      LOAD TOKEN
+    </button>
 
-  <div class="progress-container">
+    <button class="secondary" onclick="loadPreview()">
+      PREVIEW 24
+    </button>
 
-    <div class="progress-info">
-      <span id="progressText">0 / 3600</span>
-      <span id="progressPercent">0%</span>
-    </div>
-
-    <div class="progress-bar">
-      <div class="progress-fill" id="progressFill"></div>
-    </div>
+    <button class="secondary" onclick="loadRange()">
+      PREVIEW 100
+    </button>
 
   </div>
 
-  <div class="summary">
+</section>
 
-    <div class="summary-item">
-      <div class="summary-number" id="totalCount">3600</div>
-      <div class="summary-label">Total</div>
-    </div>
 
-    <div class="summary-item">
-      <div class="summary-number" id="loadedCount">0</div>
-      <div class="summary-label">Loaded</div>
-    </div>
+<main id="gallery" class="grid">
 
-    <div class="summary-item">
-      <div class="summary-number" id="errorCount">0</div>
-      <div class="summary-label">Errors</div>
-    </div>
-
+  <div class="loading">
+    LOADING ON-CHAIN DATA...
   </div>
-
-  <div class="gallery" id="gallery"></div>
 
 </main>
 
+
 <footer>
-  ARC 360 · ON-CHAIN NFT PREVIEW · ARC TESTNET
+  ARC 360 — FULLY ON-CHAIN
 </footer>
-
-
-<!-- MODAL -->
-
-<div class="modal" id="modal">
-
-  <div class="modal-content">
-
-    <button class="close" onclick="closeModal()">×</button>
-
-    <img
-      id="modalImage"
-      class="modal-image"
-      src=""
-      alt=""
-    />
-
-    <div class="modal-title" id="modalTitle"></div>
-
-    <div class="modal-description" id="modalDescription"></div>
-
-    <div class="traits" id="modalTraits"></div>
-
-  </div>
-
-</div>
 
 
 <script>
 
-  /*
-   * ============================================================
-   * ARC 360 — SIMPLE ON-CHAIN PREVIEW
-   * ============================================================
-   */
+/* =========================================================
+   ARC TESTNET CONFIGURATION
+========================================================= */
 
-  const RPC_URL = "https://rpc.testnet.arc.network";
+const RPC_URL = "https://rpc.testnet.arc.network";
 
-  const CONTRACT_ADDRESS =
-    "0x48fad98b637d35c449819782b542af0306e4a56d";
+/*
+ * IMPORTANT:
+ * Replace this with the address of the NEW ARC 360 contract
+ * after deployment.
+ */
+const CONTRACT_ADDRESS = "0x1aa4e3d6765ad2a0244b69681a34e48779dc8d65";
 
-  const TOTAL_NFTS = 3600;
-
-  const ABI = [
-
-    "function previewTokenURI(uint256 tokenId) view returns (string)",
-
-    "function GENESIS_SUPPLY() view returns (uint256)"
-
-  ];
+const GENESIS_SUPPLY = 3600;
 
 
-  let provider;
-  let contract;
+/* =========================================================
+   CONTRACT ABI
+========================================================= */
 
-  let loaded = 0;
-  let errors = 0;
-
-
-  /*
-   * ------------------------------------------------------------
-   * INITIALIZE
-   * ------------------------------------------------------------
-   */
-
-  async function init() {
-
-    try {
-
-      setStatus(
-        "Connecting to Arc Testnet...",
-        "Connecting directly to the Arc Testnet RPC."
-      );
-
-      provider = new ethers.JsonRpcProvider(RPC_URL);
-
-      contract = new ethers.Contract(
-        CONTRACT_ADDRESS,
-        ABI,
-        provider
-      );
-
-
-      /*
-       * Check contract
-       */
-
-      try {
-
-        const supply = await contract.GENESIS_SUPPLY();
-
-        console.log(
-          "GENESIS_SUPPLY:",
-          supply.toString()
-        );
-
-      } catch (e) {
-
-        console.log(
-          "GENESIS_SUPPLY unavailable. Using 3600."
-        );
-
+const ABI = [
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
       }
+    ],
+    "name": "previewTokenURI",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  }
+];
 
 
-      setStatus(
-        "Contract connected",
-        "Loading all 3,600 Architect previews directly from previewTokenURI()."
+/* =========================================================
+   SIMPLE JSON-RPC CLIENT
+   No wallet required.
+========================================================= */
+
+async function rpc(method, params = []) {
+
+  const response = await fetch(RPC_URL, {
+    method: "POST",
+
+    headers: {
+      "Content-Type": "application/json"
+    },
+
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      id: Date.now(),
+      method,
+      params
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error("RPC HTTP error: " + response.status);
+  }
+
+  const data = await response.json();
+
+  if (data.error) {
+    throw new Error(data.error.message || "RPC error");
+  }
+
+  return data.result;
+}
+
+
+/* =========================================================
+   ABI ENCODING
+========================================================= */
+
+/*
+ * Function selector for:
+ *
+ * previewTokenURI(uint256)
+ *
+ * The selector is calculated automatically below.
+ *
+ * This avoids requiring ethers.js or another external library.
+ */
+
+async function sha256Hex(text) {
+
+  const encoder = new TextEncoder();
+
+  const data = encoder.encode(text);
+
+  const hash = await crypto.subtle.digest(
+    "SHA-256",
+    data
+  );
+
+  return Array.from(
+    new Uint8Array(hash)
+  )
+  .map(
+    b => b.toString(16).padStart(2, "0")
+  )
+  .join("");
+}
+
+
+/*
+ * Ethereum uses Keccak-256, not SHA-256.
+ *
+ * For maximum compatibility we load ethers.js dynamically
+ * only for ABI encoding/decoding.
+ */
+
+let ethersLoaded = false;
+
+
+/* =========================================================
+   LOAD ETHERS
+========================================================= */
+
+async function loadEthers() {
+
+  if (ethersLoaded && window.ethers) {
+    return;
+  }
+
+  await new Promise((resolve, reject) => {
+
+    const script = document.createElement("script");
+
+    script.src =
+      "https://cdn.jsdelivr.net/npm/ethers@6.15.0/dist/ethers.umd.min.js";
+
+    script.onload = resolve;
+
+    script.onerror = () =>
+      reject(
+        new Error("Could not load ethers.js")
       );
 
+    document.head.appendChild(script);
 
-      await loadAllNFTs();
+  });
+
+  ethersLoaded = true;
+}
 
 
-      setStatus(
-        "Preview complete",
-        `${loaded} NFTs loaded successfully${errors > 0 ? ` · ${errors} errors` : ""}.`
-      );
+/* =========================================================
+   CONTRACT CALL
+========================================================= */
 
-    } catch (error) {
+async function previewToken(tokenId) {
 
-      console.error(error);
+  await loadEthers();
 
-      setStatus(
-        "Connection error",
-        error.message || "Could not connect to the contract."
-      );
+  if (
+    !CONTRACT_ADDRESS ||
+    CONTRACT_ADDRESS ===
+      "0x1aa4e3d6765ad2a0244b69681a34e48779dc8d65"
+  ) {
 
-    }
-
+    throw new Error(
+      "Set CONTRACT_ADDRESS with the new ARC 360 contract address."
+    );
   }
 
 
-  /*
-   * ------------------------------------------------------------
-   * LOAD ALL NFTS
-   * ------------------------------------------------------------
-   */
+  const iface =
+    new ethers.Interface(ABI);
 
-  async function loadAllNFTs() {
 
-    const gallery =
-      document.getElementById("gallery");
+  const calldata =
+    iface.encodeFunctionData(
+      "previewTokenURI",
+      [tokenId]
+    );
+
+
+  const result =
+    await rpc(
+      "eth_call",
+      [
+        {
+          to: CONTRACT_ADDRESS,
+          data: calldata
+        },
+        "latest"
+      ]
+    );
+
+
+  const decoded =
+    iface.decodeFunctionResult(
+      "previewTokenURI",
+      result
+    );
+
+
+  return decoded[0];
+}
+
+
+/* =========================================================
+   TOKEN URI PARSER
+========================================================= */
+
+function parseTokenURI(uri) {
+
+  if (
+    !uri ||
+    !uri.startsWith(
+      "data:application/json;base64,"
+    )
+  ) {
+
+    throw new Error(
+      "Invalid tokenURI returned by contract."
+    );
+  }
+
+
+  const encoded =
+    uri.substring(
+      "data:application/json;base64,".length
+    );
+
+
+  const jsonText =
+    decodeURIComponent(
+      Array.prototype.map.call(
+        atob(encoded),
+        c =>
+          "%" +
+          ("00" + c.charCodeAt(0).toString(16))
+            .slice(-2)
+      ).join("")
+    );
+
+
+  return JSON.parse(jsonText);
+}
+
+
+/* =========================================================
+   CREATE NFT CARD
+========================================================= */
+
+function createCard(tokenId, metadata) {
+
+  const card =
+    document.createElement("div");
+
+  card.className = "card";
+
+
+  const art =
+    document.createElement("div");
+
+  art.className = "art";
+
+
+  const img =
+    document.createElement("img");
+
+  img.src = metadata.image;
+
+  img.alt =
+    "ARC 360 #" +
+    String(tokenId).padStart(4, "0");
+
+
+  art.appendChild(img);
+
+
+  const name =
+    document.createElement("div");
+
+  name.className =
+    "token-name";
+
+  name.textContent =
+    "ARC 360 #" +
+    String(tokenId).padStart(4, "0");
+
+
+  const info =
+    document.createElement("div");
+
+  info.className =
+    "token-info";
+
+
+  let attributes = "";
+
+
+  if (
+    Array.isArray(metadata.attributes)
+  ) {
+
+    attributes =
+      metadata.attributes
+        .map(attribute => {
+
+          return (
+            attribute.trait_type +
+            ": " +
+            attribute.value
+          );
+
+        })
+        .join("<br>");
+  }
+
+
+  info.innerHTML = attributes;
+
+
+  card.appendChild(art);
+  card.appendChild(name);
+  card.appendChild(info);
+
+
+  return card;
+}
+
+
+/* =========================================================
+   LOAD ONE TOKEN
+========================================================= */
+
+async function loadSingle() {
+
+  const input =
+    document.getElementById(
+      "tokenInput"
+    );
+
+
+  const tokenId =
+    Number(input.value);
+
+
+  if (
+    !Number.isInteger(tokenId) ||
+    tokenId < 1 ||
+    tokenId > GENESIS_SUPPLY
+  ) {
+
+    alert(
+      "Token ID must be between 1 and 3600."
+    );
+
+    return;
+  }
+
+
+  const gallery =
+    document.getElementById(
+      "gallery"
+    );
+
+
+  const status =
+    document.getElementById(
+      "status"
+    );
+
+
+  gallery.innerHTML =
+    '<div class="loading">READING CONTRACT...</div>';
+
+
+  try {
+
+    const uri =
+      await previewToken(tokenId);
+
+
+    const metadata =
+      parseTokenURI(uri);
+
 
     gallery.innerHTML = "";
 
-    loaded = 0;
-    errors = 0;
 
-    updateProgress();
+    gallery.appendChild(
+      createCard(
+        tokenId,
+        metadata
+      )
+    );
+
+
+    status.textContent =
+      "READING ARC TESTNET • TOKEN #" +
+      tokenId;
+
+
+  } catch (error) {
+
+    showError(error);
+
+  }
+
+}
+
+
+/* =========================================================
+   LOAD FIRST 24
+========================================================= */
+
+async function loadPreview() {
+
+  await loadRangeInternal(
+    1,
+    24
+  );
+
+}
+
+
+/* =========================================================
+   LOAD FIRST 100
+========================================================= */
+
+async function loadRange() {
+
+  await loadRangeInternal(
+    1,
+    100
+  );
+
+}
+
+
+/* =========================================================
+   LOAD RANGE
+========================================================= */
+
+async function loadRangeInternal(
+  start,
+  end
+) {
+
+  const gallery =
+    document.getElementById(
+      "gallery"
+    );
+
+
+  const status =
+    document.getElementById(
+      "status"
+    );
+
+
+  gallery.innerHTML =
+    '<div class="loading">READING ON-CHAIN SVGs...</div>';
+
+
+  try {
+
+    const total =
+      end - start + 1;
+
+
+    const results =
+      new Array(total);
 
 
     /*
-     * We load in batches so the RPC isn't hit
-     * with 3,600 calls simultaneously.
+     * Process in small batches so the browser
+     * does not hammer the public RPC.
      */
 
-    const BATCH_SIZE = 12;
+    const batchSize = 5;
 
 
     for (
-      let start = 1;
-      start <= TOTAL_NFTS;
-      start += BATCH_SIZE
+      let i = 0;
+      i < total;
+      i += batchSize
     ) {
 
-      const end = Math.min(
-        start + BATCH_SIZE - 1,
-        TOTAL_NFTS
-      );
-
-
-      const promises = [];
+      const batch = [];
 
 
       for (
-        let tokenId = start;
-        tokenId <= end;
-        tokenId++
+        let j = i;
+        j < Math.min(
+          i + batchSize,
+          total
+        );
+        j++
       ) {
 
-        promises.push(
-          loadNFT(tokenId)
+        const tokenId =
+          start + j;
+
+
+        batch.push(
+          previewToken(tokenId)
+            .then(uri => ({
+              tokenId,
+              uri
+            }))
+            .catch(error => ({
+              tokenId,
+              error
+            }))
         );
 
       }
 
 
-      await Promise.all(promises);
+      const batchResults =
+        await Promise.all(batch);
 
 
-      updateProgress();
+      batchResults.forEach(
+        (result, index) => {
 
-    }
-
-  }
-
-
-  /*
-   * ------------------------------------------------------------
-   * LOAD SINGLE NFT
-   * ------------------------------------------------------------
-   */
-
-  async function loadNFT(tokenId) {
-
-    try {
-
-      /*
-       * THIS IS THE IMPORTANT PART:
-       *
-       * We do NOT use tokenURI().
-       *
-       * We use previewTokenURI(), which allows us
-       * to visualize NFTs that have not been minted yet.
-       */
-
-      const uri =
-        await contract.previewTokenURI(tokenId);
-
-
-      const metadata =
-        decodeTokenURI(uri);
-
-
-      addNFT(
-        tokenId,
-        metadata
-      );
-
-
-      loaded++;
-
-    } catch (error) {
-
-      console.error(
-        `NFT #${tokenId} failed:`,
-        error
-      );
-
-      errors++;
-
-      addError(
-        tokenId,
-        error
-      );
-
-    }
-
-  }
-
-
-  /*
-   * ------------------------------------------------------------
-   * DECODE TOKEN URI
-   * ------------------------------------------------------------
-   */
-
-  function decodeTokenURI(uri) {
-
-    if (!uri) {
-
-      throw new Error(
-        "Empty token URI"
-      );
-
-    }
-
-
-    /*
-     * JSON BASE64
-     */
-
-    if (
-      uri.startsWith(
-        "data:application/json;base64,"
-      )
-    ) {
-
-      const base64 =
-        uri.split(",")[1];
-
-      const json =
-        decodeURIComponent(
-          escape(
-            atob(base64)
-          )
-        );
-
-      return JSON.parse(json);
-
-    }
-
-
-    /*
-     * Normal JSON data URI
-     */
-
-    if (
-      uri.startsWith(
-        "data:application/json,"
-      )
-    ) {
-
-      const json =
-        decodeURIComponent(
-          uri.split(",")[1]
-        );
-
-      return JSON.parse(json);
-
-    }
-
-
-    /*
-     * Sometimes metadata may be returned
-     * directly as JSON.
-     */
-
-    if (
-      uri.trim().startsWith("{")
-    ) {
-
-      return JSON.parse(uri);
-
-    }
-
-
-    throw new Error(
-      "Unsupported metadata format"
-    );
-
-  }
-
-
-  /*
-   * ------------------------------------------------------------
-   * ADD NFT CARD
-   * ------------------------------------------------------------
-   */
-
-  function addNFT(tokenId, metadata) {
-
-    const gallery =
-      document.getElementById("gallery");
-
-
-    const card =
-      document.createElement("div");
-
-    card.className = "card";
-
-
-    const image =
-      metadata.image || "";
-
-
-    const name =
-      metadata.name ||
-      `ARC 360 #${formatId(tokenId)}`;
-
-
-    card.innerHTML = `
-
-      <div class="card-image">
-
-        <img
-          src="${escapeHtml(image)}"
-          alt="${escapeHtml(name)}"
-          loading="lazy"
-        />
-
-      </div>
-
-      <div class="card-info">
-
-        <div class="card-number">
-          #${formatId(tokenId)}
-        </div>
-
-        <div class="card-name">
-          ${escapeHtml(name)}
-        </div>
-
-        <div class="card-status">
-          ON-CHAIN PREVIEW
-        </div>
-
-      </div>
-
-    `;
-
-
-    card.addEventListener(
-      "click",
-      () => openModal(
-        tokenId,
-        metadata
-      )
-    );
-
-
-    gallery.appendChild(card);
-
-  }
-
-
-  /*
-   * ------------------------------------------------------------
-   * ERROR CARD
-   * ------------------------------------------------------------
-   */
-
-  function addError(tokenId, error) {
-
-    const gallery =
-      document.getElementById("gallery");
-
-
-    const card =
-      document.createElement("div");
-
-    card.className =
-      "error-card";
-
-
-    card.innerHTML = `
-
-      <strong>
-        #${formatId(tokenId)}
-      </strong>
-
-      <br><br>
-
-      Failed to load preview.
-
-    `;
-
-
-    gallery.appendChild(card);
-
-  }
-
-
-  /*
-   * ------------------------------------------------------------
-   * MODAL
-   * ------------------------------------------------------------
-   */
-
-  function openModal(
-    tokenId,
-    metadata
-  ) {
-
-    const modal =
-      document.getElementById("modal");
-
-
-    const image =
-      document.getElementById("modalImage");
-
-
-    const title =
-      document.getElementById("modalTitle");
-
-
-    const description =
-      document.getElementById("modalDescription");
-
-
-    const traits =
-      document.getElementById("modalTraits");
-
-
-    image.src =
-      metadata.image || "";
-
-
-    image.alt =
-      metadata.name ||
-      `ARC 360 #${formatId(tokenId)}`;
-
-
-    title.textContent =
-      metadata.name ||
-      `ARC 360 #${formatId(tokenId)}`;
-
-
-    description.textContent =
-      metadata.description ||
-      `ARC 360 Architect #${formatId(tokenId)} — on-chain preview.`;
-
-
-    traits.innerHTML = "";
-
-
-    if (
-      Array.isArray(
-        metadata.attributes
-      )
-    ) {
-
-      metadata.attributes.forEach(
-        attribute => {
-
-          const trait =
-            document.createElement("div");
-
-          trait.className =
-            "trait";
-
-
-          const type =
-            attribute.trait_type ||
-            "Trait";
-
-
-          const value =
-            attribute.value ??
-            "";
-
-
-          trait.innerHTML = `
-
-            <div class="trait-type">
-              ${escapeHtml(type)}
-            </div>
-
-            <div class="trait-value">
-              ${escapeHtml(String(value))}
-            </div>
-
-          `;
-
-
-          traits.appendChild(trait);
+          results[
+            i + index
+          ] = result;
 
         }
       );
 
+
+      status.textContent =
+        "READING ON-CHAIN SVGs • " +
+        Math.min(
+          i + batchSize,
+          total
+        ) +
+        " / " +
+        total;
+
     }
 
 
-    modal.classList.add(
-      "active"
-    );
-
-  }
+    gallery.innerHTML = "";
 
 
-  function closeModal() {
+    results.forEach(
+      result => {
 
-    document
-      .getElementById("modal")
-      .classList.remove("active");
+        if (result.error) {
 
-  }
+          const errorCard =
+            document.createElement(
+              "div"
+            );
+
+          errorCard.className =
+            "error";
+
+          errorCard.textContent =
+            "Token #" +
+            result.tokenId +
+            " — " +
+            result.error.message;
+
+          gallery.appendChild(
+            errorCard
+          );
+
+          return;
+        }
 
 
-  document
-    .getElementById("modal")
-    .addEventListener(
-      "click",
-      event => {
+        try {
 
-        if (
-          event.target.id === "modal"
-        ) {
+          const metadata =
+            parseTokenURI(
+              result.uri
+            );
 
-          closeModal();
+
+          gallery.appendChild(
+            createCard(
+              result.tokenId,
+              metadata
+            )
+          );
+
+        } catch (error) {
+
+          const errorCard =
+            document.createElement(
+              "div"
+            );
+
+          errorCard.className =
+            "error";
+
+          errorCard.textContent =
+            "Token #" +
+            result.tokenId +
+            " — invalid metadata";
+
+          gallery.appendChild(
+            errorCard
+          );
 
         }
 
@@ -1034,131 +906,156 @@
     );
 
 
-  /*
-   * ------------------------------------------------------------
-   * STATUS
-   * ------------------------------------------------------------
-   */
-
-  function setStatus(
-    title,
-    text
-  ) {
-
-    document
-      .getElementById("statusTitle")
-      .textContent = title;
+    status.textContent =
+      "ARC TESTNET • " +
+      total +
+      " ON-CHAIN PREVIEWS LOADED";
 
 
-    document
-      .getElementById("statusText")
-      .textContent = text;
+  } catch (error) {
+
+    showError(error);
 
   }
 
+}
 
-  /*
-   * ------------------------------------------------------------
-   * PROGRESS
-   * ------------------------------------------------------------
-   */
 
-  function updateProgress() {
+/* =========================================================
+   ERROR
+========================================================= */
 
-    const percent =
-      Math.round(
-        (loaded + errors) /
-        TOTAL_NFTS *
-        100
+function showError(error) {
+
+  const gallery =
+    document.getElementById(
+      "gallery"
+    );
+
+
+  const status =
+    document.getElementById(
+      "status"
+    );
+
+
+  gallery.innerHTML = "";
+
+
+  const box =
+    document.createElement(
+      "div"
+    );
+
+
+  box.className =
+    "error";
+
+
+  box.innerHTML =
+    "<strong>PREVIEW ERROR</strong><br><br>" +
+    escapeHtml(
+      error.message || String(error)
+    );
+
+
+  gallery.appendChild(box);
+
+
+  status.textContent =
+    "CONNECTION ERROR";
+
+}
+
+
+/* =========================================================
+   HTML ESCAPE
+========================================================= */
+
+function escapeHtml(text) {
+
+  return String(text)
+
+    .replaceAll("&", "&amp;")
+
+    .replaceAll("<", "&lt;")
+
+    .replaceAll(">", "&gt;")
+
+    .replaceAll('"', "&quot;")
+
+    .replaceAll("'", "&#039;");
+}
+
+
+/* =========================================================
+   INITIALIZATION
+========================================================= */
+
+async function initialize() {
+
+  const status =
+    document.getElementById(
+      "status"
+    );
+
+
+  try {
+
+    const block =
+      await rpc(
+        "eth_blockNumber"
       );
 
 
-    document
-      .getElementById("progressText")
-      .textContent =
-        `${loaded + errors} / ${TOTAL_NFTS}`;
-
-
-    document
-      .getElementById("progressPercent")
-      .textContent =
-        `${percent}%`;
-
-
-    document
-      .getElementById("progressFill")
-      .style.width =
-        `${percent}%`;
-
-
-    document
-      .getElementById("loadedCount")
-      .textContent =
-        loaded;
-
-
-    document
-      .getElementById("errorCount")
-      .textContent =
-        errors;
-
-  }
-
-
-  /*
-   * ------------------------------------------------------------
-   * FORMAT ID
-   * ------------------------------------------------------------
-   */
-
-  function formatId(id) {
-
-    return String(id)
-      .padStart(4, "0");
-
-  }
-
-
-  /*
-   * ------------------------------------------------------------
-   * HTML ESCAPE
-   * ------------------------------------------------------------
-   */
-
-  function escapeHtml(value) {
-
-    return String(value)
-      .replace(
-        /&/g,
-        "&amp;"
-      )
-      .replace(
-        /</g,
-        "&lt;"
-      )
-      .replace(
-        />/g,
-        "&gt;"
-      )
-      .replace(
-        /"/g,
-        "&quot;"
-      )
-      .replace(
-        /'/g,
-        "&#039;"
+    status.textContent =
+      "ARC TESTNET ONLINE • BLOCK " +
+      parseInt(
+        block,
+        16
       );
 
+
+    /*
+     * Automatically load a small preview.
+     */
+
+    if (
+      CONTRACT_ADDRESS &&
+      CONTRACT_ADDRESS !==
+        "0x1aa4e3d6765ad2a0244b69681a34e48779dc8d65"
+    ) {
+
+      await loadPreview();
+
+    } else {
+
+      document.getElementById(
+        "gallery"
+      ).innerHTML = `
+        <div class="error">
+          CONTRACT ADDRESS NOT CONFIGURED<br><br>
+          Set the new ARC 360 contract address
+          in <b>CONTRACT_ADDRESS</b> inside index.html.
+        </div>
+      `;
+
+    }
+
+
+  } catch (error) {
+
+    showError(error);
+
   }
 
+}
 
-  /*
-   * START
-   */
 
-  init();
+initialize();
 
 </script>
 
 </body>
 </html>
+```
