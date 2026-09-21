@@ -46,7 +46,7 @@ h1 {
 }
 
 .controls {
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 10px auto 35px;
   padding: 0 20px;
 }
@@ -88,7 +88,7 @@ button {
 }
 
 button:hover {
-  background: #ffffff;
+  background: #fff;
 }
 
 button.secondary {
@@ -116,7 +116,9 @@ button.secondary:hover {
   background: #0d1013;
   border: 1px solid #22272c;
   padding: 18px;
-  min-height: 280px;
+
+  min-height: 285px;
+
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -131,11 +133,11 @@ button.secondary:hover {
   width: 180px;
   height: 180px;
 
+  background: #08090b;
+
   display: flex;
   align-items: center;
   justify-content: center;
-
-  background: #08090b;
 }
 
 .art img {
@@ -148,6 +150,7 @@ button.secondary:hover {
 
 .token-name {
   margin-top: 14px;
+
   font-size: 10px;
   letter-spacing: 3px;
   color: #777d83;
@@ -155,43 +158,59 @@ button.secondary:hover {
 
 .token-info {
   margin-top: 8px;
+
   font-size: 9px;
+  line-height: 1.6;
+
   color: #454b51;
   text-align: center;
-  line-height: 1.6;
 }
 
 .loading {
   grid-column: 1 / -1;
+
   text-align: center;
-  padding: 50px;
+
+  padding: 60px;
+
   color: #555b61;
+
   font-size: 10px;
   letter-spacing: 3px;
 }
 
 .error {
   grid-column: 1 / -1;
+
   text-align: center;
+
   padding: 40px;
+
   border: 1px solid #3a2525;
+
   color: #9a7777;
+
   font-size: 11px;
+
   line-height: 1.8;
 }
 
 footer {
   border-top: 1px solid #161a1e;
+
   text-align: center;
+
   padding: 25px;
+
   color: #3f4449;
+
   font-size: 9px;
+
   letter-spacing: 2px;
 }
 
-/* Mobile */
-
 @media (max-width: 600px) {
+
   h1 {
     font-size: 22px;
     letter-spacing: 6px;
@@ -200,6 +219,7 @@ footer {
   .grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
+
     padding: 0 10px 40px;
   }
 
@@ -256,11 +276,17 @@ footer {
       LOAD TOKEN
     </button>
 
-    <button class="secondary" onclick="loadPreview()">
+    <button
+      class="secondary"
+      onclick="loadTokens(1, 24)"
+    >
       PREVIEW 24
     </button>
 
-    <button class="secondary" onclick="loadRange()">
+    <button
+      class="secondary"
+      onclick="loadTokens(1, 100)"
+    >
       PREVIEW 100
     </button>
 
@@ -269,10 +295,13 @@ footer {
 </section>
 
 
-<main id="gallery" class="grid">
+<main
+  id="gallery"
+  class="grid"
+>
 
   <div class="loading">
-    LOADING ON-CHAIN DATA...
+    INITIALIZING...
   </div>
 
 </main>
@@ -283,286 +312,227 @@ footer {
 </footer>
 
 
+<!-- =====================================================
+     ETHERS
+====================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.15.0/dist/ethers.umd.min.js"></script>
+
+
 <script>
 
-/* =========================================================
-   ARC TESTNET CONFIGURATION
-========================================================= */
+/* =====================================================
+   CONFIGURATION
+===================================================== */
 
-const RPC_URL = "https://rpc.testnet.arc.network";
+const RPC_URL =
+  "https://rpc.testnet.arc.network";
 
-/*
- * IMPORTANT:
- * Replace this with the address of the NEW ARC 360 contract
- * after deployment.
- */
-const CONTRACT_ADDRESS = "0x1aa4e3d6765ad2a0244b69681a34e48779dc8d65";
+const CONTRACT_ADDRESS =
+  "0x1aa4e3d6765ad2a0244b69681a34e48779dc8d65";
 
 const GENESIS_SUPPLY = 3600;
 
 
-/* =========================================================
+/* =====================================================
    CONTRACT ABI
-========================================================= */
+===================================================== */
 
 const ABI = [
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
-    ],
-    "name": "previewTokenURI",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "stateMutability": "pure",
-    "type": "function"
-  }
+  "function previewTokenURI(uint256 tokenId) view returns (string)"
 ];
 
 
-/* =========================================================
-   SIMPLE JSON-RPC CLIENT
-   No wallet required.
-========================================================= */
+/* =====================================================
+   PROVIDER
+===================================================== */
 
-async function rpc(method, params = []) {
+let provider;
 
-  const response = await fetch(RPC_URL, {
-    method: "POST",
-
-    headers: {
-      "Content-Type": "application/json"
-    },
-
-    body: JSON.stringify({
-      jsonrpc: "2.0",
-      id: Date.now(),
-      method,
-      params
-    })
-  });
-
-  if (!response.ok) {
-    throw new Error("RPC HTTP error: " + response.status);
-  }
-
-  const data = await response.json();
-
-  if (data.error) {
-    throw new Error(data.error.message || "RPC error");
-  }
-
-  return data.result;
-}
+let contract;
 
 
-/* =========================================================
-   ABI ENCODING
-========================================================= */
+/* =====================================================
+   INITIALIZE
+===================================================== */
 
-/*
- * Function selector for:
- *
- * previewTokenURI(uint256)
- *
- * The selector is calculated automatically below.
- *
- * This avoids requiring ethers.js or another external library.
- */
+async function initialize() {
 
-async function sha256Hex(text) {
+  const status =
+    document.getElementById("status");
 
-  const encoder = new TextEncoder();
+  try {
 
-  const data = encoder.encode(text);
-
-  const hash = await crypto.subtle.digest(
-    "SHA-256",
-    data
-  );
-
-  return Array.from(
-    new Uint8Array(hash)
-  )
-  .map(
-    b => b.toString(16).padStart(2, "0")
-  )
-  .join("");
-}
-
-
-/*
- * Ethereum uses Keccak-256, not SHA-256.
- *
- * For maximum compatibility we load ethers.js dynamically
- * only for ABI encoding/decoding.
- */
-
-let ethersLoaded = false;
-
-
-/* =========================================================
-   LOAD ETHERS
-========================================================= */
-
-async function loadEthers() {
-
-  if (ethersLoaded && window.ethers) {
-    return;
-  }
-
-  await new Promise((resolve, reject) => {
-
-    const script = document.createElement("script");
-
-    script.src =
-      "https://cdn.jsdelivr.net/npm/ethers@6.15.0/dist/ethers.umd.min.js";
-
-    script.onload = resolve;
-
-    script.onerror = () =>
-      reject(
-        new Error("Could not load ethers.js")
+    provider =
+      new ethers.JsonRpcProvider(
+        RPC_URL,
+        {
+          chainId: 5042002,
+          name: "arc-testnet"
+        }
       );
 
-    document.head.appendChild(script);
 
-  });
+    contract =
+      new ethers.Contract(
+        CONTRACT_ADDRESS,
+        ABI,
+        provider
+      );
 
-  ethersLoaded = true;
-}
+
+    /*
+     * Test the actual contract immediately.
+     */
+
+    const test =
+      await contract.previewTokenURI(1);
 
 
-/* =========================================================
-   CONTRACT CALL
-========================================================= */
+    if (!test) {
+      throw new Error(
+        "Contract returned an empty preview."
+      );
+    }
 
-async function previewToken(tokenId) {
 
-  await loadEthers();
+    status.textContent =
+      "ARC TESTNET ONLINE • CONTRACT CONNECTED";
 
-  if (
-    !CONTRACT_ADDRESS ||
-    CONTRACT_ADDRESS ===
-      "0x1aa4e3d6765ad2a0244b69681a34e48779dc8d65"
-  ) {
 
-    throw new Error(
-      "Set CONTRACT_ADDRESS with the new ARC 360 contract address."
-    );
+    /*
+     * Automatically show first 24.
+     */
+
+    await loadTokens(1, 24);
+
+  } catch (error) {
+
+    console.error(error);
+
+    showError(error);
+
   }
 
-
-  const iface =
-    new ethers.Interface(ABI);
-
-
-  const calldata =
-    iface.encodeFunctionData(
-      "previewTokenURI",
-      [tokenId]
-    );
-
-
-  const result =
-    await rpc(
-      "eth_call",
-      [
-        {
-          to: CONTRACT_ADDRESS,
-          data: calldata
-        },
-        "latest"
-      ]
-    );
-
-
-  const decoded =
-    iface.decodeFunctionResult(
-      "previewTokenURI",
-      result
-    );
-
-
-  return decoded[0];
 }
 
 
-/* =========================================================
-   TOKEN URI PARSER
-========================================================= */
+/* =====================================================
+   GET TOKEN URI
+===================================================== */
+
+async function getTokenURI(tokenId) {
+
+  return await contract.previewTokenURI(
+    tokenId
+  );
+
+}
+
+
+/* =====================================================
+   DECODE BASE64 JSON
+===================================================== */
+
+function decodeBase64Unicode(base64) {
+
+  const binary =
+    atob(base64);
+
+  const bytes =
+    new Uint8Array(
+      binary.length
+    );
+
+  for (
+    let i = 0;
+    i < binary.length;
+    i++
+  ) {
+
+    bytes[i] =
+      binary.charCodeAt(i);
+
+  }
+
+  return new TextDecoder(
+    "utf-8"
+  ).decode(bytes);
+
+}
+
+
+/* =====================================================
+   PARSE TOKEN URI
+===================================================== */
 
 function parseTokenURI(uri) {
 
+  const prefix =
+    "data:application/json;base64,";
+
+
   if (
-    !uri ||
-    !uri.startsWith(
-      "data:application/json;base64,"
-    )
+    !uri.startsWith(prefix)
   ) {
 
     throw new Error(
-      "Invalid tokenURI returned by contract."
+      "Contract returned an invalid tokenURI."
     );
+
   }
 
 
-  const encoded =
+  const base64 =
     uri.substring(
-      "data:application/json;base64,".length
+      prefix.length
     );
 
 
-  const jsonText =
-    decodeURIComponent(
-      Array.prototype.map.call(
-        atob(encoded),
-        c =>
-          "%" +
-          ("00" + c.charCodeAt(0).toString(16))
-            .slice(-2)
-      ).join("")
+  const json =
+    decodeBase64Unicode(
+      base64
     );
 
 
-  return JSON.parse(jsonText);
+  return JSON.parse(json);
+
 }
 
 
-/* =========================================================
-   CREATE NFT CARD
-========================================================= */
+/* =====================================================
+   CREATE CARD
+===================================================== */
 
-function createCard(tokenId, metadata) {
+function createCard(
+  tokenId,
+  metadata
+) {
 
   const card =
     document.createElement("div");
 
-  card.className = "card";
+  card.className =
+    "card";
 
 
   const art =
     document.createElement("div");
 
-  art.className = "art";
+  art.className =
+    "art";
 
 
   const img =
     document.createElement("img");
 
-  img.src = metadata.image;
+  img.src =
+    metadata.image;
 
   img.alt =
     "ARC 360 #" +
-    String(tokenId).padStart(4, "0");
+    String(tokenId)
+      .padStart(4, "0");
 
 
   art.appendChild(img);
@@ -576,7 +546,8 @@ function createCard(tokenId, metadata) {
 
   name.textContent =
     "ARC 360 #" +
-    String(tokenId).padStart(4, "0");
+    String(tokenId)
+      .padStart(4, "0");
 
 
   const info =
@@ -586,29 +557,30 @@ function createCard(tokenId, metadata) {
     "token-info";
 
 
-  let attributes = "";
-
-
   if (
-    Array.isArray(metadata.attributes)
+    Array.isArray(
+      metadata.attributes
+    )
   ) {
 
-    attributes =
+    info.innerHTML =
       metadata.attributes
         .map(attribute => {
 
           return (
-            attribute.trait_type +
+            escapeHtml(
+              attribute.trait_type
+            ) +
             ": " +
-            attribute.value
+            escapeHtml(
+              attribute.value
+            )
           );
 
         })
         .join("<br>");
+
   }
-
-
-  info.innerHTML = attributes;
 
 
   card.appendChild(art);
@@ -617,12 +589,13 @@ function createCard(tokenId, metadata) {
 
 
   return card;
+
 }
 
 
-/* =========================================================
-   LOAD ONE TOKEN
-========================================================= */
+/* =====================================================
+   LOAD ONE
+===================================================== */
 
 async function loadSingle() {
 
@@ -643,10 +616,11 @@ async function loadSingle() {
   ) {
 
     alert(
-      "Token ID must be between 1 and 3600."
+      "Enter a Token ID from 1 to 3600."
     );
 
     return;
+
   }
 
 
@@ -663,13 +637,17 @@ async function loadSingle() {
 
 
   gallery.innerHTML =
-    '<div class="loading">READING CONTRACT...</div>';
+    '<div class="loading">READING TOKEN #' +
+    tokenId +
+    '...</div>';
 
 
   try {
 
     const uri =
-      await previewToken(tokenId);
+      await getTokenURI(
+        tokenId
+      );
 
 
     const metadata =
@@ -688,11 +666,14 @@ async function loadSingle() {
 
 
     status.textContent =
-      "READING ARC TESTNET • TOKEN #" +
-      tokenId;
+      "ARC TESTNET • TOKEN #" +
+      tokenId +
+      " • ON-CHAIN";
 
 
   } catch (error) {
+
+    console.error(error);
 
     showError(error);
 
@@ -701,39 +682,11 @@ async function loadSingle() {
 }
 
 
-/* =========================================================
-   LOAD FIRST 24
-========================================================= */
+/* =====================================================
+   LOAD MULTIPLE
+===================================================== */
 
-async function loadPreview() {
-
-  await loadRangeInternal(
-    1,
-    24
-  );
-
-}
-
-
-/* =========================================================
-   LOAD FIRST 100
-========================================================= */
-
-async function loadRange() {
-
-  await loadRangeInternal(
-    1,
-    100
-  );
-
-}
-
-
-/* =========================================================
-   LOAD RANGE
-========================================================= */
-
-async function loadRangeInternal(
+async function loadTokens(
   start,
   end
 ) {
@@ -754,82 +707,75 @@ async function loadRangeInternal(
     '<div class="loading">READING ON-CHAIN SVGs...</div>';
 
 
+  const total =
+    end - start + 1;
+
+
   try {
 
-    const total =
-      end - start + 1;
-
-
-    const results =
-      new Array(total);
+    const results = [];
 
 
     /*
-     * Process in small batches so the browser
-     * does not hammer the public RPC.
+     * Small batches protect the public RPC.
      */
 
-    const batchSize = 5;
+    const batchSize = 4;
 
 
     for (
-      let i = 0;
-      i < total;
+      let i = start;
+      i <= end;
       i += batchSize
     ) {
 
-      const batch = [];
+      const batchEnd =
+        Math.min(
+          i + batchSize - 1,
+          end
+        );
+
+
+      const promises = [];
 
 
       for (
-        let j = i;
-        j < Math.min(
-          i + batchSize,
-          total
-        );
-        j++
+        let tokenId = i;
+        tokenId <= batchEnd;
+        tokenId++
       ) {
 
-        const tokenId =
-          start + j;
-
-
-        batch.push(
-          previewToken(tokenId)
-            .then(uri => ({
-              tokenId,
-              uri
-            }))
-            .catch(error => ({
-              tokenId,
-              error
-            }))
+        promises.push(
+          getTokenURI(
+            tokenId
+          )
+          .then(uri => ({
+            tokenId,
+            uri
+          }))
+          .catch(error => ({
+            tokenId,
+            error
+          }))
         );
 
       }
 
 
-      const batchResults =
-        await Promise.all(batch);
+      const batch =
+        await Promise.all(
+          promises
+        );
 
 
-      batchResults.forEach(
-        (result, index) => {
-
-          results[
-            i + index
-          ] = result;
-
-        }
+      results.push(
+        ...batch
       );
 
 
       status.textContent =
         "READING ON-CHAIN SVGs • " +
-        Math.min(
-          i + batchSize,
-          total
-        ) +
+        results.length +
         " / " +
         total;
 
@@ -839,80 +785,71 @@ async function loadRangeInternal(
     gallery.innerHTML = "";
 
 
-    results.forEach(
-      result => {
+    for (
+      const result of results
+    ) {
 
-        if (result.error) {
+      if (result.error) {
 
-          const errorCard =
-            document.createElement(
-              "div"
-            );
-
-          errorCard.className =
-            "error";
-
-          errorCard.textContent =
-            "Token #" +
-            result.tokenId +
-            " — " +
-            result.error.message;
-
-          gallery.appendChild(
-            errorCard
+        const error =
+          document.createElement(
+            "div"
           );
 
-          return;
-        }
+        error.className =
+          "error";
+
+        error.textContent =
+          "Token #" +
+          result.tokenId +
+          " failed: " +
+          result.error.message;
+
+        gallery.appendChild(
+          error
+        );
+
+        continue;
+      }
 
 
-        try {
+      try {
 
-          const metadata =
-            parseTokenURI(
-              result.uri
-            );
-
-
-          gallery.appendChild(
-            createCard(
-              result.tokenId,
-              metadata
-            )
+        const metadata =
+          parseTokenURI(
+            result.uri
           );
 
-        } catch (error) {
 
-          const errorCard =
-            document.createElement(
-              "div"
-            );
+        gallery.appendChild(
+          createCard(
+            result.tokenId,
+            metadata
+          )
+        );
 
-          errorCard.className =
-            "error";
+      } catch (error) {
 
-          errorCard.textContent =
-            "Token #" +
-            result.tokenId +
-            " — invalid metadata";
-
-          gallery.appendChild(
-            errorCard
-          );
-
-        }
+        console.error(
+          "Metadata error:",
+          result.tokenId,
+          error
+        );
 
       }
-    );
+
+    }
 
 
     status.textContent =
       "ARC TESTNET • " +
       total +
-      " ON-CHAIN PREVIEWS LOADED";
+      " TOKENS • FULLY ON-CHAIN";
 
 
   } catch (error) {
+
+    console.error(error);
 
     showError(error);
 
@@ -921,9 +858,9 @@ async function loadRangeInternal(
 }
 
 
-/* =========================================================
-   ERROR
-========================================================= */
+/* =====================================================
+   ERROR DISPLAY
+===================================================== */
 
 function showError(error) {
 
@@ -953,104 +890,66 @@ function showError(error) {
 
 
   box.innerHTML =
-    "<strong>PREVIEW ERROR</strong><br><br>" +
+    "<strong>FAILED TO LOAD PREVIEW</strong>" +
+    "<br><br>" +
     escapeHtml(
-      error.message || String(error)
+      error?.shortMessage ||
+      error?.reason ||
+      error?.message ||
+      String(error)
     );
 
 
-  gallery.appendChild(box);
+  gallery.appendChild(
+    box
+  );
 
 
   status.textContent =
-    "CONNECTION ERROR";
+    "CONTRACT CONNECTION ERROR";
 
 }
 
 
-/* =========================================================
-   HTML ESCAPE
-========================================================= */
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
 
-function escapeHtml(text) {
+function escapeHtml(value) {
 
-  return String(text)
+  return String(value)
 
-    .replaceAll("&", "&amp;")
+    .replaceAll(
+      "&",
+      "&amp;"
+    )
 
-    .replaceAll("<", "&lt;")
+    .replaceAll(
+      "<",
+      "&lt;"
+    )
 
-    .replaceAll(">", "&gt;")
+    .replaceAll(
+      ">",
+      "&gt;"
+    )
 
-    .replaceAll('"', "&quot;")
+    .replaceAll(
+      '"',
+      "&quot;"
+    )
 
-    .replaceAll("'", "&#039;");
-}
-
-
-/* =========================================================
-   INITIALIZATION
-========================================================= */
-
-async function initialize() {
-
-  const status =
-    document.getElementById(
-      "status"
+    .replaceAll(
+      "'",
+      "&#039;"
     );
 
-
-  try {
-
-    const block =
-      await rpc(
-        "eth_blockNumber"
-      );
-
-
-    status.textContent =
-      "ARC TESTNET ONLINE • BLOCK " +
-      parseInt(
-        block,
-        16
-      );
-
-
-    /*
-     * Automatically load a small preview.
-     */
-
-    if (
-      CONTRACT_ADDRESS &&
-      CONTRACT_ADDRESS !==
-        "0x1aa4e3d6765ad2a0244b69681a34e48779dc8d65"
-    ) {
-
-      await loadPreview();
-
-    } else {
-
-      document.getElementById(
-        "gallery"
-      ).innerHTML = `
-        <div class="error">
-          CONTRACT ADDRESS NOT CONFIGURED<br><br>
-          Set the new ARC 360 contract address
-          in <b>CONTRACT_ADDRESS</b> inside index.html.
-        </div>
-      `;
-
-    }
-
-
-  } catch (error) {
-
-    showError(error);
-
-  }
-
 }
 
+
+/* =====================================================
+   START
+===================================================== */
 
 initialize();
 
