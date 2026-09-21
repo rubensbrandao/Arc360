@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ARC 360 — Architects</title>
+
+<style>
+
+:root {
+    --bg: #050505;
+    --panel: #0b0b0b;
+    --panel2: #101010;
+    --line: #242424;
+    --text: #f2f2f2;
+    --muted: #777;
+    --accent: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
+    min-height: 100vh;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    position: relative;
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at center,
+            #202020 0%,
+            #0b0b0b 35%,
+            #050505 70%
+        );
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+
+    background-size: 45px 45px;
+
+    mask-image: linear-gradient(
+        to bottom,
+        black,
+        transparent
+    );
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+
+    text-align: center;
+    padding: 30px;
+}
+
+.logo-small {
+    letter-spacing: 8px;
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 30px;
+}
+
+.hero h1 {
+    font-size: clamp(70px, 15vw, 180px);
+    line-height: .8;
+    letter-spacing: -10px;
+    font-weight: 900;
+}
+
+.hero-subtitle {
+    margin-top: 35px;
+    font-size: 13px;
+    letter-spacing: 6px;
+    color: #999;
+}
+
+.enter-button {
+    margin-top: 50px;
+
+    border: 1px solid #555;
+    background: transparent;
+    color: white;
+
+    padding: 18px 45px;
+
+    font-size: 11px;
+    letter-spacing: 4px;
+
+    cursor: pointer;
+
+    transition:
+        background .25s,
+        color .25s,
+        border .25s;
+}
+
+.enter-button:hover {
+    background: white;
+    color: black;
+    border-color: white;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+
+    height: 70px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 35px;
+
+    background: rgba(5,5,5,.92);
+    backdrop-filter: blur(15px);
+
+    border-bottom: 1px solid var(--line);
+}
+
+.header-logo {
+    font-weight: bold;
+    letter-spacing: 3px;
+}
+
+.header-nav {
+    display: flex;
+    gap: 25px;
+}
+
+.header-nav button {
+    border: none;
+    background: transparent;
+    color: #888;
+
+    font-size: 10px;
+    letter-spacing: 2px;
+
+    cursor: pointer;
+}
+
+.header-nav button:hover {
+    color: white;
+}
+
+.wallet-button {
+    border: 1px solid #444;
+    background: transparent;
+    color: white;
+
+    padding: 11px 17px;
+
+    font-size: 10px;
+    letter-spacing: 1px;
+
+    cursor: pointer;
+}
+
+.wallet-button:hover {
+    background: white;
+    color: black;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+#mintPage {
+    display: none;
+}
+
+.main {
+    max-width: 1500px;
+    margin: auto;
+    padding: 80px 35px;
+}
+
+.title-block {
+    margin-bottom: 70px;
+}
+
+.title-block .eyebrow {
+    color: #666;
+    font-size: 10px;
+    letter-spacing: 4px;
+    margin-bottom: 15px;
+}
+
+.title-block h2 {
+    font-size: clamp(40px, 7vw, 85px);
+    letter-spacing: -4px;
+}
+
+.title-block p {
+    max-width: 600px;
+    margin-top: 20px;
+    color: #777;
+    line-height: 1.7;
+    font-size: 14px;
+}
+
+/* =========================
+   STATS
+========================= */
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+
+    margin-bottom: 70px;
+}
+
+.stat {
+    padding: 25px;
+
+    border-right: 1px solid var(--line);
+}
+
+.stat:last-child {
+    border-right: none;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 9px;
+    letter-spacing: 3px;
+    margin-bottom: 12px;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* =========================
+   CONTROLS
+========================= */
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 30px;
+
+    gap: 20px;
+}
+
+.search {
+    width: 280px;
+
+    background: #0a0a0a;
+    border: 1px solid #292929;
+
+    padding: 13px 15px;
+
+    color: white;
+    outline: none;
+
+    font-size: 12px;
+}
+
+.search:focus {
+    border-color: #555;
+}
+
+.filters {
+    display: flex;
+    gap: 8px;
+}
+
+.filter {
+    border: 1px solid #292929;
+    background: #0a0a0a;
+    color: #777;
+
+    padding: 10px 15px;
+
+    font-size: 9px;
+    letter-spacing: 1px;
+
+    cursor: pointer;
+}
+
+.filter.active,
+.filter:hover {
+    color: white;
+    border-color: #666;
+}
+
+/* =========================
+   NFT GRID
+========================= */
+
+.grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill, minmax(170px, 1fr));
+
+    gap: 12px;
+}
+
+.nft {
+    background: var(--panel);
+
+    border: 1px solid var(--line);
+
+    cursor: pointer;
+
+    transition:
+        transform .2s,
+        border .2s;
+}
+
+.nft:hover {
+    transform: translateY(-4px);
+    border-color: #666;
+}
+
+.nft-image {
+    aspect-ratio: 1 / 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(
+            circle,
+            #242424,
+            #0b0b0b 65%
+        );
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+.nft-image::before {
+    content: "";
+
+    position: absolute;
+
+    width: 55%;
+    height: 55%;
+
+    border: 1px solid #444;
+
+    transform: rotate(45deg);
+}
+
+.nft-image::after {
+    content: "";
+
+    position: absolute;
+
+    width: 30%;
+    height: 30%;
+
+    border: 1px solid #777;
+
+    transform: rotate(45deg);
+}
+
+.nft-number {
+    position: absolute;
+
+    z-index: 3;
+
+    font-size: 14px;
+    letter-spacing: 2px;
+
+    color: white;
+}
+
+.nft-info {
+    padding: 15px;
+}
+
+.nft-name {
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+
+.nft-status {
+    margin-top: 8px;
+
+    font-size: 8px;
+    letter-spacing: 2px;
+
+    color: #666;
+}
+
+/* =========================
+   LOAD MORE
+========================= */
+
+.load-more {
+    display: flex;
+    justify-content: center;
+
+    padding: 60px 0;
+}
+
+.load-more button {
+    border: 1px solid #333;
+
+    background: transparent;
+    color: #888;
+
+    padding: 15px 35px;
+
+    font-size: 9px;
+    letter-spacing: 3px;
+
+    cursor: pointer;
+}
+
+.load-more button:hover {
+    color: white;
+    border-color: white;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal {
+    position: fixed;
+    inset: 0;
+
+    z-index: 500;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(0,0,0,.85);
+    backdrop-filter: blur(12px);
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-box {
+    width: min(800px, 100%);
+
+    background: #0a0a0a;
+
+    border: 1px solid #333;
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    position: relative;
+}
+
+.modal-image {
+    min-height: 450px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(
+            circle,
+            #292929,
+            #090909
+        );
+
+    position: relative;
+}
+
+.modal-number {
+    font-size: 35px;
+    letter-spacing: 5px;
+    z-index: 2;
+}
+
+.modal-details {
+    padding: 40px;
+}
+
+.modal-details h3 {
+    font-size: 30px;
+    margin-bottom: 30px;
+}
+
+.detail {
+    display: flex;
+    justify-content: space-between;
+
+    border-bottom: 1px solid #222;
+
+    padding: 14px 0;
+
+    font-size: 11px;
+}
+
+.detail span:first-child {
+    color: #666;
+}
+
+.mint-button {
+    width: 100%;
+
+    margin-top: 35px;
+
+    padding: 17px;
+
+    background: white;
+    color: black;
+
+    border: none;
+
+    font-size: 10px;
+    letter-spacing: 3px;
+
+    cursor: pointer;
+}
+
+.mint-button:hover {
+    background: #ccc;
+}
+
+.close {
+    position: absolute;
+
+    right: 15px;
+    top: 15px;
+
+    width: 35px;
+    height: 35px;
+
+    border: 1px solid #333;
+
+    background: #080808;
+    color: white;
+
+    cursor: pointer;
+
+    z-index: 5;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer {
+    border-top: 1px solid var(--line);
+
+    padding: 50px 35px;
+
+    display: flex;
+    justify-content: space-between;
+
+    color: #555;
+
+    font-size: 9px;
+    letter-spacing: 2px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width: 800px) {
+
+    .header {
+        padding: 0 15px;
+    }
+
+    .header-nav {
+        display: none;
+    }
+
+    .main {
+        padding: 60px 15px;
+    }
+
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .stat:nth-child(2) {
+        border-right: none;
+    }
+
+    .controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search {
+        width: 100%;
+    }
+
+    .filters {
+        overflow-x: auto;
+    }
+
+    .grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .modal-box {
+        grid-template-columns: 1fr;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .modal-image {
+        min-height: 300px;
+    }
+
+    .footer {
+        flex-direction: column;
+        gap: 20px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     LANDING PAGE
+========================= -->
+
+<section class="hero" id="home">
+
+    <div class="hero-content">
+
+        <div class="logo-small">
+            ARC / ARCHITECTS
+        </div>
+
+        <h1>360</h1>
+
+        <div class="hero-subtitle">
+            ARC 360 — ARCHITECTS
+        </div>
+
+        <button
+            class="enter-button"
+            onclick="openMint()"
+        >
+            ENTER COLLECTION
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     MINT PAGE
+========================= -->
+
+<section id="mintPage">
+
+    <header class="header">
+
+        <div class="header-logo">
+            ARC 360
+        </div>
+
+        <nav class="header-nav">
+
+            <button onclick="scrollToTop()">
+                COLLECTION
+            </button>
+
+            <button onclick="showAbout()">
+                ABOUT
+            </button>
+
+        </nav>
+
+        <button
+            class="wallet-button"
+            id="walletButton"
+            onclick="connectWallet()"
+        >
+            CONNECT WALLET
+        </button>
+
+    </header>
+
+
+    <main class="main">
+
+        <div class="title-block">
+
+            <div class="eyebrow">
+                ARC TESTNET / GENESIS
+            </div>
+
+            <h2>
+                ARC 360
+            </h2>
+
+            <p>
+                A collection of 3,600 individual Architects.
+                Each token represents a unique identity within
+                the ARC 360 system.
+            </p>
+
+        </div>
+
+
+        <!-- STATS -->
+
+        <section class="stats">
+
+            <div class="stat">
+
+                <div class="stat-label">
+                    TOTAL SUPPLY
+                </div>
+
+                <div class="stat-value">
+                    3,600
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-label">
+                    GENESIS
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="genesisCount"
+                >
+                    3,600
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-label">
+                    NETWORK
+                </div>
+
+                <div class="stat-value">
+                    ARC TESTNET
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-label">
+                    CONTRACT
+                </div>
+
+                <div
+                    class="stat-value"
+                    style="font-size:12px;"
+                >
+                    0xcbbb...92c1a
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- CONTROLS -->
+
+        <div class="controls">
+
+            <input
+                class="search"
+                id="search"
+                placeholder="SEARCH ARC #..."
+                oninput="searchNFT()"
+            >
+
+            <div class="filters">
+
+                <button
+                    class="filter active"
+                    onclick="filterNFTs('all', this)"
+                >
+                    ALL
+                </button>
+
+                <button
+                    class="filter"
+                    onclick="filterNFTs('genesis', this)"
+                >
+                    GENESIS
+                </button>
+
+                <button
+                    class="filter"
+                    onclick="filterNFTs('special', this)"
+                >
+                    SPECIAL
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- NFT GRID -->
+
+        <div
+            class="grid"
+            id="nftGrid"
+        ></div>
+
+
+        <div class="load-more">
+
+            <button onclick="loadMore()">
+                LOAD MORE
+            </button>
+
+        </div>
+
+    </main>
+
+
+    <footer class="footer">
+
+        <div>
+            ARC 360
+        </div>
+
+        <div>
+            ON-CHAIN / ARC
+        </div>
+
+        <div>
+            ARCHITECTS
+        </div>
+
+    </footer>
+
+</section>
+
+
+<!-- =========================
+     MODAL
+========================= -->
+
+<div
+    class="modal"
+    id="modal"
+    onclick="closeModal(event)"
+>
+
+    <div
+        class="modal-box"
+        onclick="event.stopPropagation()"
+    >
+
+        <button
+            class="close"
+            onclick="closeModal()"
+        >
+            ×
+        </button>
+
+
+        <div class="modal-image">
+
+            <div
+                class="modal-number"
+                id="modalNumber"
+            >
+                #0001
+            </div>
+
+        </div>
+
+
+        <div class="modal-details">
+
+            <h3 id="modalTitle">
+                ARC 360 #0001
+            </h3>
+
+
+            <div class="detail">
+
+                <span>ID</span>
+
+                <span id="modalId">
+                    0001
+                </span>
+
+            </div>
+
+
+            <div class="detail">
+
+                <span>TYPE</span>
+
+                <span>
+                    GENESIS
+                </span>
+
+            </div>
+
+
+            <div class="detail">
+
+                <span>NETWORK</span>
+
+                <span>
+                    ARC
+                </span>
+
+            </div>
+
+
+            <div class="detail">
+
+                <span>STATUS</span>
+
+                <span id="modalStatus">
+                    AVAILABLE
+                </span>
+
+            </div>
+
+
+            <button
+                class="mint-button"
+                onclick="mintSelected()"
+            >
+                MINT THIS ARCHITECT
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ethers -->
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js"></script>
+
+
+<script>
+
+/* =====================================================
+   ARC 360 CONFIG
+===================================================== */
+
+const CONTRACT_ADDRESS =
+    "0xcbbb4e13fdfe87ded8fa896e8833058dcda92c1a";
+
+
+/*
+    ARC Testnet
+
+    Caso a MetaMask já esteja configurada,
+    o site simplesmente tenta usar a rede atual.
+*/
+
+const ARC_TESTNET_CHAIN_ID = "0x" + (5042002).toString(16);
+
+
+/* =====================================================
+   STATE
+===================================================== */
+
+let provider = null;
+let signer = null;
+let walletAddress = null;
+
+let selectedNFT = null;
+
+let visibleNFTs = 120;
+
+let currentFilter = "all";
+
+
+/* =====================================================
+   OPEN MINT
+===================================================== */
+
+function openMint() {
+
+    document.getElementById("home").style.display = "none";
+
+    document.getElementById("mintPage").style.display = "block";
+
+    window.scrollTo({
+        top: 0,
+        behavior: "instant"
+    });
+
+    generateNFTs();
+}
+
+
+/* =====================================================
+   NFT GRID
+===================================================== */
+
+function generateNFTs() {
+
+    const grid =
+        document.getElementById("nftGrid");
+
+    grid.innerHTML = "";
+
+    let max =
+        Math.min(visibleNFTs, 3600);
+
+    for (let i = 1; i <= max; i++) {
+
+        if (!passesFilter(i)) {
+            continue;
+        }
+
+        createNFTCard(i, grid);
+    }
+
+}
+
+
+/* =====================================================
+   CREATE NFT
+===================================================== */
+
+function createNFTCard(id, grid) {
+
+    const card =
+        document.createElement("div");
+
+    card.className = "nft";
+
+    card.dataset.id = id;
+
+
+    const formatted =
+        String(id).padStart(4, "0");
+
+
+    let special = false;
+
+    if (
+        id === 1 ||
+        id === 3600 ||
+        id % 360 === 0
+    ) {
+        special = true;
+    }
+
+
+    card.innerHTML = `
+
+        <div class="nft-image">
+
+            <div class="nft-number">
+                #${formatted}
+            </div>
+
+        </div>
+
+        <div class="nft-info">
+
+            <div class="nft-name">
+                ARC 360 #${formatted}
+            </div>
+
+            <div class="nft-status">
+                ${special ? "SPECIAL" : "GENESIS"}
+            </div>
+
+        </div>
+
+    `;
+
+
+    card.onclick = () => {
+        openNFT(id);
+    };
+
+
+    grid.appendChild(card);
+}
+
+
+/* =====================================================
+   FILTER
+===================================================== */
+
+function passesFilter(id) {
+
+    if (currentFilter === "all") {
+        return true;
+    }
+
+
+    if (currentFilter === "genesis") {
+        return id <= 3600;
+    }
+
+
+    if (currentFilter === "special") {
+
+        return (
+            id === 1 ||
+            id === 3600 ||
+            id % 360 === 0
+        );
+
+    }
+
+    return true;
+}
+
+
+function filterNFTs(type, button) {
+
+    currentFilter = type;
+
+    document
+        .querySelectorAll(".filter")
+        .forEach(el =>
+            el.classList.remove("active")
+        );
+
+    button.classList.add("active");
+
+    generateNFTs();
+}
+
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+function searchNFT() {
+
+    const query =
+        document
+            .getElementById("search")
+            .value
+            .replace("#", "")
+            .trim();
+
+    document
+        .querySelectorAll(".nft")
+        .forEach(card => {
+
+            const id =
+                card.dataset.id;
+
+            if (
+                query === "" ||
+                id.includes(query)
+            ) {
+
+                card.style.display =
+                    "";
+
+            } else {
+
+                card.style.display =
+                    "none";
+
+            }
+
+        });
+
+}
+
+
+/* =====================================================
+   LOAD MORE
+===================================================== */
+
+function loadMore() {
+
+    visibleNFTs += 120;
+
+    if (visibleNFTs > 3600) {
+        visibleNFTs = 3600;
+    }
+
+    generateNFTs();
+}
+
+
+/* =====================================================
+   NFT MODAL
+===================================================== */
+
+function openNFT(id) {
+
+    selectedNFT = id;
+
+    const formatted =
+        String(id).padStart(4, "0");
+
+
+    document.getElementById("modalNumber")
+        .innerText =
+        "#" + formatted;
+
+
+    document.getElementById("modalTitle")
+        .innerText =
+        "ARC 360 #" + formatted;
+
+
+    document.getElementById("modalId")
+        .innerText =
+        formatted;
+
+
+    document.getElementById("modalStatus")
+        .innerText =
+        "AVAILABLE";
+
+
+    document
+        .getElementById("modal")
+        .classList.add("active");
+}
+
+
+function closeModal(event) {
+
+    if (
+        event &&
+        event.target !== event.currentTarget
+    ) {
+        return;
+    }
+
+    document
+        .getElementById("modal")
+        .classList.remove("active");
+}
+
+
+/* =====================================================
+   WALLET
+===================================================== */
+
+async function connectWallet() {
+
+    if (!window.ethereum) {
+
+        alert(
+            "MetaMask not detected. Install MetaMask first."
+        );
+
+        return;
+    }
+
+
+    try {
+
+        provider =
+            new ethers.BrowserProvider(
+                window.ethereum
+            );
+
+
+        await provider.send(
+            "eth_requestAccounts",
+            []
+        );
+
+
+        signer =
+            await provider.getSigner();
+
+
+        walletAddress =
+            await signer.getAddress();
+
+
+        updateWalletButton();
+
+
+        /*
+            Try to switch to Arc Testnet.
+        */
+
+        try {
+
+            await window.ethereum.request({
+
+                method:
+                    "wallet_switchEthereumChain",
+
+                params: [
+                    {
+                        chainId:
+                            ARC_TESTNET_CHAIN_ID
+                    }
+                ]
+
+            });
+
+        } catch (switchError) {
+
+            console.log(
+                "Network switch:",
+                switchError
+            );
+
+        }
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Wallet connection failed."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   WALLET BUTTON
+===================================================== */
+
+function updateWalletButton() {
+
+    const button =
+        document.getElementById(
+            "walletButton"
+        );
+
+
+    if (!walletAddress) {
+
+        button.innerText =
+            "CONNECT WALLET";
+
+        return;
+    }
+
+
+    button.innerText =
+        walletAddress.slice(0, 6) +
+        "..." +
+        walletAddress.slice(-4);
+}
+
+
+/* =====================================================
+   MINT
+===================================================== */
+
+async function mintSelected() {
+
+    if (!selectedNFT) {
+        return;
+    }
+
+
+    if (!signer) {
+
+        await connectWallet();
+
+    }
+
+
+    if (!signer) {
+        return;
+    }
+
+
+    /*
+        IMPORTANTE:
+
+        Aqui vamos colocar a ABI exata
+        e o método mint() do contrato.
+
+        Por enquanto, não enviamos
+        nenhuma transação para evitar
+        chamar uma função errada.
+    */
+
+    alert(
+        "Wallet connected. The real ARC360 mint function will be connected here."
+    );
+
+}
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+function scrollToTop() {
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+}
+
+
+function showAbout() {
+
+    alert(
+        "ARC 360 — 3,600 individual Architects represented on Arc."
+    );
+
+}
+
+
+/* =====================================================
+   INITIAL LOAD
+===================================================== */
+
+generateNFTs();
+
+
+/* =====================================================
+   METAMASK EVENTS
+===================================================== */
+
+if (window.ethereum) {
+
+    window.ethereum.on(
+        "accountsChanged",
+        function(accounts) {
+
+            if (!accounts.length) {
+
+                walletAddress = null;
+
+            } else {
+
+                walletAddress =
+                    accounts[0];
+
+            }
+
+            updateWalletButton();
+
+        }
+    );
+
+}
+
+
+</script>
+
+</body>
+</html>
