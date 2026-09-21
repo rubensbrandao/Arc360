@@ -1,5 +1,5 @@
+```html
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -8,25 +8,34 @@
 
 <style>
 :root{
-  --bg:#08090b;
-  --panel:#0d1013;
-  --line:#22272c;
-  --text:#d8dde1;
-  --muted:#686f75;
-  --lime:#89f336;
-  --orange:#ff9d32;
+  --bg:#000f26;
+  --white:#f9f9fb;
+  --muted:#a3b3c3;
+  --blue:#3d6b8d;
+  --panel:#06172d;
+  --panel2:#081b34;
+  --border:rgba(163,179,195,.14);
+  --border-hover:rgba(61,107,141,.65);
 }
 
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
+
+html{
+  background:var(--bg);
+}
 
 body{
   margin:0;
   background:var(--bg);
-  color:var(--text);
+  color:var(--white);
   font-family:Arial,Helvetica,sans-serif;
+  min-height:100vh;
 }
 
 button,
+input,
 select{
   font:inherit;
 }
@@ -35,257 +44,298 @@ button{
   cursor:pointer;
 }
 
-.header{
+button:disabled{
+  cursor:not-allowed;
+  opacity:.45;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+header{
+  width:100%;
+  border-bottom:1px solid var(--border);
+  background:rgba(0,15,38,.96);
   position:sticky;
   top:0;
-  z-index:20;
-  background:rgba(8,9,11,.96);
-  border-bottom:1px solid var(--line);
+  z-index:50;
+  backdrop-filter:blur(12px);
 }
 
 .header-inner{
-  max-width:1400px;
+  max-width:1500px;
   margin:auto;
-  min-height:82px;
-  padding:14px 24px;
+  min-height:92px;
+  padding:18px 28px;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:20px;
-}
-
-.brand{
-  display:flex;
-  align-items:center;
-  gap:14px;
-  text-decoration:none;
-  color:var(--text);
+  gap:30px;
 }
 
 .logo{
-  width:48px;
-  height:48px;
-  image-rendering:pixelated;
-  shape-rendering:crispEdges;
+  width:180px;
+  height:auto;
+  display:block;
 }
 
-.brand-name{
-  font-size:20px;
-  font-weight:bold;
-  letter-spacing:5px;
-}
-
-.wallet-btn{
-  border:1px solid var(--lime);
+.wallet-button{
+  height:42px;
+  padding:0 20px;
   background:transparent;
-  color:var(--lime);
-  padding:11px 17px;
-  font-size:11px;
-  letter-spacing:2px;
-  text-transform:uppercase;
+  color:var(--white);
+  border:1px solid var(--border);
+  letter-spacing:1px;
+  font-size:12px;
+  transition:.2s ease;
 }
 
-.wallet-btn:hover{
-  background:var(--lime);
-  color:#08090b;
+.wallet-button:hover{
+  border-color:var(--blue);
 }
+
+/* =========================
+   MAIN
+========================= */
+
+main{
+  max-width:1500px;
+  margin:auto;
+  padding:28px;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:20px;
+  margin-bottom:22px;
+}
+
+.title-area h1{
+  margin:0;
+  font-size:24px;
+  letter-spacing:5px;
+  font-weight:500;
+}
+
+.title-area p{
+  margin:8px 0 0;
+  color:var(--muted);
+  font-size:12px;
+  letter-spacing:1px;
+}
+
+.count{
+  color:var(--muted);
+  font-size:12px;
+}
+
+/* =========================
+   TOOLBAR
+========================= */
 
 .toolbar{
-  max-width:1400px;
-  margin:auto;
-  padding:22px 24px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:15px;
-  flex-wrap:wrap;
+  display:grid;
+  grid-template-columns:minmax(180px,1fr) 190px 150px 150px;
+  gap:10px;
+  margin-bottom:25px;
 }
 
-.collection-count{
-  font-size:11px;
-  color:var(--muted);
-  letter-spacing:2px;
-}
-
-.filters{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
-
-select{
-  appearance:none;
+.input,
+.select{
+  height:42px;
+  width:100%;
+  padding:0 13px;
+  color:var(--white);
   background:var(--panel);
-  color:var(--text);
-  border:1px solid var(--line);
-  padding:10px 34px 10px 12px;
-  font-size:10px;
-  letter-spacing:1px;
+  border:1px solid var(--border);
   outline:none;
 }
 
-select:focus{
-  border-color:var(--lime);
+.input::placeholder{
+  color:#647789;
 }
 
-.search{
-  background:var(--panel);
-  color:var(--text);
-  border:1px solid var(--line);
-  padding:10px 12px;
-  width:150px;
-  outline:none;
-  font-size:10px;
+.input:focus,
+.select:focus{
+  border-color:var(--blue);
 }
 
-.search:focus{
-  border-color:var(--lime);
+.select{
+  cursor:pointer;
 }
 
-.gallery-wrap{
-  max-width:1400px;
-  margin:auto;
-  padding:0 24px 60px;
-}
+/* =========================
+   GALLERY
+========================= */
 
 .gallery{
   display:grid;
-  grid-template-columns:repeat(6,1fr);
+  grid-template-columns:repeat(6,minmax(0,1fr));
   gap:14px;
 }
 
 .card{
   background:var(--panel);
-  border:1px solid var(--line);
-  padding:10px;
-  transition:border-color .15s,transform .15s;
+  border:1px solid var(--border);
+  transition:
+    transform .18s ease,
+    border-color .18s ease;
+  overflow:hidden;
 }
 
 .card:hover{
-  border-color:#555d63;
   transform:translateY(-2px);
+  border-color:var(--border-hover);
 }
 
 .card-image{
   width:100%;
-  aspect-ratio:1;
-  display:block;
-  background:#08090b;
+  aspect-ratio:1/1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#000f26;
+  overflow:hidden;
+}
+
+.card-image img{
+  width:100%;
+  height:100%;
   image-rendering:pixelated;
+  object-fit:contain;
+  display:block;
 }
 
-.card-info{
-  padding:10px 2px 2px;
+.card-content{
+  padding:13px;
 }
 
-.card-id{
-  font-size:11px;
-  letter-spacing:2px;
-  color:var(--text);
+.card-name{
+  color:var(--white);
+  font-size:12px;
+  letter-spacing:1px;
+  margin-bottom:8px;
 }
 
 .card-price{
-  margin-top:8px;
-  font-size:12px;
-  font-weight:bold;
+  color:var(--muted);
+  font-size:11px;
+  margin-bottom:5px;
 }
 
 .card-status{
-  margin-top:8px;
-  font-size:9px;
-  letter-spacing:1.5px;
+  color:var(--muted);
+  font-size:10px;
+  margin-bottom:12px;
+  text-transform:uppercase;
+  letter-spacing:1px;
 }
 
-.available{
-  color:var(--lime);
+.status-available{
+  color:var(--blue);
 }
 
-.minted{
-  color:#777;
+.status-minted{
+  color:#657789;
 }
 
-.card-actions{
-  display:flex;
-  gap:6px;
-  margin-top:10px;
-}
-
-.details-btn,
-.mint-btn{
-  flex:1;
-  border:1px solid var(--line);
-  background:transparent;
-  padding:8px 5px;
-  font-size:8px;
+.card-button{
+  width:100%;
+  height:35px;
+  border:1px solid var(--blue);
+  background:var(--blue);
+  color:var(--white);
+  font-size:10px;
   letter-spacing:1px;
   text-transform:uppercase;
+  transition:.2s ease;
 }
 
-.details-btn{
-  color:var(--text);
-}
-
-.details-btn:hover{
-  border-color:#777;
-}
-
-.mint-btn{
-  border-color:var(--lime);
-  color:var(--lime);
-}
-
-.mint-btn:hover{
-  background:var(--lime);
-  color:#08090b;
-}
-
-.mint-btn:disabled{
-  border-color:#333;
-  color:#555;
-  cursor:not-allowed;
+.card-button:hover{
   background:transparent;
 }
+
+.card-button.minted{
+  background:transparent;
+  border-color:var(--border);
+  color:#647789;
+}
+
+/* =========================
+   LOADING
+========================= */
+
+.loading{
+  min-height:300px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:var(--muted);
+  font-size:11px;
+  letter-spacing:2px;
+}
+
+.error-box{
+  padding:30px;
+  border:1px solid rgba(163,179,195,.14);
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.7;
+  text-align:center;
+}
+
+/* =========================
+   PAGINATION
+========================= */
 
 .pagination{
   display:flex;
   justify-content:center;
   align-items:center;
-  gap:20px;
+  gap:8px;
   margin-top:30px;
+  padding-bottom:30px;
 }
 
-.page-btn{
-  width:42px;
-  height:42px;
+.page-button{
+  min-width:42px;
+  height:38px;
+  padding:0 12px;
   background:transparent;
-  color:var(--text);
-  border:1px solid var(--line);
-  font-size:18px;
-}
-
-.page-btn:hover:not(:disabled){
-  border-color:var(--lime);
-  color:var(--lime);
-}
-
-.page-btn:disabled{
-  opacity:.25;
-  cursor:not-allowed;
-}
-
-.page-number{
-  font-size:10px;
   color:var(--muted);
-  letter-spacing:2px;
+  border:1px solid var(--border);
+  font-size:11px;
 }
 
-/* SIDE PANEL */
+.page-button:hover:not(:disabled){
+  border-color:var(--blue);
+  color:var(--white);
+}
+
+.page-button.active{
+  background:var(--blue);
+  border-color:var(--blue);
+  color:var(--white);
+}
+
+.page-info{
+  color:var(--muted);
+  font-size:11px;
+  padding:0 8px;
+}
+
+/* =========================
+   OVERLAY / DETAILS
+========================= */
 
 .overlay{
   position:fixed;
   inset:0;
   background:rgba(0,0,0,.65);
-  z-index:40;
+  z-index:100;
   display:none;
 }
 
@@ -293,387 +343,409 @@ select:focus{
   display:block;
 }
 
-.side-panel{
+.detail-panel{
   position:absolute;
   right:0;
   top:0;
   height:100%;
-  width:min(480px,94vw);
-  background:#0b0d0f;
-  border-left:1px solid var(--line);
+  width:min(520px,100%);
+  background:var(--bg);
+  border-left:1px solid var(--border);
   overflow-y:auto;
   padding:24px;
 }
 
-.close{
-  position:absolute;
-  top:18px;
-  right:18px;
-  width:36px;
-  height:36px;
-  border:1px solid var(--line);
+.detail-close{
+  width:38px;
+  height:38px;
+  float:right;
   background:transparent;
-  color:var(--text);
-  font-size:20px;
+  border:1px solid var(--border);
+  color:var(--muted);
+  font-size:18px;
+}
+
+.detail-close:hover{
+  border-color:var(--blue);
+  color:var(--white);
 }
 
 .detail-image{
+  clear:both;
   width:100%;
-  max-width:360px;
-  display:block;
-  margin:45px auto 25px;
-  background:#08090b;
+  margin-top:20px;
+  background:#000f26;
+  border:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.detail-image img{
+  width:100%;
+  max-height:460px;
+  object-fit:contain;
   image-rendering:pixelated;
 }
 
-.detail-id{
+.detail-name{
   font-size:20px;
-  letter-spacing:4px;
+  letter-spacing:3px;
+  margin:20px 0 5px;
 }
 
 .detail-price{
-  margin-top:10px;
-  font-size:18px;
-  font-weight:bold;
+  color:var(--muted);
+  font-size:12px;
+  margin-bottom:25px;
 }
 
 .detail-status{
-  margin-top:10px;
+  color:var(--blue);
   font-size:10px;
+  text-transform:uppercase;
   letter-spacing:2px;
+  margin-bottom:22px;
 }
 
 .traits{
-  margin-top:28px;
-  border-top:1px solid var(--line);
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  border-top:1px solid var(--border);
+  border-left:1px solid var(--border);
 }
 
 .trait{
-  display:flex;
-  justify-content:space-between;
-  padding:12px 0;
-  border-bottom:1px solid var(--line);
-  font-size:10px;
+  padding:13px;
+  border-right:1px solid var(--border);
+  border-bottom:1px solid var(--border);
 }
 
-.trait span:first-child{
+.trait-label{
   color:var(--muted);
-  text-transform:uppercase;
+  font-size:9px;
   letter-spacing:1px;
+  text-transform:uppercase;
+  margin-bottom:5px;
 }
 
-.trait span:last-child{
-  color:var(--text);
+.trait-value{
+  color:var(--white);
+  font-size:13px;
 }
 
 .detail-mint{
   width:100%;
-  margin-top:25px;
-  padding:15px;
-  border:1px solid var(--lime);
-  background:var(--lime);
-  color:#08090b;
-  font-weight:bold;
+  height:45px;
+  margin-top:20px;
+  background:var(--blue);
+  color:var(--white);
+  border:1px solid var(--blue);
   font-size:11px;
-  letter-spacing:2px;
+  letter-spacing:1px;
+  text-transform:uppercase;
 }
 
-.detail-mint:disabled{
-  border-color:#333;
-  background:#222;
-  color:#777;
+.detail-mint:hover{
+  background:transparent;
 }
 
-/* WALLET */
+.detail-mint.minted{
+  background:transparent;
+  border-color:var(--border);
+  color:#647789;
+}
 
-.wallet-box{
+/* =========================
+   TOAST
+========================= */
+
+.toast{
   position:fixed;
-  right:24px;
-  top:75px;
-  z-index:50;
-  width:300px;
-  background:#0d1013;
-  border:1px solid var(--line);
-  padding:18px;
+  right:20px;
+  bottom:20px;
+  max-width:360px;
+  padding:14px 17px;
+  background:var(--panel2);
+  border:1px solid var(--border);
+  color:var(--white);
+  font-size:11px;
+  line-height:1.5;
+  z-index:200;
   display:none;
 }
 
-.wallet-box.open{
+.toast.show{
   display:block;
 }
 
-.wallet-title{
-  font-size:10px;
-  letter-spacing:2px;
-  margin-bottom:12px;
-}
+/* =========================
+   RESPONSIVE
+========================= */
 
-.wallet-address{
-  font-family:monospace;
-  font-size:10px;
-  color:var(--muted);
-  word-break:break-all;
-}
-
-.disconnect{
-  margin-top:15px;
-  background:transparent;
-  border:1px solid #333;
-  color:#777;
-  padding:8px 12px;
-  font-size:9px;
-}
-
-.loading{
-  grid-column:1/-1;
-  text-align:center;
-  padding:80px 20px;
-  color:var(--muted);
-  font-size:10px;
-  letter-spacing:2px;
-}
-
-.error{
-  grid-column:1/-1;
-  text-align:center;
-  padding:50px;
-  color:#ff6b6b;
-  font-size:11px;
-}
-
-@media(max-width:1100px){
-  .gallery{grid-template-columns:repeat(4,1fr)}
-}
-
-@media(max-width:700px){
-  .header-inner{
-    padding:12px 15px;
+@media(max-width:1200px){
+  .gallery{
+    grid-template-columns:repeat(4,minmax(0,1fr));
   }
 
-  .brand-name{
-    font-size:16px;
+  .toolbar{
+    grid-template-columns:1fr 180px 140px;
+  }
+}
+
+@media(max-width:800px){
+  .header-inner{
+    padding:15px 18px;
+  }
+
+  main{
+    padding:20px 15px;
+  }
+
+  .logo{
+    width:145px;
+  }
+
+  .toolbar{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .toolbar .search{
+    grid-column:1/-1;
   }
 
   .gallery{
-    grid-template-columns:repeat(2,1fr);
+    grid-template-columns:repeat(2,minmax(0,1fr));
     gap:10px;
   }
+}
 
-  .gallery-wrap,
+@media(max-width:500px){
+  .header-inner{
+    min-height:75px;
+  }
+
+  .wallet-button{
+    padding:0 12px;
+    font-size:10px;
+  }
+
+  .topbar{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
   .toolbar{
-    padding-left:12px;
-    padding-right:12px;
+    grid-template-columns:1fr;
   }
 
-  .filters{
-    width:100%;
+  .toolbar .search{
+    grid-column:auto;
   }
 
-  select,
-  .search{
-    flex:1;
-    min-width:130px;
+  .detail-panel{
+    padding:16px;
   }
 }
 </style>
-
 </head>
 
 <body>
 
-<header class="header">
+<header>
   <div class="header-inner">
 
-```
-<a class="brand" href="#">
-  <!-- PIXEL LOGO -->
-  <svg class="logo" viewBox="0 0 16 16"
-       xmlns="http://www.w3.org/2000/svg">
-    <rect width="16" height="16" fill="#08090b"/>
+    <!-- ARC 360 PIXEL LOGO -->
+    <svg
+      class="logo"
+      viewBox="0 0 400 90"
+      xmlns="http://www.w3.org/2000/svg"
+      shape-rendering="crispEdges"
+      aria-label="ARC 360"
+    >
+      <!-- A -->
+      <g fill="#f9f9fb">
+        <rect x="20" y="10" width="30" height="10"/>
+        <rect x="10" y="20" width="10" height="50"/>
+        <rect x="50" y="20" width="10" height="50"/>
+        <rect x="20" y="40" width="30" height="10"/>
+      </g>
 
-    <!-- head -->
-    <rect x="4" y="2" width="8" height="1" fill="#d8dde1"/>
-    <rect x="3" y="3" width="10" height="2" fill="#d8dde1"/>
-    <rect x="2" y="5" width="12" height="6" fill="#d8dde1"/>
-    <rect x="3" y="11" width="10" height="2" fill="#d8dde1"/>
-    <rect x="5" y="13" width="6" height="1" fill="#d8dde1"/>
+      <!-- R -->
+      <g fill="#f9f9fb">
+        <rect x="72" y="10" width="10" height="60"/>
+        <rect x="82" y="10" width="30" height="10"/>
+        <rect x="112" y="20" width="10" height="20"/>
+        <rect x="82" y="40" width="30" height="10"/>
+        <rect x="102" y="50" width="10" height="10"/>
+        <rect x="112" y="60" width="10" height="10"/>
+      </g>
 
-    <!-- eyes -->
-    <rect x="3" y="7" width="4" height="2" fill="#08090b"/>
-    <rect x="9" y="7" width="4" height="2" fill="#08090b"/>
+      <!-- C -->
+      <g fill="#f9f9fb">
+        <rect x="142" y="10" width="40" height="10"/>
+        <rect x="132" y="20" width="10" height="40"/>
+        <rect x="142" y="60" width="40" height="10"/>
+      </g>
 
-    <!-- neon eye accents -->
-    <rect x="4" y="7" width="2" height="1" fill="#89f336"/>
-    <rect x="10" y="7" width="2" height="1" fill="#89f336"/>
+      <!-- 3 -->
+      <g fill="#a3b3c3">
+        <rect x="210" y="10" width="40" height="10"/>
+        <rect x="240" y="20" width="10" height="40"/>
+        <rect x="210" y="35" width="30" height="10"/>
+        <rect x="210" y="60" width="40" height="10"/>
+      </g>
 
-    <!-- nose -->
-    <rect x="7" y="9" width="2" height="2" fill="#08090b"/>
+      <!-- 6 -->
+      <g fill="#a3b3c3">
+        <rect x="262" y="10" width="40" height="10"/>
+        <rect x="262" y="20" width="10" height="40"/>
+        <rect x="272" y="35" width="30" height="10"/>
+        <rect x="292" y="45" width="10" height="15"/>
+        <rect x="262" y="60" width="40" height="10"/>
+      </g>
 
-    <!-- jaw -->
-    <rect x="5" y="11" width="2" height="1" fill="#08090b"/>
-    <rect x="9" y="11" width="2" height="1" fill="#08090b"/>
-  </svg>
+      <!-- 0 -->
+      <g fill="#3d6b8d">
+        <rect x="314" y="10" width="40" height="10"/>
+        <rect x="314" y="20" width="10" height="40"/>
+        <rect x="344" y="20" width="10" height="40"/>
+        <rect x="314" y="60" width="40" height="10"/>
+      </g>
+    </svg>
 
-  <div class="brand-name">ARC 360</div>
-</a>
-
-<button id="walletBtn" class="wallet-btn">
-  Connect Wallet
-</button>
-```
+    <button id="walletButton" class="wallet-button">
+      CONNECT WALLET
+    </button>
 
   </div>
 </header>
 
-<div id="walletBox" class="wallet-box">
-  <div class="wallet-title">CONNECTED WALLET</div>
-  <div id="walletAddress" class="wallet-address"></div>
-  <button id="disconnectBtn" class="disconnect">Disconnect</button>
-</div>
+<main>
 
-<section class="toolbar">
+  <div class="topbar">
 
-  <div class="collection-count">
-    <span id="availableCount">—</span> AVAILABLE
-    &nbsp; / &nbsp;
-    3,600
-  </div>
+    <div class="title-area">
+      <h1>GENESIS</h1>
+      <p>ARC 360 COLLECTION</p>
+    </div>
 
-  <div class="filters">
-
-```
-<input
-  id="search"
-  class="search"
-  type="number"
-  min="1"
-  max="3600"
-  placeholder="SEARCH #"
->
-
-<select id="sort">
-  <option value="idAsc">ID: 0001 → 3600</option>
-  <option value="idDesc">ID: 3600 → 0001</option>
-  <option value="priceAsc">PRICE: LOW → HIGH</option>
-  <option value="priceDesc">PRICE: HIGH → LOW</option>
-  <option value="rarityAsc">RARITY: LOW → HIGH</option>
-  <option value="rarityDesc">RARITY: HIGH → LOW</option>
-</select>
-
-<select id="statusFilter">
-  <option value="all">ALL</option>
-  <option value="available">AVAILABLE</option>
-  <option value="minted">MINTED</option>
-</select>
-```
+    <div id="count" class="count">
+      Loading...
+    </div>
 
   </div>
 
-</section>
+  <div class="toolbar">
 
-<main class="gallery-wrap">
+    <input
+      id="search"
+      class="input search"
+      type="text"
+      placeholder="Search ARC 360 #..."
+    >
 
-  <div id="gallery" class="gallery">
-    <div class="loading">LOADING ARCHITECTS...</div>
+    <select id="sort" class="select">
+      <option value="id-asc">ID — LOW TO HIGH</option>
+      <option value="id-desc">ID — HIGH TO LOW</option>
+      <option value="rarity-asc">RARITY — LOW TO HIGH</option>
+      <option value="rarity-desc">RARITY — HIGH TO LOW</option>
+    </select>
+
+    <select id="statusFilter" class="select">
+      <option value="all">ALL</option>
+      <option value="available">AVAILABLE</option>
+      <option value="minted">MINTED</option>
+    </select>
+
+    <select id="pageSize" class="select">
+      <option value="24">24 / PAGE</option>
+      <option value="48">48 / PAGE</option>
+      <option value="72">72 / PAGE</option>
+    </select>
+
   </div>
 
-  <div class="pagination">
+  <div id="gallery" class="gallery"></div>
 
-```
-<button id="prevPage" class="page-btn">←</button>
-
-<div id="pageNumber" class="page-number">
-  PAGE 1
-</div>
-
-<button id="nextPage" class="page-btn">→</button>
-```
-
+  <div id="loading" class="loading">
+    LOADING ARCHITECTS...
   </div>
+
+  <div id="pagination" class="pagination"></div>
 
 </main>
 
-<!-- DETAIL PANEL -->
-
+<!-- DETAILS PANEL -->
 <div id="overlay" class="overlay">
 
-  <aside class="side-panel">
+  <aside class="detail-panel">
 
-```
-<button id="closePanel" class="close">×</button>
+    <button id="closeDetail" class="detail-close">×</button>
 
-<img id="detailImage" class="detail-image">
+    <div id="detailImage" class="detail-image"></div>
 
-<div id="detailId" class="detail-id"></div>
-<div id="detailPrice" class="detail-price"></div>
-<div id="detailStatus" class="detail-status"></div>
+    <div id="detailName" class="detail-name">ARC 360</div>
 
-<div class="traits">
+    <div id="detailPrice" class="detail-price">—</div>
 
-  <div class="trait">
-    <span>Face</span>
-    <span id="traitFace">—</span>
-  </div>
+    <div id="detailStatus" class="detail-status">—</div>
 
-  <div class="trait">
-    <span>Eyes</span>
-    <span id="traitEyes">—</span>
-  </div>
+    <div id="traits" class="traits"></div>
 
-  <div class="trait">
-    <span>Jaw</span>
-    <span id="traitJaw">—</span>
-  </div>
-
-  <div class="trait">
-    <span>Hair</span>
-    <span id="traitHair">—</span>
-  </div>
-
-  <div class="trait">
-    <span>Horns</span>
-    <span id="traitHorns">—</span>
-  </div>
-
-  <div class="trait">
-    <span>Head</span>
-    <span id="traitHead">—</span>
-  </div>
-
-  <div class="trait">
-    <span>Rarity Score</span>
-    <span id="traitRarity">—</span>
-  </div>
-
-</div>
-
-<button id="detailMint" class="detail-mint">
-  MINT
-</button>
-```
+    <button id="detailMint" class="detail-mint">
+      MINT
+    </button>
 
   </aside>
 
 </div>
 
+<div id="toast" class="toast"></div>
+
 <script type="module">
 
 import {
   BrowserProvider,
-  Contract,
-  parseEther
+  JsonRpcProvider,
+  Contract
 } from "https://cdn.jsdelivr.net/npm/ethers@6.15.0/+esm";
 
 /* =========================================================
-   CONTRACT
+   CONFIG
 ========================================================= */
 
-const RPC_URL = "https://rpc.testnet.arc.network";
+const RPC_URL =
+  "https://rpc.testnet.arc.network";
+
+const CHAIN_ID =
+  5042002;
+
+const CHAIN_ID_HEX =
+  "0x4cef52";
 
 const CONTRACT_ADDRESS =
   "0x1aa4e3d6765ad2a0244b69681a34e48779dc8d65";
 
-const CHAIN_ID = 5042002;
+const EXPLORER =
+  "https://explorer.testnet.arc.io/address/" +
+  CONTRACT_ADDRESS;
+
+const TOTAL_SUPPLY =
+  3600;
+
+const PAGE_SIZE_DEFAULT =
+  24;
+
+const BATCH_SIZE =
+  4;
+
+const MAX_RETRIES =
+  5;
+
+/* =========================================================
+   ABI
+========================================================= */
 
 const ABI = [
 
@@ -681,121 +753,216 @@ const ABI = [
 
   "function isGenesisMinted(uint256 tokenId) view returns (bool)",
 
-  "function isGenesisAvailable(uint256 tokenId) view returns (bool)",
-
   "function rarityScore(uint256 tokenId) view returns (uint256)",
 
-  "function mintPrice() view returns (uint256)",
+  "function getDNA(uint256 tokenId) view returns (uint256 face,uint256 eyes,uint256 jaw,uint256 hair,uint256 horns,uint256 head)",
 
   "function mint(uint256[] tokenIds) payable",
+
+  "function mintPrice() view returns (uint256)",
 
   "function genesisMinted() view returns (uint256)",
 
   "function activeSupply() view returns (uint256)"
-
 ];
 
 /* =========================================================
-   PRICE TABLE
-=========================================================
-
-   The current Solidity contract has one global mintPrice().
-   Individual prices are therefore kept here until an
-   individual-price mechanism is added to the contract.
-
-   Set prices like:
-
-   1: "10",
-   2: "12",
-   3: "15"
-
-   Values are USDC-style display values.
-
+   PROVIDERS
 ========================================================= */
 
-const CUSTOM_PRICES = {
-  // 1: 10,
-  // 2: 12,
-  // 3: 15
-};
+const readProvider =
+  new JsonRpcProvider(RPC_URL);
 
-let contract;
-let provider;
-let signer;
+const readContract =
+  new Contract(
+    CONTRACT_ADDRESS,
+    ABI,
+    readProvider
+  );
+
+let browserProvider = null;
+let signer = null;
+let writeContract = null;
 let walletAddress = null;
 
-let globalMintPrice = 0;
+/* =========================================================
+   STATE
+========================================================= */
 
-const TOTAL = 3600;
-const PER_PAGE = 24;
+let allNFTs = [];
+
+let filteredNFTs = [];
 
 let currentPage = 1;
-let currentItems = [];
 
-const state = new Map();
+let pageSize = PAGE_SIZE_DEFAULT;
+
+let currentDetail = null;
+
+let mintPrice = 0n;
 
 /* =========================================================
    DOM
 ========================================================= */
 
-const gallery = document.getElementById("gallery");
-const pageNumber = document.getElementById("pageNumber");
-const prevPage = document.getElementById("prevPage");
-const nextPage = document.getElementById("nextPage");
-const sortSelect = document.getElementById("sort");
-const statusFilter = document.getElementById("statusFilter");
-const search = document.getElementById("search");
+const gallery =
+  document.getElementById("gallery");
 
-const overlay = document.getElementById("overlay");
-const closePanel = document.getElementById("closePanel");
+const loading =
+  document.getElementById("loading");
 
-const detailImage = document.getElementById("detailImage");
-const detailId = document.getElementById("detailId");
-const detailPrice = document.getElementById("detailPrice");
-const detailStatus = document.getElementById("detailStatus");
-const detailMint = document.getElementById("detailMint");
+const count =
+  document.getElementById("count");
 
-const walletBtn = document.getElementById("walletBtn");
-const walletBox = document.getElementById("walletBox");
-const walletAddressEl = document.getElementById("walletAddress");
-const disconnectBtn = document.getElementById("disconnectBtn");
+const search =
+  document.getElementById("search");
+
+const sort =
+  document.getElementById("sort");
+
+const statusFilter =
+  document.getElementById("statusFilter");
+
+const pageSizeSelect =
+  document.getElementById("pageSize");
+
+const pagination =
+  document.getElementById("pagination");
+
+const walletButton =
+  document.getElementById("walletButton");
+
+const overlay =
+  document.getElementById("overlay");
+
+const closeDetail =
+  document.getElementById("closeDetail");
+
+const detailImage =
+  document.getElementById("detailImage");
+
+const detailName =
+  document.getElementById("detailName");
+
+const detailPrice =
+  document.getElementById("detailPrice");
+
+const detailStatus =
+  document.getElementById("detailStatus");
+
+const traits =
+  document.getElementById("traits");
+
+const detailMint =
+  document.getElementById("detailMint");
+
+const toast =
+  document.getElementById("toast");
 
 /* =========================================================
-   CONTRACT READ PROVIDER
+   HELPERS
 ========================================================= */
 
-const readProvider =
-  new BrowserProvider(
-    new ethers.JsonRpcProvider(RPC_URL)
+function showToast(message){
+
+  toast.textContent = message;
+
+  toast.classList.add("show");
+
+  clearTimeout(showToast.timer);
+
+  showToast.timer =
+    setTimeout(() => {
+      toast.classList.remove("show");
+    }, 4500);
+}
+
+function shortenAddress(address){
+
+  if(!address) return "";
+
+  return (
+    address.slice(0,6) +
+    "..." +
+    address.slice(-4)
   );
-
-/* =========================================================
-   PRICE
-========================================================= */
-
-function getPrice(id){
-
-  if(CUSTOM_PRICES[id] !== undefined){
-    return Number(CUSTOM_PRICES[id]);
-  }
-
-  return globalMintPrice;
 }
 
 function formatPrice(value){
 
-  if(value === 0){
+  if(value === 0n){
     return "FREE";
   }
 
-  return `${value} USDC`;
+  try{
+
+    const amount =
+      Number(value) / 1e18;
+
+    return amount + " ARC";
+
+  }catch{
+
+    return value.toString() + " wei";
+
+  }
+}
+
+function sleep(ms){
+
+  return new Promise(
+    resolve => setTimeout(resolve,ms)
+  );
 }
 
 /* =========================================================
-   DATA URI PARSER
+   RPC RETRY
 ========================================================= */
 
-function parseTokenURI(uri){
+async function retryCall(fn){
+
+  let lastError = null;
+
+  for(
+    let attempt = 1;
+    attempt <= MAX_RETRIES;
+    attempt++
+  ){
+
+    try{
+
+      return await fn();
+
+    }catch(error){
+
+      lastError = error;
+
+      console.warn(
+        "RPC attempt",
+        attempt,
+        error
+      );
+
+      if(attempt < MAX_RETRIES){
+
+        await sleep(
+          500 * attempt
+        );
+
+      }
+
+    }
+
+  }
+
+  throw lastError;
+}
+
+/* =========================================================
+   TOKEN URI
+========================================================= */
+
+function decodeTokenURI(uri){
 
   try{
 
@@ -803,423 +970,643 @@ function parseTokenURI(uri){
       "data:application/json;base64,";
 
     if(!uri.startsWith(prefix)){
-      throw new Error("Unexpected metadata format");
+      throw new Error(
+        "Unexpected tokenURI format"
+      );
     }
 
+    const base64 =
+      uri.slice(prefix.length);
+
     const json =
-      atob(uri.slice(prefix.length));
+      decodeURIComponent(
+        Array.prototype.map.call(
+          atob(base64),
+          c =>
+            "%" +
+            ("00"+c.charCodeAt(0).toString(16))
+              .slice(-2)
+        ).join("")
+      );
 
     return JSON.parse(json);
 
   }catch(error){
 
-    console.error("Metadata parse error:",error);
-    return null;
-
-  }
-}
-
-/* =========================================================
-   RETRY
-========================================================= */
-
-async function retry(fn, attempts=4){
-
-  let lastError;
-
-  for(let i=0;i<attempts;i++){
-
-    try{
-      return await fn();
-    }catch(error){
-
-      lastError = error;
-
-      await new Promise(
-        resolve => setTimeout(resolve, 300*(i+1))
-      );
-
-    }
-
-  }
-
-  throw lastError;
-
-}
-
-/* =========================================================
-   TOKEN DATA
-========================================================= */
-
-async function loadToken(id){
-
-  if(state.has(id)){
-    return state.get(id);
-  }
-
-  const data = {
-    id,
-    minted:false,
-    available:false,
-    rarity:0,
-    image:null,
-    traits:{}
-  };
-
-  try{
-
-    data.minted =
-      await retry(
-        () => contractRead().isGenesisMinted(id)
-      );
-
-    data.available = !data.minted;
-
-    data.rarity =
-      Number(
-        await retry(
-          () => contractRead().rarityScore(id)
-        )
-      );
-
-    /*
-      previewTokenURI is retried independently because
-      occasional Arc RPC calls can return missing revert data.
-    */
-
-    const uri =
-      await retry(
-        () => contractRead().previewTokenURI(id),
-        4
-      );
-
-    const metadata =
-      parseTokenURI(uri);
-
-    if(metadata){
-
-      data.image = metadata.image;
-
-      if(Array.isArray(metadata.attributes)){
-
-        for(const attr of metadata.attributes){
-
-          data.traits[attr.trait_type] =
-            attr.value;
-
-        }
-
-      }
-
-    }
-
-  }catch(error){
-
-    console.warn(
-      `Token #${id} failed after retries`,
+    console.error(
+      "Metadata decode failed:",
       error
     );
 
-    data.error = true;
+    return null;
+  }
+}
+
+/* =========================================================
+   NFT LOAD
+========================================================= */
+
+async function loadNFT(id){
+
+  const minted =
+    await retryCall(() =>
+      readContract.isGenesisMinted(id)
+    );
+
+  const rarity =
+    await retryCall(() =>
+      readContract.rarityScore(id)
+    );
+
+  const uri =
+    await retryCall(() =>
+      readContract.previewTokenURI(id)
+    );
+
+  const metadata =
+    decodeTokenURI(uri);
+
+  let image = "";
+
+  if(metadata && metadata.image){
+
+    image =
+      metadata.image;
 
   }
 
-  state.set(id,data);
+  return {
 
-  return data;
+    id,
+
+    minted,
+
+    rarity:
+      Number(rarity),
+
+    image,
+
+    price:
+      mintPrice
+
+  };
 }
 
 /* =========================================================
-   READ CONTRACT
+   LOAD ALL NFTs
 ========================================================= */
 
-function contractRead(){
+async function loadCollection(){
 
-  return new Contract(
-    CONTRACT_ADDRESS,
-    ABI,
-    readProvider
-  );
+  loading.style.display =
+    "flex";
 
-}
+  gallery.innerHTML =
+    "";
 
-/* =========================================================
-   INITIALIZE
-========================================================= */
-
-async function init(){
+  count.textContent =
+    "Loading...";
 
   try{
 
-    contract = contractRead();
-
-    globalMintPrice =
-      Number(
-        await retry(
-          () => contract.mintPrice()
-        )
+    mintPrice =
+      await retryCall(() =>
+        readContract.mintPrice()
       );
 
+    console.log(
+      "Contract:",
+      CONTRACT_ADDRESS
+    );
+
+    console.log(
+      "Mint price:",
+      mintPrice.toString()
+    );
+
+    allNFTs = [];
+
     /*
-      Load availability progressively.
-      We don't request all 3600 previews at once.
+      We load in very small batches.
+      This avoids flooding the Arc RPC.
     */
 
-    await loadPage(1);
+    for(
+      let start = 1;
+      start <= TOTAL_SUPPLY;
+      start += BATCH_SIZE
+    ){
+
+      const end =
+        Math.min(
+          start + BATCH_SIZE - 1,
+          TOTAL_SUPPLY
+        );
+
+      const batch = [];
+
+      for(
+        let id = start;
+        id <= end;
+        id++
+      ){
+
+        batch.push(
+          loadNFT(id)
+        );
+
+      }
+
+      const results =
+        await Promise.all(batch);
+
+      allNFTs.push(
+        ...results
+      );
+
+      count.textContent =
+        `${allNFTs.length.toLocaleString()} / ${TOTAL_SUPPLY.toLocaleString()}`;
+
+      /*
+        Render progressively so the page
+        starts showing NFTs immediately.
+      */
+
+      applyFilters();
+
+      await sleep(80);
+    }
+
+    loading.style.display =
+      "none";
+
+    count.textContent =
+      `${allNFTs.length.toLocaleString()} NFTs`;
+
+    applyFilters();
 
   }catch(error){
 
     console.error(error);
 
-    gallery.innerHTML =
-      `<div class="error">
-        Unable to connect to Arc Testnet.
-      </div>`;
-
-  }
-
-}
-
-/* =========================================================
-   LOAD PAGE
-========================================================= */
-
-async function loadPage(page){
-
-  gallery.innerHTML =
-    `<div class="loading">
-      LOADING ARCHITECTS...
-    </div>`;
-
-  currentPage = page;
-
-  const start =
-    (page-1)*PER_PAGE+1;
-
-  const end =
-    Math.min(
-      TOTAL,
-      start+PER_PAGE-1
-    );
-
-  const ids = [];
-
-  for(let id=start;id<=end;id++){
-    ids.push(id);
-  }
-
-  const results = [];
-
-  /*
-    Small batches avoid overwhelming the RPC.
-  */
-
-  for(let i=0;i<ids.length;i+=4){
-
-    const batch =
-      ids.slice(i,i+4);
-
-    const batchResults =
-      await Promise.all(
-        batch.map(id => loadToken(id))
-      );
-
-    results.push(...batchResults);
-
-    await new Promise(
-      resolve => setTimeout(resolve,80)
-    );
-
-  }
-
-  currentItems = results;
-
-  render();
-
-}
-
-/* =========================================================
-   FILTER + SORT
-========================================================= */
-
-function filteredItems(){
-
-  let items =
-    Array.from(state.values());
-
-  const searchValue =
-    Number(search.value);
-
-  if(searchValue){
-
-    items =
-      items.filter(
-        x => x.id === searchValue
-      );
-
-  }
-
-  if(statusFilter.value === "available"){
-
-    items =
-      items.filter(x => x.available);
-
-  }
-
-  if(statusFilter.value === "minted"){
-
-    items =
-      items.filter(x => x.minted);
-
-  }
-
-  const sort =
-    sortSelect.value;
-
-  items.sort((a,b)=>{
-
-    if(sort==="idAsc")
-      return a.id-b.id;
-
-    if(sort==="idDesc")
-      return b.id-a.id;
-
-    if(sort==="priceAsc")
-      return getPrice(a.id)-getPrice(b.id);
-
-    if(sort==="priceDesc")
-      return getPrice(b.id)-getPrice(a.id);
-
-    if(sort==="rarityAsc")
-      return a.rarity-b.rarity;
-
-    if(sort==="rarityDesc")
-      return b.rarity-a.rarity;
-
-    return a.id-b.id;
-
-  });
-
-  return items;
-
-}
-
-/* =========================================================
-   RENDER
-========================================================= */
-
-function render(){
-
-  const items =
-    filteredItems();
-
-  gallery.innerHTML = "";
-
-  if(items.length === 0){
-
-    gallery.innerHTML =
-      `<div class="loading">
-        NO TOKENS FOUND
-      </div>`;
-
-  }
-
-  for(const item of items){
-
-    const card =
-      document.createElement("article");
-
-    card.className = "card";
-
-    const image =
-      document.createElement("img");
-
-    image.className =
-      "card-image";
-
-    image.src =
-      item.image || "";
-
-    image.alt =
-      `ARC 360 #${String(item.id).padStart(4,"0")}`;
-
-    const info =
-      document.createElement("div");
-
-    info.className =
-      "card-info";
-
-    const id =
-      String(item.id).padStart(4,"0");
-
-    const price =
-      getPrice(item.id);
-
-    info.innerHTML = `
-
-      <div class="card-id">
-        ARC 360 #${id}
-      </div>
-
-      <div class="card-price">
-        ${formatPrice(price)}
-      </div>
-
-      <div class="card-status ${item.available ? "available":"minted"}">
-        ${item.available ? "AVAILABLE":"MINTED"}
-      </div>
-
-      <div class="card-actions">
-
-        <button class="details-btn">
-          DETAILS
-        </button>
-
-        <button
-          class="mint-btn"
-          ${item.available ? "":"disabled"}>
-          ${item.available ? "MINT":"MINTED"}
-        </button>
-
+    loading.style.display =
+      "none";
+
+    gallery.innerHTML = `
+      <div class="error-box" style="grid-column:1/-1">
+        <strong>Unable to load the collection.</strong>
+        <br><br>
+        The Arc Testnet RPC may have temporarily
+        rejected a request.
+        <br><br>
+        Please refresh the page and try again.
       </div>
     `;
 
-    card.appendChild(image);
-    card.appendChild(info);
-
-    card
-      .querySelector(".details-btn")
-      .onclick = () => openDetails(item.id);
-
-    card
-      .querySelector(".mint-btn")
-      .onclick = event => {
-        event.stopPropagation();
-        mintToken(item.id);
-      };
-
-    card.onclick = event => {
-
-      if(
-        event.target.tagName === "BUTTON"
-      ) return;
-
-      openDetails(item.id);
-
-    };
-
-    gallery.appendChild(card);
+    count.textContent =
+      "RPC ERROR";
 
   }
 
-  pageNumber.textContent =
-    `PAGE ${currentPage} / ${Math.ceil(TOTAL/PER_PAGE)}`;
+}
 
-  prevPage.disabled =
+/* =========================================================
+   FILTERS
+========================================================= */
+
+function applyFilters(){
+
+  const query =
+    search.value
+      .trim()
+      .toLowerCase();
+
+  const status =
+    statusFilter.value;
+
+  filteredNFTs =
+    allNFTs.filter(nft => {
+
+      const matchesSearch =
+        !query ||
+        String(nft.id)
+          .includes(
+            query.replace(
+              "arc 360 #",
+              ""
+            )
+          );
+
+      const matchesStatus =
+        status === "all" ||
+        (
+          status === "available" &&
+          !nft.minted
+        ) ||
+        (
+          status === "minted" &&
+          nft.minted
+        );
+
+      return (
+        matchesSearch &&
+        matchesStatus
+      );
+
+    });
+
+  const sortMode =
+    sort.value;
+
+  filteredNFTs.sort(
+    (a,b) => {
+
+      if(sortMode === "id-asc"){
+        return a.id - b.id;
+      }
+
+      if(sortMode === "id-desc"){
+        return b.id - a.id;
+      }
+
+      if(sortMode === "rarity-asc"){
+        return a.rarity - b.rarity;
+      }
+
+      if(sortMode === "rarity-desc"){
+        return b.rarity - a.rarity;
+      }
+
+      return 0;
+    }
+  );
+
+  currentPage = 1;
+
+  renderPage();
+
+}
+
+/* =========================================================
+   IMAGE
+========================================================= */
+
+function imageHTML(nft){
+
+  if(!nft.image){
+
+    return `
+      <div style="
+        color:#647789;
+        font-size:10px;
+      ">
+        IMAGE ERROR
+      </div>
+    `;
+
+  }
+
+  return `
+    <img
+      src="${nft.image}"
+      alt="ARC 360 #${nft.id}"
+      loading="lazy"
+    >
+  `;
+}
+
+/* =========================================================
+   CARD
+========================================================= */
+
+function renderCard(nft){
+
+  const available =
+    !nft.minted;
+
+  const price =
+    formatPrice(nft.price);
+
+  return `
+    <article
+      class="card"
+      data-id="${nft.id}"
+    >
+
+      <div
+        class="card-image"
+        data-open="${nft.id}"
+      >
+        ${imageHTML(nft)}
+      </div>
+
+      <div class="card-content">
+
+        <div class="card-name">
+          ARC 360 #${String(nft.id).padStart(4,"0")}
+        </div>
+
+        <div class="card-price">
+          ${price}
+        </div>
+
+        <div class="
+          card-status
+          ${available
+            ? "status-available"
+            : "status-minted"}
+        ">
+          ${available
+            ? "AVAILABLE"
+            : "MINTED"}
+        </div>
+
+        <button
+          class="card-button ${available
+            ? ""
+            : "minted"}"
+          data-detail="${nft.id}"
+        >
+          ${available
+            ? "VIEW / MINT"
+            : "VIEW"}
+        </button>
+
+      </div>
+
+    </article>
+  `;
+}
+
+/* =========================================================
+   RENDER PAGE
+========================================================= */
+
+function renderPage(){
+
+  const total =
+    filteredNFTs.length;
+
+  const totalPages =
+    Math.max(
+      1,
+      Math.ceil(
+        total / pageSize
+      )
+    );
+
+  if(currentPage > totalPages){
+    currentPage =
+      totalPages;
+  }
+
+  const start =
+    (currentPage - 1) *
+    pageSize;
+
+  const end =
+    start + pageSize;
+
+  const pageNFTs =
+    filteredNFTs.slice(
+      start,
+      end
+    );
+
+  if(pageNFTs.length === 0){
+
+    gallery.innerHTML = `
+      <div class="error-box"
+        style="grid-column:1/-1">
+        No NFTs found.
+      </div>
+    `;
+
+  }else{
+
+    gallery.innerHTML =
+      pageNFTs
+        .map(renderCard)
+        .join("");
+
+  }
+
+  renderPagination(
+    totalPages
+  );
+
+  /*
+    Attach click handlers after
+    cards are rendered.
+  */
+
+  document
+    .querySelectorAll("[data-open]")
+    .forEach(el => {
+
+      el.addEventListener(
+        "click",
+        () => {
+
+          const id =
+            Number(
+              el.dataset.open
+            );
+
+          openDetail(id);
+
+        }
+      );
+
+    });
+
+  document
+    .querySelectorAll("[data-detail]")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        event => {
+
+          event.stopPropagation();
+
+          const id =
+            Number(
+              button.dataset.detail
+            );
+
+          openDetail(id);
+
+        }
+      );
+
+    });
+
+}
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+
+function renderPagination(totalPages){
+
+  pagination.innerHTML =
+    "";
+
+  if(totalPages <= 1){
+    return;
+  }
+
+  const prev =
+    document.createElement("button");
+
+  prev.className =
+    "page-button";
+
+  prev.textContent =
+    "←";
+
+  prev.disabled =
     currentPage === 1;
 
-  nextPage.disabled =
-    currentPage === Math.ceil(TOTAL/PER_PAGE);
+  prev.onclick =
+    () => {
+
+      if(currentPage > 1){
+
+        currentPage--;
+
+        renderPage();
+
+        window.scrollTo({
+          top:0,
+          behavior:"smooth"
+        });
+
+      }
+
+    };
+
+  pagination.appendChild(prev);
+
+  /*
+    Show a compact page range.
+  */
+
+  let start =
+    Math.max(
+      1,
+      currentPage - 2
+    );
+
+  let end =
+    Math.min(
+      totalPages,
+      currentPage + 2
+    );
+
+  if(currentPage <= 3){
+    end =
+      Math.min(
+        totalPages,
+        5
+      );
+  }
+
+  if(currentPage >= totalPages - 2){
+    start =
+      Math.max(
+        1,
+        totalPages - 4
+      );
+  }
+
+  for(
+    let page = start;
+    page <= end;
+    page++
+  ){
+
+    const button =
+      document.createElement("button");
+
+    button.className =
+      "page-button" +
+      (
+        page === currentPage
+          ? " active"
+          : ""
+      );
+
+    button.textContent =
+      page;
+
+    button.onclick =
+      () => {
+
+        currentPage =
+          page;
+
+        renderPage();
+
+        window.scrollTo({
+          top:0,
+          behavior:"smooth"
+        });
+
+      };
+
+    pagination.appendChild(
+      button
+    );
+
+  }
+
+  const next =
+    document.createElement("button");
+
+  next.className =
+    "page-button";
+
+  next.textContent =
+    "→";
+
+  next.disabled =
+    currentPage === totalPages;
+
+  next.onclick =
+    () => {
+
+      if(
+        currentPage <
+        totalPages
+      ){
+
+        currentPage++;
+
+        renderPage();
+
+        window.scrollTo({
+          top:0,
+          behavior:"smooth"
+        });
+
+      }
+
+    };
+
+  pagination.appendChild(next);
+
+  const info =
+    document.createElement("span");
+
+  info.className =
+    "page-info";
+
+  info.textContent =
+    `${currentPage} / ${totalPages}`;
+
+  pagination.appendChild(info);
 
 }
 
@@ -1227,141 +1614,316 @@ function render(){
    DETAILS
 ========================================================= */
 
-async function openDetails(id){
+function openDetail(id){
 
-  const item =
-    await loadToken(id);
+  const nft =
+    allNFTs.find(
+      item => item.id === id
+    );
 
-  detailImage.src =
-    item.image || "";
+  if(!nft){
+    return;
+  }
 
-  detailId.textContent =
-    `ARC 360 #${String(id).padStart(4,"0")}`;
+  currentDetail =
+    nft;
+
+  detailImage.innerHTML =
+    imageHTML(nft);
+
+  detailName.textContent =
+    `ARC 360 #${String(nft.id).padStart(4,"0")}`;
 
   detailPrice.textContent =
-    formatPrice(getPrice(id));
+    formatPrice(nft.price);
 
   detailStatus.textContent =
-    item.available
-      ? "AVAILABLE"
-      : "MINTED";
+    nft.minted
+      ? "MINTED"
+      : "AVAILABLE";
 
-  detailStatus.className =
-    `detail-status ${
-      item.available
-      ? "available"
-      : "minted"
-    }`;
+  detailStatus.style.color =
+    nft.minted
+      ? "#657789"
+      : "var(--blue)";
 
-  document.getElementById("traitFace").textContent =
-    item.traits.Face ?? "—";
+  traits.innerHTML = `
+    <div class="trait">
+      <div class="trait-label">Face</div>
+      <div
+        class="trait-value"
+        id="traitFace"
+      >—</div>
+    </div>
 
-  document.getElementById("traitEyes").textContent =
-    item.traits.Eyes ?? "—";
+    <div class="trait">
+      <div class="trait-label">Eyes</div>
+      <div
+        class="trait-value"
+        id="traitEyes"
+      >—</div>
+    </div>
 
-  document.getElementById("traitJaw").textContent =
-    item.traits.Jaw ?? "—";
+    <div class="trait">
+      <div class="trait-label">Jaw</div>
+      <div
+        class="trait-value"
+        id="traitJaw"
+      >—</div>
+    </div>
 
-  document.getElementById("traitHair").textContent =
-    item.traits.Hair ?? "—";
+    <div class="trait">
+      <div class="trait-label">Hair</div>
+      <div
+        class="trait-value"
+        id="traitHair"
+      >—</div>
+    </div>
 
-  document.getElementById("traitHorns").textContent =
-    item.traits.Horns ?? "—";
+    <div class="trait">
+      <div class="trait-label">Horns</div>
+      <div
+        class="trait-value"
+        id="traitHorns"
+      >—</div>
+    </div>
 
-  document.getElementById("traitHead").textContent =
-    item.traits.Head ?? "—";
+    <div class="trait">
+      <div class="trait-label">Head</div>
+      <div
+        class="trait-value"
+        id="traitHead"
+      >—</div>
+    </div>
 
-  document.getElementById("traitRarity").textContent =
-    item.rarity;
+    <div class="trait">
+      <div class="trait-label">Rarity Score</div>
+      <div
+        class="trait-value"
+        id="traitRarity"
+      >${nft.rarity}</div>
+    </div>
+
+    <div class="trait">
+      <div class="trait-label">Type</div>
+      <div
+        class="trait-value"
+      >Genesis</div>
+    </div>
+  `;
 
   detailMint.disabled =
-    !item.available;
+    nft.minted;
+
+  detailMint.className =
+    "detail-mint" +
+    (
+      nft.minted
+        ? " minted"
+        : ""
+    );
 
   detailMint.textContent =
-    item.available
-      ? "MINT"
-      : "MINTED";
+    nft.minted
+      ? "ALREADY MINTED"
+      : "MINT THIS ARCHITECT";
 
-  detailMint.onclick =
-    () => mintToken(id);
+  overlay.classList.add(
+    "open"
+  );
 
-  overlay.classList.add("open");
+  loadDNA(id);
 
 }
 
 /* =========================================================
-   MINT
+   DNA
 ========================================================= */
 
-async function mintToken(id){
+async function loadDNA(id){
 
   try{
 
-    if(!signer){
+    const dna =
+      await retryCall(() =>
+        readContract.getDNA(id)
+      );
 
-      await connectWallet();
+    document.getElementById(
+      "traitFace"
+    ).textContent =
+      dna.face.toString();
 
-      if(!signer){
-        return;
-      }
+    document.getElementById(
+      "traitEyes"
+    ).textContent =
+      dna.eyes.toString();
 
-    }
+    document.getElementById(
+      "traitJaw"
+    ).textContent =
+      dna.jaw.toString();
 
-    const current =
-      await contract
-        .connect(signer)
-        .isGenesisMinted(id);
+    document.getElementById(
+      "traitHair"
+    ).textContent =
+      dna.hair.toString();
 
-    if(current){
+    document.getElementById(
+      "traitHorns"
+    ).textContent =
+      dna.horns.toString();
 
-      alert("This ARC 360 is already minted.");
-      return;
-
-    }
-
-    const price =
-      getPrice(id);
-
-    const value =
-      price === 0
-        ? 0n
-        : parseEther(String(price));
-
-    const tx =
-      await contract
-        .connect(signer)
-        .mint([id],{
-          value
-        });
-
-    detailMint.disabled = true;
-    detailMint.textContent = "MINTING...";
-
-    await tx.wait();
-
-    alert(
-      `ARC 360 #${String(id).padStart(4,"0")} minted successfully.`
-    );
-
-    state.delete(id);
-
-    await loadPage(currentPage);
-
-    overlay.classList.remove("open");
+    document.getElementById(
+      "traitHead"
+    ).textContent =
+      dna.head.toString();
 
   }catch(error){
 
-    console.error(error);
-
-    alert(
-      error?.shortMessage ||
-      error?.reason ||
-      "Mint failed."
+    console.error(
+      "DNA error:",
+      error
     );
 
   }
 
 }
+
+/* =========================================================
+   CLOSE DETAILS
+========================================================= */
+
+closeDetail.onclick =
+  () => {
+
+    overlay.classList.remove(
+      "open"
+    );
+
+  };
+
+overlay.addEventListener(
+  "click",
+  event => {
+
+    if(event.target === overlay){
+
+      overlay.classList.remove(
+        "open"
+      );
+
+    }
+
+  }
+);
+
+/* =========================================================
+   MINT
+========================================================= */
+
+detailMint.onclick =
+  async () => {
+
+    if(!currentDetail){
+      return;
+    }
+
+    if(currentDetail.minted){
+      return;
+    }
+
+    if(!writeContract){
+
+      showToast(
+        "Connect your wallet first."
+      );
+
+      await connectWallet();
+
+      return;
+    }
+
+    try{
+
+      detailMint.disabled =
+        true;
+
+      detailMint.textContent =
+        "CONFIRM IN WALLET...";
+
+      const tx =
+        await writeContract.mint(
+          [currentDetail.id],
+          {
+            value: mintPrice
+          }
+        );
+
+      detailMint.textContent =
+        "MINTING...";
+
+      showToast(
+        "Transaction submitted. Waiting for confirmation..."
+      );
+
+      await tx.wait();
+
+      showToast(
+        "ARC 360 #" +
+        currentDetail.id +
+        " minted successfully."
+      );
+
+      currentDetail.minted =
+        true;
+
+      const nft =
+        allNFTs.find(
+          item =>
+            item.id ===
+            currentDetail.id
+        );
+
+      if(nft){
+        nft.minted =
+          true;
+      }
+
+      applyFilters();
+
+      detailStatus.textContent =
+        "MINTED";
+
+      detailStatus.style.color =
+        "#657789";
+
+      detailMint.textContent =
+        "ALREADY MINTED";
+
+      detailMint.className =
+        "detail-mint minted";
+
+    }catch(error){
+
+      console.error(
+        "Mint error:",
+        error
+      );
+
+      detailMint.disabled =
+        false;
+
+      detailMint.textContent =
+        "MINT THIS ARCHITECT";
+
+      showToast(
+        getReadableError(error)
+      );
+
+    }
+
+  };
 
 /* =========================================================
    WALLET
@@ -1371,8 +1933,8 @@ async function connectWallet(){
 
   if(!window.ethereum){
 
-    alert(
-      "Please install MetaMask or another compatible wallet."
+    showToast(
+      "MetaMask was not detected."
     );
 
     return;
@@ -1381,200 +1943,316 @@ async function connectWallet(){
 
   try{
 
-    provider =
+    browserProvider =
       new BrowserProvider(
         window.ethereum
       );
 
-    const network =
-      await provider.getNetwork();
+    /*
+      Request wallet permission.
+    */
 
-    if(Number(network.chainId) !== CHAIN_ID){
+    await browserProvider.send(
+      "eth_requestAccounts",
+      []
+    );
 
-      try{
+    /*
+      Switch to Arc Testnet.
+    */
+
+    try{
+
+      await window.ethereum.request({
+        method:"wallet_switchEthereumChain",
+        params:[
+          {
+            chainId:
+              CHAIN_ID_HEX
+          }
+        ]
+      });
+
+    }catch(error){
+
+      /*
+        4902 = chain not added.
+      */
+
+      if(error.code === 4902){
 
         await window.ethereum.request({
-          method:"wallet_switchEthereumChain",
+          method:"wallet_addEthereumChain",
           params:[
             {
-              chainId:"0x4CF852"
+              chainId:
+                CHAIN_ID_HEX,
+
+              chainName:
+                "Arc Testnet",
+
+              nativeCurrency:{
+                name:"USDC",
+                symbol:"USDC",
+                decimals:18
+              },
+
+              rpcUrls:[
+                RPC_URL
+              ],
+
+              blockExplorerUrls:[
+                "https://explorer.testnet.arc.io"
+              ]
             }
           ]
         });
 
-      }catch(error){
+      }else{
 
-        if(error.code === 4902){
-
-          await window.ethereum.request({
-            method:"wallet_addEthereumChain",
-            params:[
-              {
-                chainId:"0x4CF852",
-                chainName:"Arc Testnet",
-                nativeCurrency:{
-                  name:"USDC",
-                  symbol:"USDC",
-                  decimals:18
-                },
-                rpcUrls:[
-                  RPC_URL
-                ],
-                blockExplorerUrls:[
-                  "https://explorer.testnet.arc.io"
-                ]
-              }
-            ]
-          });
-
-        }else{
-          throw error;
-        }
+        throw error;
 
       }
 
-      provider =
-        new BrowserProvider(
-          window.ethereum
-        );
-
     }
 
+    browserProvider =
+      new BrowserProvider(
+        window.ethereum
+      );
+
     signer =
-      await provider.getSigner();
+      await browserProvider.getSigner();
 
     walletAddress =
       await signer.getAddress();
 
-    walletAddressEl.textContent =
-      walletAddress;
-
-    walletBtn.textContent =
-      walletAddress.slice(0,6)
-      + "..."
-      + walletAddress.slice(-4);
-
-    walletBox.classList.add("open");
-
-    contract =
+    writeContract =
       new Contract(
         CONTRACT_ADDRESS,
         ABI,
         signer
       );
 
+    walletButton.textContent =
+      shortenAddress(
+        walletAddress
+      );
+
+    showToast(
+      "Wallet connected: " +
+      shortenAddress(walletAddress)
+    );
+
   }catch(error){
 
-    console.error(error);
+    console.error(
+      "Wallet connection error:",
+      error
+    );
 
-    alert(
-      error?.shortMessage ||
-      "Wallet connection failed."
+    showToast(
+      getReadableError(error)
     );
 
   }
 
 }
 
-walletBtn.onclick = () => {
-
-  if(signer){
-
-    walletBox.classList.toggle("open");
-
-  }else{
-
-    connectWallet();
-
-  }
-
-};
-
-disconnectBtn.onclick = () => {
-
-  signer = null;
-  walletAddress = null;
-
-  walletBox.classList.remove("open");
-
-  walletBtn.textContent =
-    "Connect Wallet";
-
-};
-
 /* =========================================================
-   EVENTS
+   ERROR MESSAGE
 ========================================================= */
 
-prevPage.onclick = () => {
+function getReadableError(error){
 
-  if(currentPage > 1){
-    loadPage(currentPage-1);
+  if(!error){
+    return "Unknown error.";
   }
 
-};
-
-nextPage.onclick = () => {
-
-  const max =
-    Math.ceil(TOTAL/PER_PAGE);
-
-  if(currentPage < max){
-    loadPage(currentPage+1);
+  if(
+    error.code === 4001 ||
+    error.code === "ACTION_REJECTED"
+  ){
+    return "Transaction rejected in wallet.";
   }
 
-};
+  if(
+    error.message &&
+    error.message.includes(
+      "insufficient funds"
+    )
+  ){
+    return "Insufficient funds.";
+  }
 
-sortSelect.onchange = () => render();
-statusFilter.onchange = () => render();
+  if(
+    error.reason
+  ){
+    return error.reason;
+  }
 
-search.oninput = () => {
+  if(
+    error.shortMessage
+  ){
+    return error.shortMessage;
+  }
 
-  const value =
-    Number(search.value);
+  if(
+    error.message
+  ){
 
-  if(value >= 1 && value <= TOTAL){
+    return error.message
+      .replace(
+        /\s+/g,
+        " "
+      )
+      .slice(0,300);
 
-    const targetPage =
-      Math.ceil(value/PER_PAGE);
+  }
 
-    if(targetPage !== currentPage){
+  return "Transaction failed.";
 
-      loadPage(targetPage);
+}
 
-    }else{
+/* =========================================================
+   WALLET EVENTS
+========================================================= */
 
-      render();
+if(window.ethereum){
+
+  window.ethereum.on(
+    "accountsChanged",
+    accounts => {
+
+      if(accounts.length === 0){
+
+        walletAddress =
+          null;
+
+        signer =
+          null;
+
+        writeContract =
+          null;
+
+        walletButton.textContent =
+          "CONNECT WALLET";
+
+      }else{
+
+        walletAddress =
+          accounts[0];
+
+        walletButton.textContent =
+          shortenAddress(
+            walletAddress
+          );
+
+      }
 
     }
+  );
 
-  }else{
+  window.ethereum.on(
+    "chainChanged",
+    () => {
 
-    render();
+      /*
+        Reload because read/write providers
+        must be synchronized with the chain.
+      */
+
+      window.location.reload();
+
+    }
+  );
+
+}
+
+/* =========================================================
+   SEARCH / FILTER EVENTS
+========================================================= */
+
+search.addEventListener(
+  "input",
+  () => {
+
+    applyFilters();
 
   }
+);
 
-};
+sort.addEventListener(
+  "change",
+  () => {
 
-closePanel.onclick = () => {
-  overlay.classList.remove("open");
-};
+    applyFilters();
 
-overlay.onclick = event => {
-
-  if(event.target === overlay){
-    overlay.classList.remove("open");
   }
+);
 
-};
+statusFilter.addEventListener(
+  "change",
+  () => {
+
+    applyFilters();
+
+  }
+);
+
+pageSizeSelect.addEventListener(
+  "change",
+  () => {
+
+    pageSize =
+      Number(
+        pageSizeSelect.value
+      );
+
+    currentPage =
+      1;
+
+    renderPage();
+
+  }
+);
+
+/* =========================================================
+   WALLET BUTTON
+========================================================= */
+
+walletButton.addEventListener(
+  "click",
+  connectWallet
+);
 
 /* =========================================================
    START
 ========================================================= */
 
-init();
+console.log(
+  "ARC 360"
+);
+
+console.log(
+  "Contract:",
+  CONTRACT_ADDRESS
+);
+
+console.log(
+  "Arc Testnet Chain ID:",
+  CHAIN_ID
+);
+
+console.log(
+  "RPC:",
+  RPC_URL
+);
+
+loadCollection();
 
 </script>
 
 </body>
 </html>
+```
