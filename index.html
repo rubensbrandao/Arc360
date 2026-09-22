@@ -9,7 +9,7 @@
 <style>
 
 /* =========================================================
-   ARC 360 — V2
+   ARC 360 — COLLECTION
 ========================================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=Share+Tech+Mono&display=swap');
@@ -19,6 +19,10 @@
   --white:#f9f9fb;
   --muted:#a3b3c3;
   --blue:#3d6b8d;
+
+  --rarity-light:#6f9fbe;
+  --rarity-medium:#4f7f9f;
+  --rarity-dark:#3d6b8d;
 
   --panel:#050505;
   --panel2:#090909;
@@ -123,6 +127,10 @@ header{
   display:block;
 
   flex-shrink:0;
+}
+
+.logo-link{
+  display:block;
 }
 
 .navigation{
@@ -281,6 +289,9 @@ main{
   font-weight:400;
 }
 
+/*
+   ONLY THE AUTHOR BYLINE REMAINS HERE.
+*/
 .collection-byline{
   margin-top:28px;
 
@@ -418,18 +429,6 @@ main{
   min-width:185px;
 }
 
-.filter-label{
-  color:#4e5962;
-
-  font-size:8px;
-
-  letter-spacing:
-    1px;
-
-  padding:
-    0 4px;
-}
-
 /* =========================================================
    GALLERY
 ========================================================= */
@@ -500,14 +499,22 @@ main{
     13px 14px 15px;
 }
 
+/*
+   NAME + RARITY
+*/
+
 .card-topline{
   display:flex;
+
+  align-items:center;
 
   justify-content:space-between;
 
   gap:10px;
 
   margin-bottom:7px;
+
+  min-width:0;
 }
 
 .card-name{
@@ -517,13 +524,49 @@ main{
 
   letter-spacing:
     .8px;
+
+  white-space:nowrap;
+
+  overflow:hidden;
+
+  text-overflow:ellipsis;
+
+  min-width:0;
 }
 
-.card-id{
-  color:#4d5962;
+/*
+   RARITY IS NOW THE RANKING POSITION.
+*/
 
-  font-size:9px;
+.card-rarity{
+  flex-shrink:0;
+
+  font-size:8px;
+
+  letter-spacing:
+    .7px;
+
+  white-space:nowrap;
+
+  transition:
+    color .2s ease;
 }
+
+.rarity-light{
+  color:var(--rarity-light);
+}
+
+.rarity-medium{
+  color:var(--rarity-medium);
+}
+
+.rarity-dark{
+  color:var(--rarity-dark);
+}
+
+/* =========================================================
+   CARD BOTTOM
+========================================================= */
 
 .card-bottom{
   display:flex;
@@ -559,6 +602,10 @@ main{
   color:#505b63;
 }
 
+/*
+   MINT BUTTON
+*/
+
 .card-button{
   width:100%;
 
@@ -584,11 +631,15 @@ main{
   transition:.2s ease;
 }
 
-.card-button:hover{
+.card-button:hover:not(:disabled){
   color:var(--white);
 
   border-color:
     var(--border-hover);
+}
+
+.card-button.minted{
+  color:#59656e;
 }
 
 /* =========================================================
@@ -718,187 +769,6 @@ main{
 
   padding:
     0 10px;
-}
-
-/* =========================================================
-   SECTION
-========================================================= */
-
-.content-section{
-  padding:
-    90px 0;
-
-  border-top:
-    1px solid var(--border);
-}
-
-.section-title{
-  font-family:
-    "Share Tech Mono",
-    monospace;
-
-  font-size:25px;
-
-  letter-spacing:
-    5px;
-
-  margin:0 0 25px;
-}
-
-.section-text{
-  max-width:720px;
-
-  color:#77828b;
-
-  font-size:11px;
-
-  line-height:2;
-
-  letter-spacing:.3px;
-}
-
-.section-text strong{
-  color:#c0c7cc;
-  font-weight:400;
-}
-
-.story-large{
-  max-width:760px;
-}
-
-.story-line{
-  margin-bottom:18px;
-}
-
-/* =========================================================
-   HOLDERS
-========================================================= */
-
-.holders-table{
-  width:100%;
-
-  border-collapse:
-    collapse;
-
-  border:
-    1px solid var(--border);
-}
-
-.holders-table th,
-.holders-table td{
-  padding:
-    14px 15px;
-
-  text-align:left;
-
-  border-bottom:
-    1px solid var(--border);
-
-  font-size:9px;
-}
-
-.holders-table th{
-  color:#56616b;
-
-  font-weight:400;
-
-  letter-spacing:
-    1px;
-
-  text-transform:
-    uppercase;
-}
-
-.holders-table td{
-  color:#88939b;
-}
-
-.holders-empty{
-  padding:50px;
-
-  text-align:center;
-
-  color:#56616b;
-}
-
-/* =========================================================
-   AUTHOR
-========================================================= */
-
-.author-grid{
-  display:grid;
-
-  grid-template-columns:
-    1fr 1fr;
-
-  gap:1px;
-
-  background:
-    var(--border);
-}
-
-.author-block{
-  background:#000;
-
-  padding:30px;
-
-  min-height:180px;
-}
-
-.author-label{
-  color:#56616b;
-
-  font-size:8px;
-
-  letter-spacing:
-    1.5px;
-
-  margin-bottom:15px;
-
-  text-transform:
-    uppercase;
-}
-
-.author-value{
-  color:#d2d7db;
-
-  font-size:14px;
-}
-
-/* =========================================================
-   CONTACT
-========================================================= */
-
-.socials{
-  display:flex;
-
-  flex-wrap:wrap;
-
-  gap:8px;
-}
-
-.social-link{
-  padding:
-    12px 16px;
-
-  border:
-    1px solid var(--border);
-
-  color:#75808a;
-
-  font-size:9px;
-
-  letter-spacing:
-    1px;
-
-  transition:.2s ease;
-}
-
-.social-link:hover{
-  color:var(--white);
-
-  border-color:
-    var(--border-hover);
 }
 
 /* =========================================================
@@ -1053,6 +923,14 @@ main{
   letter-spacing:1.5px;
 }
 
+.detail-rarity{
+  margin-top:8px;
+
+  font-size:9px;
+
+  letter-spacing:1px;
+}
+
 /* =========================================================
    TRAITS
 ========================================================= */
@@ -1165,13 +1043,6 @@ main{
   text-transform:uppercase;
 }
 
-.detail-sell:hover{
-  color:var(--white);
-
-  border-color:
-    var(--border-hover);
-}
-
 /* =========================================================
    HISTORY
 ========================================================= */
@@ -1275,25 +1146,85 @@ footer{
   margin:auto;
 
   padding:
-    30px;
+    36px 30px 42px;
 
   display:flex;
 
-  justify-content:space-between;
+  flex-direction:column;
+
+  justify-content:center;
 
   align-items:center;
 
-  gap:20px;
+  gap:16px;
 
   color:#4e5962;
 
   font-size:8px;
 
   letter-spacing:.7px;
+
+  text-align:center;
 }
 
-.footer-right{
+.footer-brand{
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  gap:14px;
+
+  flex-wrap:wrap;
+}
+
+.footer-logo{
+  width:115px;
+
+  height:auto;
+}
+
+.footer-byline{
   color:#59656e;
+
+  font-size:9px;
+
+  letter-spacing:.8px;
+}
+
+.footer-description{
+  color:#4e5962;
+
+  font-size:8px;
+
+  letter-spacing:.5px;
+}
+
+.footer-socials{
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  gap:10px;
+
+  flex-wrap:wrap;
+}
+
+.footer-social{
+  color:#59656e;
+
+  font-size:8px;
+
+  letter-spacing:1px;
+
+  transition:.2s ease;
+}
+
+.footer-social:hover{
+  color:var(--white);
 }
 
 /* =========================================================
@@ -1396,17 +1327,8 @@ footer{
       repeat(2,minmax(0,1fr));
   }
 
-  .author-grid{
-    grid-template-columns:
-      1fr;
-  }
-
   .footer-inner{
-    padding:25px 15px;
-
-    flex-direction:column;
-
-    align-items:flex-start;
+    padding:30px 15px 38px;
   }
 
 }
@@ -1463,8 +1385,18 @@ footer{
     font-size:8px;
   }
 
+  .card-rarity{
+    font-size:7px;
+  }
+
   .detail-panel{
     padding:16px;
+  }
+
+  .footer-brand{
+    flex-direction:column;
+
+    gap:8px;
   }
 
 }
@@ -1478,7 +1410,11 @@ footer{
 
   <div class="header-inner">
 
-    <a href="#collection" aria-label="ARC 360">
+    <a
+      href="collection.html"
+      class="logo-link"
+      aria-label="ARC 360"
+    >
 
       <svg
         class="logo"
@@ -1547,29 +1483,39 @@ footer{
 
     </a>
 
+
     <nav class="navigation">
 
-      <a class="nav-link active" href="#collection">
+      <a
+        class="nav-link active"
+        href="collection.html"
+      >
         Collection
       </a>
 
-      <a class="nav-link" href="#about">
+      <a
+        class="nav-link"
+        href="about.html"
+      >
         About
       </a>
 
-      <a class="nav-link" href="#holders">
+      <a
+        class="nav-link"
+        href="holders.html"
+      >
         Holders
       </a>
 
-      <a class="nav-link" href="#author">
+      <a
+        class="nav-link"
+        href="author.html"
+      >
         Author
       </a>
 
-      <a class="nav-link" href="#contact">
-        Contact
-      </a>
-
     </nav>
+
 
     <div class="wallet-area">
 
@@ -1594,7 +1540,7 @@ footer{
 </header>
 
 
-<main id="collection">
+<main>
 
   <section class="collection-intro">
 
@@ -1616,13 +1562,7 @@ footer{
     </div>
 
     <div class="collection-byline">
-
       By @RubensBrandão
-      ·
-      Unique: 3,600
-      ·
-      Sep 2026
-
     </div>
 
   </section>
@@ -1645,6 +1585,7 @@ footer{
 
     </div>
 
+
     <div class="stat">
 
       <div class="stat-label">
@@ -1657,6 +1598,7 @@ footer{
 
     </div>
 
+
     <div class="stat">
 
       <div class="stat-label">
@@ -1668,6 +1610,7 @@ footer{
       </div>
 
     </div>
+
 
     <div class="stat">
 
@@ -1684,6 +1627,7 @@ footer{
 
     </div>
 
+
     <div class="stat">
 
       <div class="stat-label">
@@ -1699,6 +1643,7 @@ footer{
 
     </div>
 
+
     <div class="stat">
 
       <div class="stat-label">
@@ -1709,10 +1654,11 @@ footer{
         id="listedCount"
         class="stat-value"
       >
-        0 (0%)
+        0
       </div>
 
     </div>
+
 
     <div class="stat">
 
@@ -1747,6 +1693,7 @@ footer{
 
       </div>
 
+
       <select
         id="statusFilter"
         class="select"
@@ -1766,6 +1713,7 @@ footer{
 
       </select>
 
+
       <select
         id="rarityFilter"
         class="select"
@@ -1784,6 +1732,7 @@ footer{
         </option>
 
       </select>
+
 
       <select
         id="sort"
@@ -1840,6 +1789,7 @@ footer{
 
       </select>
 
+
       <select
         id="pageSize"
         class="select"
@@ -1871,6 +1821,7 @@ footer{
       class="gallery"
     ></div>
 
+
     <div
       id="loading"
       class="loading"
@@ -1880,13 +1831,14 @@ footer{
 
         <span class="loading-dot"></span>
 
-        <span>
+        <span id="loadingText">
           LOADING ARCHITECTS...
         </span>
 
       </div>
 
     </div>
+
 
     <div
       id="pagination"
@@ -1895,223 +1847,12 @@ footer{
 
   </section>
 
-
-  <section
-    id="about"
-    class="content-section"
-  >
-
-    <h2 class="section-title">
-      ABOUT
-    </h2>
-
-    <div class="section-text story-large">
-
-      <div class="story-line">
-        <strong>
-          They were not created to represent humans.
-        </strong>
-      </div>
-
-      <div class="story-line">
-        They were created to represent identities.
-      </div>
-
-      <div class="story-line">
-        No one knows who built the system.
-        No one knows where they came from.
-      </div>
-
-      <div class="story-line">
-        Everything that was found was a record:
-        <strong>
-          3,600 unique entities.
-        </strong>
-      </div>
-
-      <div class="story-line">
-        They were called
-        <strong>
-          Architects.
-        </strong>
-      </div>
-
-      <div class="story-line">
-        Each Architect was different.
-        Not because it possessed more power,
-        greater status, or special characteristics.
-      </div>
-
-      <div class="story-line">
-        But because each one was a unique identity.
-      </div>
-
-      <div class="story-line">
-        <strong>
-          The first circle begins now.
-        </strong>
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <section
-    id="holders"
-    class="content-section"
-  >
-
-    <h2 class="section-title">
-      HOLDERS
-    </h2>
-
-    <div class="section-text">
-
-      The holder registry will be built from
-      on-chain ownership data.
-
-    </div>
-
-    <br>
-
-    <div id="holdersContainer">
-
-      <div class="holders-empty">
-        HOLDER DATA WILL APPEAR HERE
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <section
-    id="author"
-    class="content-section"
-  >
-
-    <h2 class="section-title">
-      AUTHOR
-    </h2>
-
-    <div class="author-grid">
-
-      <div class="author-block">
-
-        <div class="author-label">
-          Created by
-        </div>
-
-        <div class="author-value">
-          Rubens Brandão
-        </div>
-
-      </div>
-
-      <div class="author-block">
-
-        <div class="author-label">
-          Collection
-        </div>
-
-        <div class="author-value">
-          ARC 360
-        </div>
-
-      </div>
-
-      <div class="author-block">
-
-        <div class="author-label">
-          Network
-        </div>
-
-        <div class="author-value">
-          Arc Testnet
-        </div>
-
-      </div>
-
-      <div class="author-block">
-
-        <div class="author-label">
-          Supply
-        </div>
-
-        <div class="author-value">
-          3,600 Architects
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <section
-    id="contact"
-    class="content-section"
-  >
-
-    <h2 class="section-title">
-      CONTACT
-    </h2>
-
-    <div class="section-text">
-
-      Follow the development of ARC 360
-      and future Architect releases.
-
-    </div>
-
-    <br><br>
-
-    <div class="socials">
-
-      <a
-        class="social-link"
-        href="https://x.com/Rubensbrandao1"
-        target="_blank"
-        rel="noopener"
-      >
-        X
-      </a>
-
-      <a
-        class="social-link"
-        href="https://github.com/rubensbrandao"
-        target="_blank"
-        rel="noopener"
-      >
-        GITHUB
-      </a>
-
-      <a
-        class="social-link"
-        href="https://instagram.com/rubensbrandao"
-        target="_blank"
-        rel="noopener"
-      >
-        INSTAGRAM
-      </a>
-
-      <a
-        class="social-link"
-        href="https://youtube.com/@rubensrmb"
-        target="_blank"
-        rel="noopener"
-      >
-        YOUTUBE
-      </a>
-
-    </div>
-
-  </section>
-
 </main>
 
+
+<!-- =======================================================
+     DETAIL OVERLAY
+======================================================== -->
 
 <div
   id="overlay"
@@ -2127,10 +1868,12 @@ footer{
       ×
     </button>
 
+
     <div
       id="detailImage"
       class="detail-image"
     ></div>
+
 
     <div class="detail-header">
 
@@ -2140,7 +1883,7 @@ footer{
           id="detailName"
           class="detail-name"
         >
-          ARC 360 GENESIS ARCHITECT
+          ARC 360
         </div>
 
         <div
@@ -2152,6 +1895,7 @@ footer{
 
       </div>
 
+
       <div
         id="detailId"
         class="detail-id"
@@ -2161,12 +1905,14 @@ footer{
 
     </div>
 
+
     <div
       id="detailPrice"
       class="detail-price"
     >
       $0.10
     </div>
+
 
     <div
       id="detailStatus"
@@ -2175,17 +1921,28 @@ footer{
       AVAILABLE
     </div>
 
+
+    <div
+      id="detailRarity"
+      class="detail-rarity"
+    >
+      RARITY: 0000
+    </div>
+
+
     <div
       id="traits"
       class="traits"
     ></div>
 
+
     <button
       id="detailMint"
       class="detail-mint"
     >
-      MINT THIS ARCHITECT
+      MINT $0.10
     </button>
+
 
     <button
       id="detailSell"
@@ -2195,15 +1952,15 @@ footer{
       SELL ARCHITECT
     </button>
 
+
     <div class="history">
 
       <div class="history-title">
         HISTORY
       </div>
 
-      <div
-        id="historyContainer"
-      >
+
+      <div id="historyContainer">
 
         <div class="history-row">
 
@@ -2236,23 +1993,124 @@ footer{
 ></div>
 
 
+<!-- =======================================================
+     FOOTER
+======================================================== -->
+
 <footer>
 
   <div class="footer-inner">
 
-    <div>
+    <div class="footer-brand">
 
-      Developed by Rubens Brandão
-      —
-      2026
-      —
-      All rights reserved.
+      <svg
+        class="footer-logo"
+        viewBox="0 0 400 90"
+        xmlns="http://www.w3.org/2000/svg"
+        shape-rendering="crispEdges"
+      >
+
+        <g fill="#f9f9fb">
+
+          <rect x="20" y="10" width="30" height="10"/>
+          <rect x="10" y="20" width="10" height="50"/>
+          <rect x="50" y="20" width="10" height="50"/>
+          <rect x="20" y="40" width="30" height="10"/>
+
+          <rect x="72" y="10" width="10" height="60"/>
+          <rect x="82" y="10" width="30" height="10"/>
+          <rect x="112" y="20" width="10" height="20"/>
+          <rect x="82" y="40" width="30" height="10"/>
+          <rect x="102" y="50" width="10" height="10"/>
+          <rect x="112" y="60" width="10" height="10"/>
+
+          <rect x="142" y="10" width="40" height="10"/>
+          <rect x="132" y="20" width="10" height="40"/>
+          <rect x="142" y="60" width="40" height="10"/>
+
+        </g>
+
+        <g fill="#a3b3c3">
+
+          <rect x="210" y="10" width="40" height="10"/>
+          <rect x="240" y="20" width="10" height="40"/>
+          <rect x="210" y="35" width="30" height="10"/>
+          <rect x="210" y="60" width="40" height="10"/>
+
+          <rect x="262" y="10" width="40" height="10"/>
+          <rect x="262" y="20" width="10" height="40"/>
+          <rect x="272" y="35" width="30" height="10"/>
+          <rect x="292" y="45" width="10" height="15"/>
+          <rect x="262" y="60" width="40" height="10"/>
+
+        </g>
+
+        <g fill="#3d6b8d">
+
+          <rect x="314" y="10" width="40" height="10"/>
+          <rect x="314" y="20" width="10" height="40"/>
+          <rect x="344" y="20" width="10" height="40"/>
+          <rect x="314" y="60" width="40" height="10"/>
+
+        </g>
+
+      </svg>
+
+
+      <span>
+        ARC 360 — COLLECTION
+      </span>
+
+
+      <span class="footer-byline">
+        By @RubensBrandão
+      </span>
 
     </div>
 
-    <div class="footer-right">
 
-      The first circle begins now.
+    <div class="footer-description">
+      Follow the development of ARC 360 and future Architect releases.
+    </div>
+
+
+    <div class="footer-socials">
+
+      <a
+        class="footer-social"
+        href="https://x.com/Rubensbrandao1"
+        target="_blank"
+        rel="noopener"
+      >
+        X
+      </a>
+
+      <a
+        class="footer-social"
+        href="https://github.com/rubensbrandao"
+        target="_blank"
+        rel="noopener"
+      >
+        GITHUB
+      </a>
+
+      <a
+        class="footer-social"
+        href="https://instagram.com/rubensbrandao"
+        target="_blank"
+        rel="noopener"
+      >
+        INSTAGRAM
+      </a>
+
+      <a
+        class="footer-social"
+        href="https://youtube.com/@rubensrmb"
+        target="_blank"
+        rel="noopener"
+      >
+        YOUTUBE
+      </a>
 
     </div>
 
@@ -2370,6 +2228,9 @@ let currentDetail =
 let mintPrice =
   0n;
 
+let rarityRankingReady =
+  false;
+
 const nftCache =
   new Map();
 
@@ -2391,14 +2252,14 @@ const loading =
     "loading"
   );
 
+const loadingText =
+  document.getElementById(
+    "loadingText"
+  );
+
 const pagination =
   document.getElementById(
     "pagination"
-  );
-
-const count =
-  document.getElementById(
-    "count"
   );
 
 const search =
@@ -2476,6 +2337,11 @@ const detailStatus =
     "detailStatus"
   );
 
+const detailRarity =
+  document.getElementById(
+    "detailRarity"
+  );
+
 const traits =
   document.getElementById(
     "traits"
@@ -2541,9 +2407,7 @@ function shortenAddress(
 ){
 
   if(!address){
-
     return "";
-
   }
 
   return (
@@ -2554,6 +2418,15 @@ function shortenAddress(
 
 }
 
+
+/*
+   PRICE FORMAT
+
+   1.9900 -> $1.99
+   1.9000 -> $1.90
+   1.0000 -> $1
+   0.1000 -> $0.10
+*/
 
 function formatMintPrice(
   value
@@ -2574,12 +2447,57 @@ function formatMintPrice(
       Number(value) /
       1e18;
 
-    return "$" +
-      amount.toFixed(
-        amount < 1
-          ? 2
-          : 4
+    let formatted =
+      amount.toFixed(6);
+
+    formatted =
+      formatted.replace(
+        /0+$/,
+        ""
       );
+
+    formatted =
+      formatted.replace(
+        /\.$/,
+        ""
+      );
+
+    if(
+      !formatted ||
+      formatted === "0"
+    ){
+
+      formatted =
+        "0.10";
+
+    }
+
+    if(
+      !formatted.includes(".")
+    ){
+
+      return "$" + formatted;
+
+    }
+
+    const parts =
+      formatted.split(".");
+
+    let decimals =
+      parts[1];
+
+    if(
+      decimals.length === 1
+    ){
+
+      decimals += "0";
+
+    }
+
+    return "$" +
+      parts[0] +
+      "." +
+      decimals;
 
   }catch{
 
@@ -2601,6 +2519,202 @@ function sleep(
         ms
       )
   );
+
+}
+
+
+/* =========================================================
+   RARITY
+========================================================= */
+
+/*
+   rarityScore() is the raw on-chain score.
+
+   The displayed RARITY value is the ranking position:
+
+   #1    = highest rarity score
+   #24   = 24th highest rarity score
+   ...
+   #3600 = lowest rarity score
+
+   This produces the four-digit value displayed
+   in the gallery.
+*/
+
+function formatRarityRank(
+  rank
+){
+
+  if(
+    rank === null ||
+    rank === undefined
+  ){
+
+    return "0000";
+
+  }
+
+  return String(
+    rank
+  ).padStart(
+    4,
+    "0"
+  );
+
+}
+
+
+function getRarityClass(
+  rank
+){
+
+  if(
+    rank === null ||
+    rank === undefined
+  ){
+
+    return "rarity-dark";
+
+  }
+
+  if(
+    rank <= 99
+  ){
+
+    return "rarity-light";
+
+  }
+
+  if(
+    rank <= 999
+  ){
+
+    return "rarity-medium";
+
+  }
+
+  return "rarity-dark";
+
+}
+
+
+function getRarityLabel(
+  nft
+){
+
+  if(
+    nft.rarityRank === null ||
+    nft.rarityRank === undefined
+  ){
+
+    return "RARITY: 0000";
+
+  }
+
+  return (
+    "RARITY: " +
+    formatRarityRank(
+      nft.rarityRank
+    )
+  );
+
+}
+
+
+/*
+   Calculate the ranking from all rarity scores.
+
+   Higher rarity score = rarer = better rank.
+*/
+
+function calculateRarityRanking(){
+
+  const scored =
+    allNFTs.filter(
+      nft =>
+        nft.rarityScore !== null &&
+        nft.rarityScore !== undefined
+    );
+
+
+  if(
+    scored.length === 0
+  ){
+
+    rarityRankingReady =
+      false;
+
+    return;
+
+  }
+
+
+  scored.sort(
+    (a,b) => {
+
+      const scoreA =
+        Number(
+          a.rarityScore
+        );
+
+      const scoreB =
+        Number(
+          b.rarityScore
+        );
+
+      if(
+        scoreB !== scoreA
+      ){
+
+        return (
+          scoreB -
+          scoreA
+        );
+
+      }
+
+      return (
+        a.id -
+        b.id
+      );
+
+    }
+  );
+
+
+  /*
+     Equal scores receive sequential positions.
+     This keeps every Architect with a unique
+     position from 0001 to 3600.
+  */
+
+  scored.forEach(
+    (nft,index) => {
+
+      nft.rarityRank =
+        index + 1;
+
+      const cached =
+        nftCache.get(
+          nft.id
+        );
+
+      if(
+        cached
+      ){
+
+        cached.rarityRank =
+          index + 1;
+
+      }
+
+    }
+  );
+
+
+  rarityRankingReady =
+    scored.length ===
+    TOTAL_SUPPLY;
 
 }
 
@@ -2679,6 +2793,7 @@ function decodeTokenURI(
     const prefix =
       "data:application/json;base64,";
 
+
     if(
       uri.startsWith(
         prefix
@@ -2724,8 +2839,10 @@ function decodeTokenURI(
 
     }
 
+
     const jsonPrefix =
       "data:application/json,";
+
 
     if(
       uri.startsWith(
@@ -2742,6 +2859,7 @@ function decodeTokenURI(
       );
 
     }
+
 
     return null;
 
@@ -2898,26 +3016,22 @@ function createNFT(
 
     id,
 
-    minted:
-      null,
+    minted:null,
 
-    rarity:
-      null,
+    rarityScore:null,
 
-    image:
-      "",
+    rarityRank:null,
+
+    image:"",
 
     price:
       mintPrice,
 
-    lastSale:
-      null,
+    lastSale:null,
 
-    topOffer:
-      null,
+    topOffer:null,
 
-    lastTransfer:
-      null,
+    lastTransfer:null,
 
     metadataTraits:{
       face:null,
@@ -2970,143 +3084,179 @@ function createCollectionIndex(){
    LOAD NFT
 ========================================================= */
 
-async function loadNFT(id){
+async function loadNFT(
+  id
+){
 
-  if(loadingPromises.has(id)){
-    return loadingPromises.get(id);
+  if(
+    loadingPromises.has(id)
+  ){
+
+    return loadingPromises.get(
+      id
+    );
+
   }
 
-  const promise = (async () => {
 
-    if(nftCache.has(id)){
-      return nftCache.get(id);
-    }
+  const promise =
+    (async () => {
 
-    const nft = createNFT(id);
+      if(
+        nftCache.has(id)
+      ){
 
-    /*
-      IMPORTANT:
-      Gallery loading only gets the data necessary
-      to display the card.
-
-      DNA is loaded only when opening the detail panel.
-    */
-
-    const results = await Promise.allSettled([
-
-      retryCall(() =>
-        readContract.isGenesisMinted(id)
-      ),
-
-      retryCall(() =>
-        readContract.rarityScore(id)
-      ),
-
-      retryCall(() =>
-        readContract.previewTokenURI(id)
-      )
-
-    ]);
-
-
-    /* =========================
-       MINT STATUS
-    ========================= */
-
-    if(
-      results[0].status === "fulfilled"
-    ){
-
-      nft.minted =
-        Boolean(
-          results[0].value
+        return nftCache.get(
+          id
         );
 
-    }
+      }
 
 
-    /* =========================
-       RARITY
-    ========================= */
-
-    if(
-      results[1].status === "fulfilled"
-    ){
-
-      nft.rarity =
-        Number(
-          results[1].value
-        );
-
-    }
+      const nft =
+        createNFT(id);
 
 
-    /* =========================
-       METADATA / IMAGE
-    ========================= */
+      /*
+        Gallery data:
+        status
+        rarity score
+        metadata/image
+      */
 
-    if(
-      results[2].status === "fulfilled"
-    ){
+      const results =
+        await Promise.allSettled([
 
-      const uri =
-        results[2].value;
+          retryCall(
+            () =>
+              readContract
+                .isGenesisMinted(
+                  id
+                )
+          ),
 
-      const metadata =
-        decodeTokenURI(
-          uri
-        );
+          retryCall(
+            () =>
+              readContract
+                .rarityScore(
+                  id
+                )
+          ),
 
-      if(metadata){
+          retryCall(
+            () =>
+              readContract
+                .previewTokenURI(
+                  id
+                )
+          )
 
-        if(metadata.image){
+        ]);
 
-          nft.image =
-            metadata.image;
 
-        }
+      /* =========================
+         MINT STATUS
+      ========================= */
 
-        nft.metadataTraits =
-          extractMetadataTraits(
-            metadata
+      if(
+        results[0].status ===
+        "fulfilled"
+      ){
+
+        nft.minted =
+          Boolean(
+            results[0].value
           );
 
       }
 
-      /*
-        Fallback in case the contract
-        returns the SVG directly.
-      */
+
+      /* =========================
+         RARITY SCORE
+      ========================= */
 
       if(
-        !nft.image &&
-        typeof uri === "string" &&
-        uri.startsWith(
-          "data:image/svg+xml"
-        )
+        results[1].status ===
+        "fulfilled"
       ){
 
-        nft.image =
-          uri;
+        nft.rarityScore =
+          Number(
+            results[1].value
+          );
 
       }
 
-    }
+
+      /* =========================
+         METADATA / IMAGE
+      ========================= */
+
+      if(
+        results[2].status ===
+        "fulfilled"
+      ){
+
+        const uri =
+          results[2].value;
 
 
-    nft.price =
-      mintPrice;
+        const metadata =
+          decodeTokenURI(
+            uri
+          );
 
 
-    nftCache.set(
-      id,
-      nft
-    );
+        if(metadata){
+
+          if(
+            metadata.image
+          ){
+
+            nft.image =
+              metadata.image;
+
+          }
 
 
-    return nft;
+          nft.metadataTraits =
+            extractMetadataTraits(
+              metadata
+            );
 
-  })();
+        }
+
+
+        if(
+          !nft.image &&
+          typeof uri ===
+          "string" &&
+          uri.startsWith(
+            "data:image/svg+xml"
+          )
+        ){
+
+          nft.image =
+            uri;
+
+        }
+
+      }
+
+
+      nft.price =
+        mintPrice;
+
+
+      nftCache.set(
+        id,
+        nft
+      );
+
+
+      return nft;
+
+    })();
 
 
   loadingPromises.set(
@@ -3129,24 +3279,34 @@ async function loadNFT(id){
 
 }
 
+
 /* =========================================================
    LOAD PAGE DATA
 ========================================================= */
 
-async function loadPageData(pageNFTs){
+async function loadPageData(
+  pageNFTs
+){
 
-  if(!pageNFTs.length){
+  if(
+    !pageNFTs.length
+  ){
+
     return;
+
   }
+
 
   loading.classList.remove(
     "hidden"
   );
 
 
-  const CONCURRENCY = 4;
+  const CONCURRENCY =
+    4;
 
-  let nextIndex = 0;
+  let nextIndex =
+    0;
 
 
   async function worker(){
@@ -3155,6 +3315,7 @@ async function loadPageData(pageNFTs){
 
       const index =
         nextIndex++;
+
 
       if(
         index >=
@@ -3183,12 +3344,6 @@ async function loadPageData(pageNFTs){
           nft
         );
 
-
-        /*
-          Update only this card.
-          This avoids rebuilding the whole
-          gallery after every NFT.
-        */
 
         updateCard(
           placeholder.id
@@ -3230,6 +3385,155 @@ async function loadPageData(pageNFTs){
   loading.classList.add(
     "hidden"
   );
+
+}
+
+
+/* =========================================================
+   LOAD ALL RARITY SCORES
+========================================================= */
+
+/*
+   To know that #0009 is RARITY 0024, the browser needs
+   to compare its rarity score against all 3,600 scores.
+
+   Only the rarity score is loaded here.
+   Images and DNA are NOT loaded for all NFTs.
+
+   This is intentionally separated from image loading.
+*/
+
+async function loadRarityRanking(){
+
+  if(
+    rarityRankingReady
+  ){
+
+    return;
+
+  }
+
+
+  loading.classList.remove(
+    "hidden"
+  );
+
+
+  loadingText.textContent =
+    "CALCULATING RARITY RANKING...";
+
+
+  const CONCURRENCY =
+    12;
+
+  let nextIndex =
+    0;
+
+
+  async function worker(){
+
+    while(true){
+
+      const index =
+        nextIndex++;
+
+
+      if(
+        index >=
+        allNFTs.length
+      ){
+
+        return;
+
+      }
+
+
+      const nft =
+        allNFTs[index];
+
+
+      /*
+        If already loaded, don't call RPC again.
+      */
+
+      if(
+        nft.rarityScore !== null &&
+        nft.rarityScore !== undefined
+      ){
+
+        continue;
+
+      }
+
+
+      try{
+
+        const score =
+          await retryCall(
+            () =>
+              readContract
+                .rarityScore(
+                  nft.id
+                )
+          );
+
+
+        nft.rarityScore =
+          Number(
+            score
+          );
+
+
+        const cached =
+          nftCache.get(
+            nft.id
+          );
+
+
+        if(
+          cached
+        ){
+
+          cached.rarityScore =
+            nft.rarityScore;
+
+        }
+
+      }catch(error){
+
+        console.warn(
+          "Rarity loading failed:",
+          nft.id,
+          error
+        );
+
+      }
+
+    }
+
+  }
+
+
+  const workers =
+    Array.from(
+      {
+        length:
+          CONCURRENCY
+      },
+      () => worker()
+    );
+
+
+  await Promise.all(
+    workers
+  );
+
+
+  calculateRarityRanking();
+
+
+  loadingText.textContent =
+    "LOADING ARCHITECTS...";
 
 }
 
@@ -3294,6 +3598,18 @@ function renderCard(
       : "AVAILABLE";
 
 
+  const rank =
+    formatRarityRank(
+      nft.rarityRank
+    );
+
+
+  const rarityClass =
+    getRarityClass(
+      nft.rarityRank
+    );
+
+
   return `
 
     <article
@@ -3316,16 +3632,22 @@ function renderCard(
         <div class="card-topline">
 
           <div class="card-name">
-            ARC 360 GENESIS ARCHITECT
-          </div>
-
-          <div class="card-id">
-            #${String(
+            ARC 360 #${String(
               nft.id
             ).padStart(
               4,
               "0"
             )}
+          </div>
+
+
+          <div
+            class="
+              card-rarity
+              ${rarityClass}
+            "
+          >
+            RARITY: ${rank}
           </div>
 
         </div>
@@ -3336,6 +3658,7 @@ function renderCard(
           <div class="card-price">
             ${price}
           </div>
+
 
           <div class="
             card-status
@@ -3352,14 +3675,22 @@ function renderCard(
 
 
         <button
-          class="card-button"
+          class="
+            card-button
+            ${available ? "" : "minted"}
+          "
           data-detail="${nft.id}"
+          ${
+            nft.minted === true
+              ? ""
+              : ""
+          }
         >
 
           ${
             available
-              ? "VIEW / MINT"
-              : "VIEW"
+              ? "MINT " + price
+              : "MINTED"
           }
 
         </button>
@@ -3371,12 +3702,21 @@ function renderCard(
   `;
 
 }
-function updateCard(id){
+
+
+/* =========================================================
+   UPDATE CARD
+========================================================= */
+
+function updateCard(
+  id
+){
 
   const card =
     document.querySelector(
       `.card[data-id="${id}"]`
     );
+
 
   if(!card){
     return;
@@ -3384,17 +3724,23 @@ function updateCard(id){
 
 
   const nft =
-    nftCache.get(id);
+    nftCache.get(
+      id
+    );
+
 
   if(!nft){
     return;
   }
 
 
+  /* IMAGE */
+
   const image =
     card.querySelector(
       ".card-image"
     );
+
 
   if(image){
 
@@ -3406,10 +3752,38 @@ function updateCard(id){
   }
 
 
+  /* RARITY */
+
+  const rarity =
+    card.querySelector(
+      ".card-rarity"
+    );
+
+
+  if(rarity){
+
+    rarity.textContent =
+      getRarityLabel(
+        nft
+      );
+
+
+    rarity.className =
+      "card-rarity " +
+      getRarityClass(
+        nft.rarityRank
+      );
+
+  }
+
+
+  /* PRICE */
+
   const price =
     card.querySelector(
       ".card-price"
     );
+
 
   if(price){
 
@@ -3420,6 +3794,8 @@ function updateCard(id){
 
   }
 
+
+  /* STATUS */
 
   const status =
     card.querySelector(
@@ -3450,6 +3826,8 @@ function updateCard(id){
   }
 
 
+  /* BUTTON */
+
   const button =
     card.querySelector(
       ".card-button"
@@ -3458,14 +3836,34 @@ function updateCard(id){
 
   if(button){
 
+    const available =
+      nft.minted !== true;
+
+
+    const priceText =
+      formatMintPrice(
+        nft.price
+      );
+
+
     button.textContent =
-      nft.minted === true
-        ? "VIEW"
-        : "VIEW / MINT";
+      available
+        ? "MINT " + priceText
+        : "MINTED";
+
+
+    button.className =
+      "card-button" +
+      (
+        available
+          ? ""
+          : " minted"
+      );
 
   }
 
 }
+
 
 /* =========================================================
    FILTER
@@ -3557,14 +3955,22 @@ function getFilteredNFTs(){
         }
 
 
+        /*
+          Rarity filters now use RANK.
+
+          Top 750 = rare.
+        */
+
         if(
           rarityMode ===
           "rare"
         ){
 
           if(
-            nft.rarity !== null &&
-            nft.rarity < 750
+            nft.rarityRank !==
+              null &&
+            nft.rarityRank >
+              750
           ){
 
             return false;
@@ -3580,8 +3986,10 @@ function getFilteredNFTs(){
         ){
 
           if(
-            nft.rarity !== null &&
-            nft.rarity >= 750
+            nft.rarityRank !==
+              null &&
+            nft.rarityRank <=
+              750
           ){
 
             return false;
@@ -3630,6 +4038,7 @@ function sortNFTs(
             : a.minted === null
               ? 1
               : 2;
+
 
         const statusB =
           b.minted === false
@@ -3701,10 +4110,12 @@ function sortNFTs(
 
         return (
           Number(
-            b.rarity || 0
+            a.rarityRank ||
+            99999
           ) -
           Number(
-            a.rarity || 0
+            b.rarityRank ||
+            99999
           )
         );
 
@@ -3718,10 +4129,12 @@ function sortNFTs(
 
         return (
           Number(
-            a.rarity || 0
+            b.rarityRank ||
+            0
           ) -
           Number(
-            b.rarity || 0
+            a.rarityRank ||
+            0
           )
         );
 
@@ -3848,16 +4261,6 @@ function renderVisiblePage(
 
 
   if(
-    count
-  ){
-
-    count.textContent =
-      `${TOTAL_SUPPLY.toLocaleString()} NFTs`;
-
-  }
-
-
-  if(
     !keepLoading
   ){
 
@@ -3876,14 +4279,19 @@ function renderVisiblePage(
 
 async function renderPage(){
 
-  renderVisiblePage(true);
+  renderVisiblePage(
+    true
+  );
+
 
   const filtered =
     getFilteredNFTs();
 
+
   const start =
     (currentPage - 1) *
     pageSize;
+
 
   const pageNFTs =
     filtered.slice(
@@ -3891,17 +4299,21 @@ async function renderPage(){
       start + pageSize
     );
 
+
   await loadPageData(
     pageNFTs
   );
+
 
   loading.classList.add(
     "hidden"
   );
 
+
   updateStats();
 
 }
+
 
 /* =========================================================
    CARD EVENTS
@@ -3945,6 +4357,7 @@ function attachCardHandlers(){
           event => {
 
             event.stopPropagation();
+
 
             openDetail(
               Number(
@@ -4009,10 +4422,12 @@ function renderPagination(
 
         currentPage--;
 
+
         window.scrollTo({
           top:0,
           behavior:"smooth"
         });
+
 
         renderPage();
 
@@ -4151,10 +4566,12 @@ function renderPagination(
 
         currentPage++;
 
+
         window.scrollTo({
           top:0,
           behavior:"smooth"
         });
+
 
         renderPage();
 
@@ -4217,10 +4634,12 @@ function renderPagination(
         currentPage =
           page;
 
+
         window.scrollTo({
           top:0,
           behavior:"smooth"
         });
+
 
         renderPage();
 
@@ -4287,7 +4706,7 @@ function updateStats(){
   document.getElementById(
     "listedCount"
   ).textContent =
-    `${available} available`;
+    `${available}`;
 
 
   document.getElementById(
@@ -4307,11 +4726,6 @@ function getTraitValue(
   trait
 ){
 
-  /*
-    First choice:
-    real on-chain DNA.
-  */
-
   if(
     nft.dna &&
     nft.dna[trait] !== null &&
@@ -4323,12 +4737,6 @@ function getTraitValue(
 
   }
 
-
-  /*
-    Second choice:
-    metadata attribute from
-    previewTokenURI().
-  */
 
   if(
     nft.metadataTraits &&
@@ -4357,7 +4765,9 @@ async function openDetail(
 ){
 
   let nft =
-    nftCache.get(id);
+    nftCache.get(
+      id
+    );
 
 
   if(
@@ -4375,16 +4785,19 @@ async function openDetail(
   currentDetail =
     nft;
 
-if(
-  !nft.dna ||
-  nft.dna.face === null
-){
 
-  loadDNA(id);
+  if(
+    !nft.dna ||
+    nft.dna.face === null
+  ){
 
-}
+    loadDNA(
+      id
+    );
 
-   
+  }
+
+
   detailImage.innerHTML =
     imageHTML(
       nft
@@ -4392,7 +4805,7 @@ if(
 
 
   detailName.textContent =
-    "ARC 360 GENESIS ARCHITECT";
+    "ARC 360";
 
 
   detailSubtitle.textContent =
@@ -4411,7 +4824,7 @@ if(
 
   detailPrice.textContent =
     formatMintPrice(
-      mintPrice
+      nft.price
     );
 
 
@@ -4425,6 +4838,19 @@ if(
     nft.minted
       ? "#59656e"
       : "var(--blue)";
+
+
+  detailRarity.textContent =
+    getRarityLabel(
+      nft
+    );
+
+
+  detailRarity.className =
+    "detail-rarity " +
+    getRarityClass(
+      nft.rarityRank
+    );
 
 
   traits.innerHTML = `
@@ -4546,14 +4972,16 @@ if(
     <div class="trait">
 
       <div class="trait-label">
-        Rarity Score
+        Rarity Rank
       </div>
 
       <div
         class="trait-value"
         id="traitRarity"
       >
-        ${nft.rarity ?? "UNAVAILABLE"}
+        ${formatRarityRank(
+          nft.rarityRank
+        )}
       </div>
 
     </div>
@@ -4589,10 +5017,17 @@ if(
     );
 
 
+  const detailPriceText =
+    formatMintPrice(
+      nft.price
+    );
+
+
   detailMint.textContent =
     nft.minted
       ? "ALREADY MINTED"
-      : "MINT THIS ARCHITECT";
+      : "MINT " +
+        detailPriceText;
 
 
   detailSell.style.display =
@@ -4617,6 +5052,7 @@ if(
 
     </div>
 
+
     <div class="history-row">
 
       <span>
@@ -4624,7 +5060,9 @@ if(
       </span>
 
       <strong>
-        ${nft.rarity ?? "UNAVAILABLE"}
+        ${formatRarityRank(
+          nft.rarityRank
+        )}
       </strong>
 
       <span>
@@ -4632,6 +5070,7 @@ if(
       </span>
 
     </div>
+
 
     <div class="history-row">
 
@@ -4677,7 +5116,9 @@ async function loadDNA(
       await retryCall(
         () =>
           readContract
-            .getDNA(id)
+            .getDNA(
+              id
+            )
       );
 
 
@@ -4920,6 +5361,7 @@ detailMint.onclick =
 
       await connectWallet();
 
+
       if(
         !writeContract
       ){
@@ -4935,6 +5377,13 @@ detailMint.onclick =
 
       detailMint.disabled =
         true;
+
+
+      const mintText =
+        formatMintPrice(
+          currentDetail.price
+        );
+
 
       detailMint.textContent =
         "CONFIRM IN WALLET...";
@@ -5048,7 +5497,10 @@ detailMint.onclick =
 
 
       detailMint.textContent =
-        "MINT THIS ARCHITECT";
+        "MINT " +
+        formatMintPrice(
+          currentDetail.price
+        );
 
 
       showToast(
@@ -5372,10 +5824,12 @@ if(
         walletAddress =
           accounts[0];
 
+
         walletButton.textContent =
           shortenAddress(
             walletAddress
           );
+
 
         disconnectButton.style.display =
           "block";
@@ -5430,12 +5884,22 @@ statusFilter.addEventListener(
 
 rarityFilter.addEventListener(
   "change",
-  () => {
+  async () => {
 
     currentPage =
       1;
 
-    renderPage();
+
+    /*
+      Rarity filter needs the complete ranking.
+    */
+
+    await loadRarityRanking();
+
+
+    renderVisiblePage(
+      false
+    );
 
   }
 );
@@ -5443,12 +5907,44 @@ rarityFilter.addEventListener(
 
 sort.addEventListener(
   "change",
-  () => {
+  async () => {
 
     currentPage =
       1;
 
-    renderPage();
+
+    if(
+      sort.value ===
+        "rarity-high" ||
+      sort.value ===
+        "rarity-low"
+    ){
+
+      await loadRarityRanking();
+
+    }
+
+
+    renderVisiblePage(
+      false
+    );
+
+
+    const filtered =
+      getFilteredNFTs();
+
+
+    const start =
+      (currentPage - 1) *
+      pageSize;
+
+
+    await loadPageData(
+      filtered.slice(
+        start,
+        start + pageSize
+      )
+    );
 
   }
 );
@@ -5510,6 +6006,7 @@ async function initialize(){
       error
     );
 
+
     mintPrice =
       100000000000000000n;
 
@@ -5527,32 +6024,62 @@ async function initialize(){
     );
 
 
-  if(
-    count
-  ){
+  /*
+     First render:
+     page appears immediately.
 
-    count.textContent =
-      `${TOTAL_SUPPLY.toLocaleString()} NFTs`;
+     We don't load all images.
+  */
 
-  }
+  renderVisiblePage(
+    true
+  );
+
+
+  /*
+     Calculate complete rarity ranking.
+
+     This loads ONLY rarityScore()
+     for all 3,600 NFTs.
+  */
+
+  await loadRarityRanking();
+
+
+  /*
+     Refresh current page so the real
+     rarity ranks appear.
+  */
+
+  renderVisiblePage(
+    true
+  );
 
 
   await renderPage();
+
+
+  loading.classList.add(
+    "hidden"
+  );
 
 
   console.log(
     "ARC 360 initialized."
   );
 
+
   console.log(
     "Contract:",
     CONTRACT_ADDRESS
   );
 
+
   console.log(
     "Total supply:",
     TOTAL_SUPPLY
   );
+
 
   console.log(
     "Pages:",
@@ -5560,6 +6087,14 @@ async function initialize(){
       TOTAL_SUPPLY /
       DEFAULT_PAGE_SIZE
     )
+  );
+
+
+  console.log(
+    "Rarity ranking:",
+    rarityRankingReady
+      ? "READY"
+      : "INCOMPLETE"
   );
 
 }
