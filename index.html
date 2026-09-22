@@ -2970,231 +2970,143 @@ function createCollectionIndex(){
    LOAD NFT
 ========================================================= */
 
-async function loadNFT(
-  id
-){
+async function loadNFT(id){
 
-  if(
-    loadingPromises.has(id)
-  ){
-
+  if(loadingPromises.has(id)){
     return loadingPromises.get(id);
-
   }
 
+  const promise = (async () => {
 
-  const promise =
-    (async () => {
+    if(nftCache.has(id)){
+      return nftCache.get(id);
+    }
+
+    const nft = createNFT(id);
+
+    /*
+      IMPORTANT:
+      Gallery loading only gets the data necessary
+      to display the card.
+
+      DNA is loaded only when opening the detail panel.
+    */
+
+    const results = await Promise.allSettled([
+
+      retryCall(() =>
+        readContract.isGenesisMinted(id)
+      ),
+
+      retryCall(() =>
+        readContract.rarityScore(id)
+      ),
+
+      retryCall(() =>
+        readContract.previewTokenURI(id)
+      )
+
+    ]);
+
+
+    /* =========================
+       MINT STATUS
+    ========================= */
+
+    if(
+      results[0].status === "fulfilled"
+    ){
+
+      nft.minted =
+        Boolean(
+          results[0].value
+        );
+
+    }
+
+
+    /* =========================
+       RARITY
+    ========================= */
+
+    if(
+      results[1].status === "fulfilled"
+    ){
+
+      nft.rarity =
+        Number(
+          results[1].value
+        );
+
+    }
+
+
+    /* =========================
+       METADATA / IMAGE
+    ========================= */
+
+    if(
+      results[2].status === "fulfilled"
+    ){
+
+      const uri =
+        results[2].value;
+
+      const metadata =
+        decodeTokenURI(
+          uri
+        );
+
+      if(metadata){
+
+        if(metadata.image){
+
+          nft.image =
+            metadata.image;
+
+        }
+
+        nft.metadataTraits =
+          extractMetadataTraits(
+            metadata
+          );
+
+      }
+
+      /*
+        Fallback in case the contract
+        returns the SVG directly.
+      */
 
       if(
-        nftCache.has(id)
+        !nft.image &&
+        typeof uri === "string" &&
+        uri.startsWith(
+          "data:image/svg+xml"
+        )
       ){
 
-        return nftCache.get(id);
+        nft.image =
+          uri;
 
       }
 
-
-      const nft =
-        createNFT(id);
+    }
 
 
-      try{
-
-        nft.minted =
-          Boolean(
-            await retryCall(
-              () =>
-                readContract
-                  .isGenesisMinted(id)
-            )
-          );
-
-      }catch(error){
-
-        console.warn(
-          "Minted status unavailable:",
-          id,
-          error
-        );
-
-      }
+    nft.price =
+      mintPrice;
 
 
-      try{
-
-        const rarity =
-          await retryCall(
-            () =>
-              readContract
-                .rarityScore(id)
-          );
-
-        nft.rarity =
-          Number(
-            rarity
-          );
-
-      }catch(error){
-
-        console.warn(
-          "Rarity unavailable:",
-          id,
-          error
-        );
-
-      }
+    nftCache.set(
+      id,
+      nft
+    );
 
 
-      /*
-        Load the complete metadata.
+    return nft;
 
-        The metadata is also used as a fallback
-        for the visible DNA/trait values.
-      */
-
-      try{
-
-        const uri =
-          await retryCall(
-            () =>
-              readContract
-                .previewTokenURI(id)
-          );
-
-
-        const metadata =
-          decodeTokenURI(
-            uri
-          );
-
-
-        if(
-          metadata
-        ){
-
-          if(
-            metadata.image
-          ){
-
-            nft.image =
-              metadata.image;
-
-          }
-
-
-          nft.metadataTraits =
-            extractMetadataTraits(
-              metadata
-            );
-
-        }
-
-
-        if(
-          !nft.image &&
-          typeof uri === "string"
-        ){
-
-          if(
-            uri.startsWith(
-              "data:image/svg+xml"
-            )
-          ){
-
-            nft.image =
-              uri;
-
-          }
-
-        }
-
-      }catch(error){
-
-        console.warn(
-          "Metadata unavailable:",
-          id,
-          error
-        );
-
-      }
-
-
-      /*
-        Load DNA independently.
-
-        This is important because the NFT image
-        must not depend on getDNA() succeeding.
-      */
-
-      try{
-
-        const dna =
-          await retryCall(
-            () =>
-              readContract
-                .getDNA(id)
-          );
-
-
-        nft.dna = {
-
-          face:
-            dna.face !== undefined
-              ? dna.face.toString()
-              : dna[0].toString(),
-
-          eyes:
-            dna.eyes !== undefined
-              ? dna.eyes.toString()
-              : dna[1].toString(),
-
-          jaw:
-            dna.jaw !== undefined
-              ? dna.jaw.toString()
-              : dna[2].toString(),
-
-          hair:
-            dna.hair !== undefined
-              ? dna.hair.toString()
-              : dna[3].toString(),
-
-          horns:
-            dna.horns !== undefined
-              ? dna.horns.toString()
-              : dna[4].toString(),
-
-          head:
-            dna.head !== undefined
-              ? dna.head.toString()
-              : dna[5].toString()
-
-        };
-
-      }catch(error){
-
-        console.warn(
-          "DNA unavailable:",
-          id,
-          error
-        );
-
-      }
-
-
-      nft.price =
-        mintPrice;
-
-
-      nftCache.set(
-        id,
-        nft
-      );
-
-
-      return nft;
-
-    })();
+  })();
 
 
   loadingPromises.set(
@@ -3217,71 +3129,102 @@ async function loadNFT(
 
 }
 
-
 /* =========================================================
    LOAD PAGE DATA
 ========================================================= */
 
-async function loadPageData(
-  pageNFTs
-){
+async function loadPageData(pageNFTs){
 
-  if(
-    !pageNFTs.length
-  ){
-
+  if(!pageNFTs.length){
     return;
-
   }
-
 
   loading.classList.remove(
     "hidden"
   );
 
 
-  const BATCH_SIZE =
-    6;
+  const CONCURRENCY = 4;
+
+  let nextIndex = 0;
 
 
-  for(
-    let i = 0;
-    i < pageNFTs.length;
-    i += BATCH_SIZE
-  ){
+  async function worker(){
 
-    const batch =
-      pageNFTs.slice(
-        i,
-        i + BATCH_SIZE
-      );
+    while(true){
 
+      const index =
+        nextIndex++;
 
-    await Promise.all(
-      batch.map(
-        async placeholder => {
+      if(
+        index >=
+        pageNFTs.length
+      ){
 
-          const nft =
-            await loadNFT(
-              placeholder.id
-            );
+        return;
+
+      }
 
 
-          Object.assign(
-            placeholder,
-            nft
+      const placeholder =
+        pageNFTs[index];
+
+
+      try{
+
+        const nft =
+          await loadNFT(
+            placeholder.id
           );
 
-        }
-      )
-    );
+
+        Object.assign(
+          placeholder,
+          nft
+        );
 
 
-    renderVisiblePage(
-      false
-    );
+        /*
+          Update only this card.
+          This avoids rebuilding the whole
+          gallery after every NFT.
+        */
+
+        updateCard(
+          placeholder.id
+        );
+
+      }catch(error){
+
+        console.warn(
+          "NFT loading failed:",
+          placeholder.id,
+          error
+        );
+
+      }
+
+    }
 
   }
+
+
+  const workers =
+    Array.from(
+      {
+        length:
+          Math.min(
+            CONCURRENCY,
+            pageNFTs.length
+          )
+      },
+      () => worker()
+    );
+
+
+  await Promise.all(
+    workers
+  );
 
 
   loading.classList.add(
@@ -3428,7 +3371,101 @@ function renderCard(
   `;
 
 }
+function updateCard(id){
 
+  const card =
+    document.querySelector(
+      `.card[data-id="${id}"]`
+    );
+
+  if(!card){
+    return;
+  }
+
+
+  const nft =
+    nftCache.get(id);
+
+  if(!nft){
+    return;
+  }
+
+
+  const image =
+    card.querySelector(
+      ".card-image"
+    );
+
+  if(image){
+
+    image.innerHTML =
+      imageHTML(
+        nft
+      );
+
+  }
+
+
+  const price =
+    card.querySelector(
+      ".card-price"
+    );
+
+  if(price){
+
+    price.textContent =
+      formatMintPrice(
+        nft.price
+      );
+
+  }
+
+
+  const status =
+    card.querySelector(
+      ".card-status"
+    );
+
+
+  if(status){
+
+    const available =
+      nft.minted !== true;
+
+
+    status.textContent =
+      available
+        ? "AVAILABLE"
+        : "MINTED";
+
+
+    status.className =
+      "card-status " +
+      (
+        available
+          ? "status-available"
+          : "status-minted"
+      );
+
+  }
+
+
+  const button =
+    card.querySelector(
+      ".card-button"
+    );
+
+
+  if(button){
+
+    button.textContent =
+      nft.minted === true
+        ? "VIEW"
+        : "VIEW / MINT";
+
+  }
+
+}
 
 /* =========================================================
    FILTER
@@ -3839,19 +3876,14 @@ function renderVisiblePage(
 
 async function renderPage(){
 
-  renderVisiblePage(
-    true
-  );
-
+  renderVisiblePage(true);
 
   const filtered =
     getFilteredNFTs();
 
-
   const start =
     (currentPage - 1) *
     pageSize;
-
 
   const pageNFTs =
     filtered.slice(
@@ -3859,21 +3891,17 @@ async function renderPage(){
       start + pageSize
     );
 
-
   await loadPageData(
     pageNFTs
   );
 
-
-  renderVisiblePage(
-    false
+  loading.classList.add(
+    "hidden"
   );
-
 
   updateStats();
 
 }
-
 
 /* =========================================================
    CARD EVENTS
@@ -4347,7 +4375,16 @@ async function openDetail(
   currentDetail =
     nft;
 
+if(
+  !nft.dna ||
+  nft.dna.face === null
+){
 
+  loadDNA(id);
+
+}
+
+   
   detailImage.innerHTML =
     imageHTML(
       nft
