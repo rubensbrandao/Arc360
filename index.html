@@ -2361,8 +2361,7 @@ import {
   JsonRpcProvider,
   Contract
 }
-from
-"https://cdn.jsdelivr.net/npm/ethers@6.15.0/+esm";
+from "https://cdn.jsdelivr.net/npm/ethers@6.15.0/+esm";
 
 
 /* =========================================================
@@ -2464,10 +2463,10 @@ let currentDetail =
 let mintPrice =
   0n;
 
-let metadataCache =
+const nftCache =
   new Map();
 
-let nftCache =
+const loadingPromises =
   new Map();
 
 
@@ -2600,7 +2599,9 @@ const toast =
    HELPERS
 ========================================================= */
 
-function showToast(message){
+function showToast(
+  message
+){
 
   toast.textContent =
     message;
@@ -2628,10 +2629,14 @@ function showToast(message){
 }
 
 
-function shortenAddress(address){
+function shortenAddress(
+  address
+){
 
   if(!address){
+
     return "";
+
   }
 
   return (
@@ -2643,7 +2648,9 @@ function shortenAddress(address){
 }
 
 
-function formatMintPrice(value){
+function formatMintPrice(
+  value
+){
 
   if(
     value === null ||
@@ -2676,7 +2683,9 @@ function formatMintPrice(value){
 }
 
 
-function sleep(ms){
+function sleep(
+  ms
+){
 
   return new Promise(
     resolve =>
@@ -2751,40 +2760,85 @@ function decodeTokenURI(
 
   try{
 
-    const prefix =
-      "data:application/json;base64,";
-
     if(
-      !uri.startsWith(prefix)
+      typeof uri !==
+      "string"
     ){
 
       return null;
 
     }
 
-    const base64 =
-      uri.slice(
-        prefix.length
+
+    /*
+      Supports:
+
+      data:application/json;base64,...
+    */
+
+    const prefix =
+      "data:application/json;base64,";
+
+
+    if(
+      uri.startsWith(
+        prefix
+      )
+    ){
+
+      const base64 =
+        uri.slice(
+          prefix.length
+        );
+
+      const json =
+        decodeURIComponent(
+          Array.prototype.map.call(
+            atob(base64),
+            c =>
+              "%" +
+              (
+                "00" +
+                c
+                  .charCodeAt(0)
+                  .toString(16)
+              ).slice(-2)
+          ).join("")
+        );
+
+      return JSON.parse(
+        json
       );
 
-    const json =
-      decodeURIComponent(
-        Array.prototype.map.call(
-          atob(base64),
-          c =>
-            "%" +
-            (
-              "00" +
-              c.charCodeAt(
-                0
-              ).toString(16)
-            ).slice(-2)
-        ).join("")
+    }
+
+
+    /*
+      Also support normal JSON
+      data URI without base64.
+    */
+
+    const jsonPrefix =
+      "data:application/json,";
+
+    if(
+      uri.startsWith(
+        jsonPrefix
+      )
+    ){
+
+      return JSON.parse(
+        decodeURIComponent(
+          uri.slice(
+            jsonPrefix.length
+          )
+        )
       );
 
-    return JSON.parse(
-      json
-    );
+    }
+
+
+    return null;
 
   }catch(error){
 
@@ -2801,96 +2855,25 @@ function decodeTokenURI(
 
 
 /* =========================================================
-   NFT LOADER
+   NFT PLACEHOLDER
 ========================================================= */
 
-async function loadNFT(
+function createNFT(
   id
 ){
 
-  if(
-    nftCache.has(id)
-  ){
-
-    return nftCache.get(id);
-
-  }
-
-
-  const minted =
-    await retryCall(
-      () =>
-        readContract
-          .isGenesisMinted(id)
-    );
-
-
-  const rarity =
-    await retryCall(
-      () =>
-        readContract
-          .rarityScore(id)
-    );
-
-
-  let image =
-    "";
-
-  let metadata =
-    null;
-
-
-  /*
-    Metadata is loaded separately so a
-    single bad SVG does not destroy the
-    entire collection.
-  */
-
-  try{
-
-    const uri =
-      await retryCall(
-        () =>
-          readContract
-            .previewTokenURI(id)
-      );
-
-    metadata =
-      decodeTokenURI(
-        uri
-      );
-
-    if(
-      metadata &&
-      metadata.image
-    ){
-
-      image =
-        metadata.image;
-
-    }
-
-  }catch(error){
-
-    console.warn(
-      "Metadata unavailable for",
-      id
-    );
-
-  }
-
-
-  const nft = {
+  return {
 
     id,
 
     minted:
-      Boolean(minted),
+      null,
 
     rarity:
-      Number(rarity),
+      null,
 
-    image,
+    image:
+      "",
 
     price:
       mintPrice,
@@ -2906,19 +2889,11 @@ async function loadNFT(
 
   };
 
-
-  nftCache.set(
-    id,
-    nft
-  );
-
-  return nft;
-
 }
 
 
 /* =========================================================
-   INITIAL COLLECTION INDEX
+   COLLECTION INDEX
 ========================================================= */
 
 function createCollectionIndex(){
@@ -2926,48 +2901,15 @@ function createCollectionIndex(){
   allNFTs =
     [];
 
-  /*
-    Create all 3,600 IDs immediately.
-
-    This is the important pagination fix.
-
-    The UI knows that 3,600 NFTs exist,
-    therefore 150 pages exist even before
-    every NFT has been queried from the RPC.
-  */
-
   for(
     let id = 1;
     id <= TOTAL_SUPPLY;
     id++
   ){
 
-    allNFTs.push({
-
-      id,
-
-      minted:
-        null,
-
-      rarity:
-        null,
-
-      image:
-        "",
-
-      price:
-        mintPrice,
-
-      lastSale:
-        null,
-
-      topOffer:
-        null,
-
-      lastTransfer:
-        null
-
-    });
+    allNFTs.push(
+      createNFT(id)
+    );
 
   }
 
@@ -2975,320 +2917,218 @@ function createCollectionIndex(){
 
 
 /* =========================================================
-   SORT
+   LOAD NFT
 ========================================================= */
 
-function sortNFTs(
-  list
+async function loadNFT(
+  id
 ){
 
-  const mode =
-    sort.value;
+  /*
+    Prevent duplicate simultaneous
+    RPC requests for the same NFT.
+  */
+
+  if(
+    loadingPromises.has(id)
+  ){
+
+    return loadingPromises.get(id);
+
+  }
 
 
-  return list.sort(
-    (a,b) => {
+  const promise =
+    (async () => {
 
       /*
-        Available first is the default.
-
-        Unknown status is kept after
-        known available items but before
-        confirmed minted items.
+        Return cached NFT when already
+        completely loaded.
       */
 
       if(
-        mode ===
-        "available"
+        nftCache.has(id)
       ){
 
-        const statusA =
-          a.minted === false
-            ? 0
-            : a.minted === null
-              ? 1
-              : 2;
+        return nftCache.get(id);
 
-        const statusB =
-          b.minted === false
-            ? 0
-            : b.minted === null
-              ? 1
-              : 2;
+      }
 
-        if(
-          statusA !==
-          statusB
-        ){
 
-          return (
-            statusA -
-            statusB
+      const nft =
+        createNFT(id);
+
+
+      /*
+        IMPORTANT:
+
+        These calls are made independently.
+        If rarity fails, the image still loads.
+        If image fails, minted status still loads.
+      */
+
+      try{
+
+        nft.minted =
+          Boolean(
+            await retryCall(
+              () =>
+                readContract
+                  .isGenesisMinted(id)
+            )
           );
 
-        }
+      }catch(error){
 
-        return (
-          a.id -
-          b.id
+        console.warn(
+          "Minted status unavailable:",
+          id,
+          error
         );
 
       }
 
 
-      if(
-        mode ===
-        "price-low"
-      ){
+      try{
 
-        return (
+        const rarity =
+          await retryCall(
+            () =>
+              readContract
+                .rarityScore(id)
+          );
+
+        nft.rarity =
           Number(
-            a.price || 0n
-          ) -
-          Number(
-            b.price || 0n
-          )
+            rarity
+          );
+
+      }catch(error){
+
+        console.warn(
+          "Rarity unavailable:",
+          id,
+          error
         );
 
       }
 
 
-      if(
-        mode ===
-        "price-high"
-      ){
+      /*
+        THIS IS THE IMPORTANT PART.
 
-        return (
-          Number(
-            b.price || 0n
-          ) -
-          Number(
-            a.price || 0n
-          )
-        );
+        previewTokenURI is called for every
+        visible NFT and its SVG metadata is
+        decoded directly from the contract.
+      */
 
-      }
+      try{
 
-
-      if(
-        mode ===
-        "rarity-high"
-      ){
-
-        return (
-          Number(
-            b.rarity || 0
-          ) -
-          Number(
-            a.rarity || 0
-          )
-        );
-
-      }
+        const uri =
+          await retryCall(
+            () =>
+              readContract
+                .previewTokenURI(id)
+          );
 
 
-      if(
-        mode ===
-        "rarity-low"
-      ){
-
-        return (
-          Number(
-            a.rarity || 0
-          ) -
-          Number(
-            b.rarity || 0
-          )
-        );
-
-      }
-
-
-      if(
-        mode ===
-        "id-desc"
-      ){
-
-        return (
-          b.id -
-          a.id
-        );
-
-      }
-
-
-      return (
-        a.id -
-        b.id
-      );
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   FILTER
-========================================================= */
-
-function getFilteredNFTs(){
-
-  const query =
-    search.value
-      .trim()
-      .toLowerCase();
-
-
-  const status =
-    statusFilter.value;
-
-
-  const rarityMode =
-    rarityFilter.value;
-
-
-  let result =
-    allNFTs.filter(
-      nft => {
-
-        if(
-          query
-        ){
-
-          const clean =
-            query
-              .replace(
-                "arc 360",
-                ""
-              )
-              .replace(
-                "#",
-                ""
-              )
-              .trim();
-
-
-          if(
-            !String(
-              nft.id
-            ).includes(
-              clean
-            )
-          ){
-
-            return false;
-
-          }
-
-        }
+        const metadata =
+          decodeTokenURI(
+            uri
+          );
 
 
         if(
-          status ===
-          "available"
+          metadata &&
+          metadata.image
         ){
 
-          if(
-            nft.minted !==
-            false
-          ){
-
-            return false;
-
-          }
-
-        }
-
-
-        if(
-          status ===
-          "minted"
-        ){
-
-          if(
-            nft.minted !==
-            true
-          ){
-
-            return false;
-
-          }
+          nft.image =
+            metadata.image;
 
         }
 
 
         /*
-          Rarity is only applied once
-          rarity data has been loaded.
+          Some contracts return the SVG
+          directly instead of JSON metadata.
         */
 
         if(
-          rarityMode ===
-          "rare" &&
-          nft.rarity !== null
+          !nft.image &&
+          typeof uri === "string"
         ){
 
           if(
-            nft.rarity < 750
+            uri.startsWith(
+              "data:image/svg+xml"
+            )
           ){
 
-            return false;
+            nft.image =
+              uri;
 
           }
 
         }
 
+      }catch(error){
 
-        if(
-          rarityMode ===
-          "common" &&
-          nft.rarity !== null
-        ){
-
-          if(
-            nft.rarity >= 750
-          ){
-
-            return false;
-
-          }
-
-        }
-
-
-        return true;
+        console.warn(
+          "Metadata unavailable:",
+          id,
+          error
+        );
 
       }
+
+
+      nft.price =
+        mintPrice;
+
+
+      nftCache.set(
+        id,
+        nft
+      );
+
+
+      return nft;
+
+    })();
+
+
+  loadingPromises.set(
+    id,
+    promise
+  );
+
+
+  try{
+
+    return await promise;
+
+  }finally{
+
+    loadingPromises.delete(
+      id
     );
 
-
-  return sortNFTs(
-    result
-  );
+  }
 
 }
 
 
 /* =========================================================
-   LOAD PAGE
+   LOAD PAGE DATA
 ========================================================= */
 
-async function loadCurrentPage(){
-
-  const start =
-    (currentPage - 1) *
-    pageSize;
-
-  const pageNFTs =
-    allNFTs.slice(
-      start,
-      start + pageSize
-    );
-
+async function loadPageData(
+  pageNFTs
+){
 
   if(
-    pageNFTs.length === 0
+    !pageNFTs.length
   ){
 
     return;
@@ -3302,39 +3142,59 @@ async function loadCurrentPage(){
 
 
   /*
-    Load only the NFTs visible
-    on this page.
+    Load in small batches.
 
-    This avoids making 3,600 RPC
-    calls before the first page
-    becomes usable.
+    This avoids sending 24 simultaneous
+    RPC calls repeatedly to the Arc RPC.
   */
 
-  await Promise.all(
-    pageNFTs.map(
-      async placeholder => {
+  const BATCH_SIZE =
+    6;
 
-        const nft =
-          await loadNFT(
-            placeholder.id
+
+  for(
+    let i = 0;
+    i < pageNFTs.length;
+    i += BATCH_SIZE
+  ){
+
+    const batch =
+      pageNFTs.slice(
+        i,
+        i + BATCH_SIZE
+      );
+
+
+    await Promise.all(
+      batch.map(
+        async placeholder => {
+
+          const nft =
+            await loadNFT(
+              placeholder.id
+            );
+
+
+          Object.assign(
+            placeholder,
+            nft
           );
 
-        Object.assign(
-          placeholder,
-          nft
-        );
-
-      }
-    )
-  );
+        }
+      )
+    );
 
 
-  /*
-    Refresh stats from the loaded
-    information.
-  */
+    /*
+      Render progressively so NFTs appear
+      as soon as their data arrives.
+    */
 
-  updateStats();
+    renderVisiblePage(
+      false
+    );
+
+  }
 
 
   loading.classList.add(
@@ -3345,7 +3205,7 @@ async function loadCurrentPage(){
 
 
 /* =========================================================
-   IMAGE
+   IMAGE HTML
 ========================================================= */
 
 function imageHTML(
@@ -3466,9 +3326,10 @@ function renderCard(
           data-detail="${nft.id}"
         >
 
-          ${available
-            ? "VIEW / MINT"
-            : "VIEW"
+          ${
+            available
+              ? "VIEW / MINT"
+              : "VIEW"
           }
 
         </button>
@@ -3483,10 +3344,336 @@ function renderCard(
 
 
 /* =========================================================
-   RENDER
+   FILTER
 ========================================================= */
 
-async function renderPage(){
+function getFilteredNFTs(){
+
+  const query =
+    search.value
+      .trim()
+      .toLowerCase();
+
+
+  const status =
+    statusFilter.value;
+
+
+  const rarityMode =
+    rarityFilter.value;
+
+
+  let result =
+    allNFTs.filter(
+      nft => {
+
+        if(
+          query
+        ){
+
+          const clean =
+            query
+              .replace(
+                "arc 360",
+                ""
+              )
+              .replace(
+                "#",
+                ""
+              )
+              .trim();
+
+
+          if(
+            !String(
+              nft.id
+            ).includes(
+              clean
+            )
+          ){
+
+            return false;
+
+          }
+
+        }
+
+
+        if(
+          status ===
+          "available"
+        ){
+
+          if(
+            nft.minted !==
+            false
+          ){
+
+            return false;
+
+          }
+
+        }
+
+
+        if(
+          status ===
+          "minted"
+        ){
+
+          if(
+            nft.minted !==
+            true
+          ){
+
+            return false;
+
+          }
+
+        }
+
+
+        if(
+          rarityMode ===
+          "rare"
+        ){
+
+          /*
+            Unknown rarity is not removed.
+            Once loaded, it is filtered correctly.
+          */
+
+          if(
+            nft.rarity !== null &&
+            nft.rarity < 750
+          ){
+
+            return false;
+
+          }
+
+        }
+
+
+        if(
+          rarityMode ===
+          "common"
+        ){
+
+          if(
+            nft.rarity !== null &&
+            nft.rarity >= 750
+          ){
+
+            return false;
+
+          }
+
+        }
+
+
+        return true;
+
+      }
+    );
+
+
+  return sortNFTs(
+    result
+  );
+
+}
+
+
+/* =========================================================
+   SORT
+========================================================= */
+
+function sortNFTs(
+  list
+){
+
+  const mode =
+    sort.value;
+
+
+  return list.sort(
+    (a,b) => {
+
+      if(
+        mode ===
+        "available"
+      ){
+
+        const statusA =
+          a.minted === false
+            ? 0
+            : a.minted === null
+              ? 1
+              : 2;
+
+        const statusB =
+          b.minted === false
+            ? 0
+            : b.minted === null
+              ? 1
+              : 2;
+
+
+        if(
+          statusA !==
+          statusB
+        ){
+
+          return (
+            statusA -
+            statusB
+          );
+
+        }
+
+
+        return (
+          a.id -
+          b.id
+        );
+
+      }
+
+
+      if(
+        mode ===
+        "price-low"
+      ){
+
+        return (
+          Number(
+            a.price || 0n
+          ) -
+          Number(
+            b.price || 0n
+          )
+        );
+
+      }
+
+
+      if(
+        mode ===
+        "price-high"
+      ){
+
+        return (
+          Number(
+            b.price || 0n
+          ) -
+          Number(
+            a.price || 0n
+          )
+        );
+
+      }
+
+
+      if(
+        mode ===
+        "rarity-high"
+      ){
+
+        return (
+          Number(
+            b.rarity || 0
+          ) -
+          Number(
+            a.rarity || 0
+          )
+        );
+
+      }
+
+
+      if(
+        mode ===
+        "rarity-low"
+      ){
+
+        return (
+          Number(
+            a.rarity || 0
+          ) -
+          Number(
+            b.rarity || 0
+          )
+        );
+
+      }
+
+
+      if(
+        mode ===
+        "last-high"
+      ){
+
+        return (
+          Number(
+            b.lastSale || 0
+          ) -
+          Number(
+            a.lastSale || 0
+          )
+        );
+
+      }
+
+
+      if(
+        mode ===
+        "last-low"
+      ){
+
+        return (
+          Number(
+            a.lastSale || 0
+          ) -
+          Number(
+            b.lastSale || 0
+          )
+        );
+
+      }
+
+
+      if(
+        mode ===
+        "id-desc"
+      ){
+
+        return (
+          b.id -
+          a.id
+        );
+
+      }
+
+
+      return (
+        a.id -
+        b.id
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   RENDER VISIBLE PAGE
+========================================================= */
+
+function renderVisiblePage(
+  keepLoading = true
+){
 
   const filtered =
     getFilteredNFTs();
@@ -3541,78 +3728,84 @@ async function renderPage(){
   );
 
 
-  /*
-    Update count based on the
-    complete collection index.
-  */
+  if(
+    count
+  ){
 
-  const mintedLoaded =
-    allNFTs.filter(
-      nft =>
-        nft.minted === true
-    ).length;
+    count.textContent =
+      `${TOTAL_SUPPLY.toLocaleString()} NFTs`;
+
+  }
 
 
-  const availableLoaded =
-    allNFTs.filter(
-      nft =>
-        nft.minted === false
-    ).length;
+  if(
+    !keepLoading
+  ){
+
+    loading.classList.add(
+      "hidden"
+    );
+
+  }
+
+}
 
 
-  count.textContent =
-    `${TOTAL_SUPPLY.toLocaleString()} NFTs`;
+/* =========================================================
+   RENDER PAGE
+========================================================= */
 
-
-  /*
-    Load actual page data after
-    the structure is rendered.
-  */
-
-  await loadCurrentPage();
-
+async function renderPage(){
 
   /*
-    Render again after images /
-    rarity / minted status arrive.
+    Render placeholders first.
+
+    This guarantees that page 1,
+    page 2, page 3... all exist
+    immediately.
   */
 
-  const updated =
+  renderVisiblePage(
+    true
+  );
+
+
+  const filtered =
     getFilteredNFTs();
 
 
-  const updatedStart =
+  const start =
     (currentPage - 1) *
     pageSize;
 
 
-  const updatedPage =
-    updated.slice(
-      updatedStart,
-      updatedStart + pageSize
+  const pageNFTs =
+    filtered.slice(
+      start,
+      start + pageSize
     );
 
 
-  gallery.innerHTML =
-    updatedPage
-      .map(
-        renderCard
-      )
-      .join("");
+  /*
+    Load exactly the NFTs currently
+    visible on the selected page.
+  */
 
-
-  attachCardHandlers();
-
-
-  renderPagination(
-    Math.max(
-      1,
-      Math.ceil(
-        updated.length /
-        pageSize
-      )
-    )
+  await loadPageData(
+    pageNFTs
   );
+
+
+  /*
+    Final render with real on-chain data.
+  */
+
+  renderVisiblePage(
+    false
+  );
+
+
+  updateStats();
 
 }
 
@@ -3781,10 +3974,6 @@ function renderPagination(
   }
 
 
-  /*
-    First page shortcut.
-  */
-
   if(
     start > 1
   ){
@@ -3792,6 +3981,7 @@ function renderPagination(
     addPageButton(
       1
     );
+
 
     if(
       start > 2
@@ -3830,6 +4020,7 @@ function renderPagination(
       addEllipsis();
 
     }
+
 
     addPageButton(
       totalPages
@@ -3957,11 +4148,14 @@ function renderPagination(
         "span"
       );
 
+
     span.className =
       "page-info";
 
+
     span.textContent =
       "...";
+
 
     pagination.appendChild(
       span
@@ -3996,11 +4190,6 @@ function updateStats(){
     TOTAL_SUPPLY -
     minted;
 
-
-  /*
-    We intentionally do not pretend
-    that unindexed sales / owners exist.
-  */
 
   document.getElementById(
     "listedCount"
@@ -4236,12 +4425,6 @@ async function openDetail(
       : "MINT THIS ARCHITECT";
 
 
-  /*
-    Marketplace is intentionally hidden
-    until the contract has listing/sale
-    functions.
-  */
-
   detailSell.style.display =
     "none";
 
@@ -4287,9 +4470,10 @@ async function openDetail(
       </span>
 
       <strong>
-        ${nft.minted
-          ? "MINTED"
-          : "AVAILABLE"
+        ${
+          nft.minted
+            ? "MINTED"
+            : "AVAILABLE"
         }
       </strong>
 
@@ -4363,29 +4547,52 @@ async function loadDNA(
       );
 
 
-    if(face)
+    if(face){
+
       face.textContent =
         dna.face.toString();
 
-    if(eyes)
+    }
+
+
+    if(eyes){
+
       eyes.textContent =
         dna.eyes.toString();
 
-    if(jaw)
+    }
+
+
+    if(jaw){
+
       jaw.textContent =
         dna.jaw.toString();
 
-    if(hair)
+    }
+
+
+    if(hair){
+
       hair.textContent =
         dna.hair.toString();
 
-    if(horns)
+    }
+
+
+    if(horns){
+
       horns.textContent =
         dna.horns.toString();
 
-    if(head)
+    }
+
+
+    if(head){
+
       head.textContent =
         dna.head.toString();
+
+    }
 
   }catch(error){
 
@@ -4483,15 +4690,6 @@ detailMint.onclick =
         "CONFIRM IN WALLET...";
 
 
-      /*
-        Uses the contract's actual
-        mintPrice() value.
-
-        This should be 0.10 USDC
-        equivalent if the deployed
-        contract is configured that way.
-      */
-
       const tx =
         await writeContract.mint(
           [
@@ -4516,10 +4714,6 @@ detailMint.onclick =
       await tx.wait();
 
 
-      /*
-        Update local state.
-      */
-
       currentDetail.minted =
         true;
 
@@ -4530,7 +4724,9 @@ detailMint.onclick =
         );
 
 
-      if(cached){
+      if(
+        cached
+      ){
 
         cached.minted =
           true;
@@ -4546,7 +4742,9 @@ detailMint.onclick =
         );
 
 
-      if(item){
+      if(
+        item
+      ){
 
         item.minted =
           true;
@@ -4554,7 +4752,7 @@ detailMint.onclick =
       }
 
 
-      const message =
+      showToast(
         "You are now the owner of Architect #" +
         String(
           currentDetail.id
@@ -4562,11 +4760,7 @@ detailMint.onclick =
           3,
           "0"
         ) +
-        ".";
-
-
-      showToast(
-        message
+        "."
       );
 
 
@@ -4588,12 +4782,6 @@ detailMint.onclick =
 
       updateStats();
 
-
-      /*
-        Close and reopen page rendering
-        so the Architect moves toward
-        the minted section.
-      */
 
       await renderPage();
 
@@ -4656,10 +4844,6 @@ async function connectWallet(){
       []
     );
 
-
-    /*
-      Switch to Arc Testnet.
-    */
 
     try{
 
@@ -4771,12 +4955,6 @@ async function connectWallet(){
     );
 
 
-    /*
-      Refresh current detail so SELL /
-      ownership logic can be extended
-      later.
-    */
-
     if(
       currentDetail
     ){
@@ -4793,6 +4971,7 @@ async function connectWallet(){
       "Wallet error",
       error
     );
+
 
     showToast(
       getReadableError(
@@ -5076,21 +5255,10 @@ async function initialize(){
 
   }catch(error){
 
-    /*
-      If the RPC temporarily refuses
-      the call, keep the UI alive.
-    */
-
     console.warn(
       "mintPrice unavailable",
       error
     );
-
-    /*
-      0.10 fallback for display.
-      The transaction still uses the
-      actual contract value once loaded.
-    */
 
     mintPrice =
       100000000000000000n;
@@ -5109,27 +5277,26 @@ async function initialize(){
     );
 
 
-  count.textContent =
-    `${TOTAL_SUPPLY.toLocaleString()} NFTs`;
+  if(
+    count
+  ){
 
+    count.textContent =
+      `${TOTAL_SUPPLY.toLocaleString()} NFTs`;
 
-  loading.classList.add(
-    "hidden"
-  );
+  }
 
 
   /*
-    This renders the first 24
-    immediately.
-
-    There are 150 pages of 24.
+    Keep the exact 3,600 collection
+    and 150 pages.
   */
 
   await renderPage();
 
 
   console.log(
-    "ARC 360 V2 initialized."
+    "ARC 360 initialized."
   );
 
   console.log(
